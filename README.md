@@ -2,7 +2,7 @@
 
 This repository contains a collection of CSV files with values of stats for
 every procedural item in [**No Man's Sky**](https://www.nomanssky.com/). This
-includes mainly technology upgrades but also the products (artifacts).
+includes mainly technology upgrades but also the products (artifacts in game).
 
 ## Preamble
 
@@ -14,7 +14,7 @@ actual values of the stats.
 This repository also contains two Python scripts that can be used to generate
 these CSV files by yourself. These scripts are based on those shared by **Ice#8413** and **DarkWalker#7721** in the **No Man's Sky [Seed Central](https://discord.gg/AEXcap6) Discord**.
 
-To run them, you need [**Python 3.6**](https://www.python.org) or newer.
+To run them, I suggest [**Python 3.7**](https://www.python.org) or newer.
 
 The first script **prepare**s your save by adding up to 100,000 seeds to it.
 If your save wont load or for any other reason you can easily split this step into
@@ -48,5 +48,5 @@ directly enter the addresses as they are displayed in Cheat Engine and don't nee
 a `0x`.
 
 ```
-python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_NAME ADDRESS_DESCRIPTION ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]
+python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDRESS_TITLE ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]
 ```
