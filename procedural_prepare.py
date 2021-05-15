@@ -195,12 +195,16 @@ with open(f_name, 'r') as f:
     print('Read')
     save = json.loads(f.read()[:-1])
 
-print(f'Update {TYPES[type_identifier]}')
+counting_seed = int(TOTAL_SEEDS / intruction['iteration_necessary'])
 
-starting_seed = (intruction['iteration'] - 1) * int(TOTAL_SEEDS / intruction['iteration_necessary'])
+starting_seed = (intruction['iteration'] - 1) * counting_seed
+
 
 def call_iter(inventory):
     iter_slot(inventory, intruction['item'], starting_seed, intruction['iteration_necessary'])
+
+
+print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {counting_seed})')
 
 inventory = {
     'freighter': save['6f=']['8ZP'],

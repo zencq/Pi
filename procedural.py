@@ -149,11 +149,16 @@ TRANSLATION = {
 # * meta: type used by the game, min value, max value
 # * number: max possible stats
 data = {
-    # C2 improving <STELLAR><> and <STELLAR><>
-    # B3 to <STELLAR><>, <STELLAR><>
-    # A3 improve <STELLAR><>, <STELLAR><>
-    # S3 to <STELLAR><>, <STELLAR><>
-    # X3 targets <STELLAR><>, <STELLAR><>
+    # C1 improving <STELLAR><>.
+    # C2 improving <STELLAR><> and <STELLAR><>.
+    # B2 to <STELLAR><> and <STELLAR><>.
+    # B3 to <STELLAR><>, <STELLAR><>,
+    # A2 improve <STELLAR><> and <STELLAR><>.
+    # A3 improve <STELLAR><>, <STELLAR><>,
+    # S2 to <STELLAR><> and <STELLAR><>.
+    # S3 to <STELLAR><>, <STELLAR><>,
+    # X2 targets <STELLAR><> and <STELLAR><>.
+    # X3 targets <STELLAR><>, <STELLAR><>,
 
     # region Weapon
 
@@ -166,7 +171,7 @@ data = {
                 ('Weapon_Laser_Drain', 0, 10),
                 ('Weapon_Laser_ReloadTime', 5, 10),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             # UP_LASER2#0 // #17 #19 // FINE-TUNED PHOTON MIRROR, ?
@@ -176,7 +181,7 @@ data = {
                 ('Weapon_Laser_Drain', 10, 15),
                 ('Weapon_Laser_ReloadTime', 10, 15),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             # UP_LASER3#0 // #17 #19 // HIGH-ENERGY PHOTON MIRROR, ?
@@ -186,7 +191,7 @@ data = {
                 ('Weapon_Laser_Drain', 15, 20),
                 ('Weapon_Laser_ReloadTime', 10, 15),
             ],
-            'number': 4,
+            'number': 4,  # 3
         },
         '4': {
             # UP_LASER4#0 // BRILLIANT PHOTON MIRROR, ?
@@ -196,7 +201,7 @@ data = {
                 ('Weapon_Laser_Drain', 20, 20),
                 ('Weapon_Laser_ReloadTime', 15, 20),
             ],
-            'number': 4,
+            'number': 4,  # 4
         },
         'X': {
             # UP_LASERX#0 // #22 #24 // COUNTERFEIT FINE-TUNED PHOTON MIRROR, ?
@@ -206,7 +211,7 @@ data = {
                 ('Weapon_Laser_Drain', 0, 25),
                 ('Weapon_Laser_ReloadTime', 5, 25),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -219,7 +224,7 @@ data = {
                 ('Weapon_Scan_Discovery_Creature', 1000, 2000),
                 ('Weapon_Scan_Discovery_Flora', 1000, 2000),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             # UP_SCAN2#0 // NANITE-POWERED DETECTOR, ?
@@ -229,7 +234,7 @@ data = {
                 ('Weapon_Scan_Discovery_Creature', 2500, 5000),
                 ('Weapon_Scan_Discovery_Flora', 2500, 5000),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '3': {
             # UP_SCAN3#0 // #1 #8 // FLUX DETECTOR, ?
@@ -239,7 +244,7 @@ data = {
                 ('Weapon_Scan_Discovery_Creature', 5000, 10000),
                 ('Weapon_Scan_Discovery_Flora', 5000, 10000),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '4': {
             # UP_SCAN4#0 // HOLOGRAPHIC DETECTOR, ?
@@ -249,7 +254,7 @@ data = {
                 ('Weapon_Scan_Discovery_Creature', 6500, 10000),
                 ('Weapon_Scan_Discovery_Flora', 6500, 10000),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             # UP_SCANX#0 // #20 #22 // NANITE-POWERED DETECTOR, ?
@@ -259,7 +264,7 @@ data = {
                 ('Weapon_Scan_Discovery_Creature', 1000, 11000),
                 ('Weapon_Scan_Discovery_Flora', 1000, 11000),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -275,7 +280,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
-            'number': 3,
+            'number': 3,  # 2 (AlwaysChoose + NumStats)
         },
         '2': {
             # UP_BOLT2#0 // #19 #20 // OPTICAL ENERGY LATTICE, LUMINOUS
@@ -288,7 +293,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 10),
             ],
-            'number': 4,
+            'number': 4,  # 3 (AlwaysChoose + NumStats)
         },
         '3': {
             # UP_BOLT3#0 // INCANDESCENT ENERGY LATTICE, PLATINUM
@@ -301,7 +306,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 10, 15),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose + NumStats)
         },
         '4': {
             # UP_BOLT4#0 // PUGNEUM ENERGY LATTICE, NEUTRINO
@@ -314,7 +319,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 15, 15),
             ],
-            'number': 4,
+            'number': 4,  # 4
         },
         'X': {
             # UP_BOLTX#0 // #4 #8 // COUNTERFEIT OPTICAL ENERGY LATTICE, UNLICENSED
@@ -327,7 +332,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
-            'number': 4,
+            'number': 4,  # 2 (AlwaysChoose + NumStats)
         },
     },
 
@@ -341,7 +346,7 @@ data = {
                 ('Weapon_Grenade_Radius', 0, 5),
                 ('Weapon_Grenade_Speed', 100, 200),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             # UP_GREN2#0 // #19 #33 // UNSTABLE GAS EXPANDER, LINEAR
@@ -352,7 +357,7 @@ data = {
                 ('Weapon_Grenade_Radius', 5, 10),
                 ('Weapon_Grenade_Speed', 100, 300),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
         '3': {
             # UP_GREN3#0 // #1 #8 // GEOMETRIC GAS EXPANDER, GYROSCOPIC
@@ -363,7 +368,7 @@ data = {
                 ('Weapon_Grenade_Radius', 5, 10),
                 ('Weapon_Grenade_Speed', 100, 300),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '4': {
             # UP_GREN4#0 // ANTIMATTER GAS EXPANDER, GRAVITATIONAL
@@ -374,7 +379,7 @@ data = {
                 ('Weapon_Grenade_Radius', 10, 15),
                 ('Weapon_Grenade_Speed', 200, 300),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             # UP_GRENX#0 // #20 #37 // COUNTERFEIT UNSTABLE GAS EXPANDER, SMUGGLED
@@ -385,51 +390,60 @@ data = {
                 ('Weapon_Grenade_Radius', 0, 20),
                 ('Weapon_Grenade_Speed', 100, 400),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
-    # TODO verify values
     'UP_TGREN': {
         '1': {
+            # UP_TGREN1#0 // SECONDARY GAS EXPANDER, TERTIARY
+            # UP_TGREN1#50000 // BOOSTED GAS EXPANDER, EFFICIENT
             'meta': [
-                ('Weapon_Grenade_Damage', 1000, 2000),
+                ('Weapon_Grenade_Damage', 10, 20),
                 ('Weapon_Grenade_Radius', 10, 20),
-                ('Weapon_Grenade_Speed', 1, 2),
+                ('Weapon_Grenade_Speed', 100, 200),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
+            # UP_TGREN2#0 // #17 #19 // UNSTABLE GAS EXPANDER, LINEAR
+            # UP_TGREN2#50000 // #50000 #50007 // PUGNEUM GAS EXPANDER, XXXX
             'meta': [
-                ('Weapon_Grenade_Damage', 2000, 3000),
+                ('Weapon_Grenade_Damage', 20, 30),
                 ('Weapon_Grenade_Radius', 20, 30),
-                ('Weapon_Grenade_Speed', 1, 3),
+                ('Weapon_Grenade_Speed', 100, 300),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
+            # UP_TGREN3#0 // #17 #19 // GEOMETRIC UNSTABLE GAS EXPANDER, LINEAR
+            # UP_TGREN3#50000 // #50000 #50007 // SUPERCRITICAL GAS EXPANDER, NANITE
             'meta': [
-                ('Weapon_Grenade_Damage', 3000, 4000),
+                ('Weapon_Grenade_Damage', 30, 40),
                 ('Weapon_Grenade_Radius', 30, 50),
-                ('Weapon_Grenade_Speed', 1, 3),
+                ('Weapon_Grenade_Speed', 100, 300),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
+            # UP_TGREN4#0 // ANTIMATTER GAS EXPANDER, GRAVITATIONAL
+            # UP_TGREN4#50000 // M-FIELD GAS EXPANDER, NANO
             'meta': [
-                ('Weapon_Grenade_Damage', 3500, 4000),
+                ('Weapon_Grenade_Damage', 35, 40),
                 ('Weapon_Grenade_Radius', 40, 50),
-                ('Weapon_Grenade_Speed', 2, 3),
+                ('Weapon_Grenade_Speed', 200, 300),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
+            # UP_TGRENX#0 // #8 #16 // UNLICENSED UNSTABLE GAS EXPANDER, SMUGGLED
+            # UP_TGRENX#50000 // #50001 #50010 // PROHIBITED PUGNEUM GAS EXPANDER, FORBIDDEN
             'meta': [
-                ('Weapon_Grenade_Damage', 1000, 4500),
+                ('Weapon_Grenade_Damage', 10, 45),
                 ('Weapon_Grenade_Radius', 10, 60),
-                ('Weapon_Grenade_Speed', 1, 4),
+                ('Weapon_Grenade_Speed', 100, 400),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
     },
 
@@ -440,35 +454,35 @@ data = {
                 ('Weapon_Laser_Damage', 300, 400),
                 ('Weapon_Laser_ChargeTime', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Weapon_Laser_Damage', 400, 500),
                 ('Weapon_Laser_ChargeTime', 10, 15),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Weapon_Laser_Damage', 500, 600),
                 ('Weapon_Laser_ChargeTime', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Weapon_Laser_Damage', 600, 750),
                 ('Weapon_Laser_ChargeTime', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
             'meta': [
                 ('Weapon_Laser_Damage', 300, 850),
                 ('Weapon_Laser_ChargeTime', 5, 25),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
     },
 
