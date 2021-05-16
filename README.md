@@ -9,7 +9,10 @@ includes mainly technology upgrades but also the products (artifacts in game).
 Each file includes the seed, procedural name, its perfection in percent and the
 actual values of the stats.
 
-There might be an ultra-low percentage of values that are not 100% accurate.
+There might be an ultra-low percentage of values that are not 100% accurate. There are
+also cases where the value of a stat cannot be determined exactly/at all due to
+how it's displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but is always
+displayed as `+2%`).
 
 ## Usage
 
@@ -38,7 +41,7 @@ four stats.
 
 For me the following worked best:
 1. Scan for the first seed that controls the UI (e.g. `UP_BOLT4#0`).
-1. Scan for the procedural name which should result in a single address after second search.
+1. Scan for the procedural name which should result in a single address after second scan.
 1. Scan for the description by searching for the listed stats (e.g. `improve <STELLAR>Damage<>, <STELLAR>Clip Size<>`).
    You may end up with 2 addresses but you're looking for the one before and closest to
    the address of the name.

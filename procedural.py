@@ -76,6 +76,8 @@ TRANSLATION = {
     'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent),
     'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent),
 
+    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent),
+    'Weapon_Laser_Damage': ('Damage', extract_int_percent),
     'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent),
     'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent),
     'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent),
@@ -92,8 +94,6 @@ TRANSLATION = {
     'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand),
     'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent),
 
-    # 'Weapon_Laser_Damage': ('Damage', extract_int_percent),
-    # 'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent),
     # 'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent),
     # 'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent),
     # 'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent),
@@ -447,39 +447,48 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_RAIL': {
         '1': {
+            # UP_RAIL1#0 // REINFORCED RECYCLER, ADDITIONAL
+            # UP_RAIL1#50000 // COPPER RECYCLER, BACKUP
             'meta': [
-                ('Weapon_Laser_Damage', 300, 400),
+                ('Weapon_Laser_Damage', 2, 2),
                 ('Weapon_Laser_ChargeTime', 5, 10),
             ],
             'number': 1,  # 1
         },
         '2': {
+            # UP_RAIL2#0 // #1 #8 // LIVING GLASS RECYCLER, ILLEGAL
+            # UP_RAIL2#50000 // #50000 #50007 // CADMIUM RECYCLER, SUPERCHARGED
             'meta': [
-                ('Weapon_Laser_Damage', 400, 500),
+                ('Weapon_Laser_Damage', 2, 3),
                 ('Weapon_Laser_ChargeTime', 10, 15),
             ],
             'number': 2,  # 1
         },
         '3': {
+            # UP_RAIL3#0 // PLASMA RECYCLER, PARALLEL
+            # UP_RAIL3#50000 // EMERIL RECYCLER, SUPERCONDUCTIVE
             'meta': [
-                ('Weapon_Laser_Damage', 500, 600),
+                ('Weapon_Laser_Damage', 3, 3),
                 ('Weapon_Laser_ChargeTime', 10, 20),
             ],
             'number': 2,  # 2
         },
         '4': {
+            # UP_RAIL4#0 // ANTIMATTER RECYCLER, VECTORISED
+            # UP_RAIL4#50000 // INDIUM RECYCLER, FAULTLESS
             'meta': [
-                ('Weapon_Laser_Damage', 600, 750),
+                ('Weapon_Laser_Damage', 4, 4),
                 ('Weapon_Laser_ChargeTime', 10, 20),
             ],
             'number': 2,  # 2
         },
         'X': {
+            # UP_RAILX#0 // #4 #8 // COUNTERFEIT LIVING GLASS RECYCLER, SMUGGLED
+            # UP_RAILX#50000 // #50001 #50010 // PROHIBITED CADMIUM RECYCLER, FORBIDDEN
             'meta': [
-                ('Weapon_Laser_Damage', 300, 850),
+                ('Weapon_Laser_Damage', 2, 5),
                 ('Weapon_Laser_ChargeTime', 5, 25),
             ],
             'number': 2,  # 1
@@ -2018,6 +2027,6 @@ with open(f_name, 'w', newline='') as f:
 
 end = datetime.now()
 
-print(f'{stop - begin} module(s) added to {f_name} in {end - start}')
+print(f'{stop - begin:>6} module(s) added to {f_name} in {end - start}')
 
 # endregion
