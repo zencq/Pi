@@ -204,7 +204,7 @@ def call_iter(inventory):
     iter_slot(inventory, intruction['item'], starting_seed, intruction['iteration_necessary'])
 
 
-print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed})')
+print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed - 1})')
 
 inventory = {
     'freighter': save['6f=']['8ZP'],

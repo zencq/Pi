@@ -62,6 +62,31 @@ def extract_int_percent_thousand(data):
 
 # region stats
 
+# C1 improving <STELLAR><>.
+# C2 improving <STELLAR><> and <STELLAR><>.
+# C3 improving <STELLAR><>, <STELLAR><> and
+# C4 improving <STELLAR><>, <STELLAR><> and
+
+# B2 to <STELLAR><>.
+# B2 to <STELLAR><> and <STELLAR><>.
+# B3 to <STELLAR><>, <STELLAR><> and
+# B4 to <STELLAR><>, <STELLAR><>,
+
+# A1 improve <STELLAR><>.
+# A2 improve <STELLAR><> and <STELLAR><>.
+# A3 improve <STELLAR><>, <STELLAR><> and
+# A4 improve <STELLAR><>, <STELLAR><>,
+
+# S1 to <STELLAR><>.
+# S2 to <STELLAR><> and <STELLAR><>.
+# S3 to <STELLAR><>, <STELLAR><> and
+# S4 to <STELLAR><>, <STELLAR><>,
+
+# X1 targets <STELLAR><>.
+# X2 targets <STELLAR><> and <STELLAR><>.
+# X3 targets <STELLAR><>, <STELLAR><> and
+# X4 targets <STELLAR><>, <STELLAR><>,
+
 TRANSLATION = {
     'Suit_Energy': ('Life Support Tanks', extract_int_percent),
     'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent),
@@ -149,17 +174,6 @@ TRANSLATION = {
 # * meta: type used by the game, min value, max value
 # * number: max possible stats
 data = {
-    # C1 improving <STELLAR><>.
-    # C2 improving <STELLAR><> and <STELLAR><>.
-    # B2 to <STELLAR><> and <STELLAR><>.
-    # B3 to <STELLAR><>, <STELLAR><>,
-    # A2 improve <STELLAR><> and <STELLAR><>.
-    # A3 improve <STELLAR><>, <STELLAR><>,
-    # S2 to <STELLAR><> and <STELLAR><>.
-    # S3 to <STELLAR><>, <STELLAR><>,
-    # X2 targets <STELLAR><> and <STELLAR><>.
-    # X3 targets <STELLAR><>, <STELLAR><>,
-
     # region Weapon
 
     'UP_LASER': {
@@ -280,7 +294,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
-            'number': 3,  # 2 (AlwaysChoose + NumStats)
+            'number': 3,  # 2 (AlwaysChoose)
         },
         '2': {
             # UP_BOLT2#0 // #19 #20 // OPTICAL ENERGY LATTICE, LUMINOUS
@@ -293,7 +307,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose + NumStats)
+            'number': 4,  # 3 (AlwaysChoose)
         },
         '3': {
             # UP_BOLT3#0 // INCANDESCENT ENERGY LATTICE, PLATINUM
@@ -306,7 +320,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 10, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose + NumStats)
+            'number': 4,  # 4 (AlwaysChoose)
         },
         '4': {
             # UP_BOLT4#0 // PUGNEUM ENERGY LATTICE, NEUTRINO
@@ -319,7 +333,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 15, 15),
             ],
-            'number': 4,  # 4
+            'number': 4,  # 4 (AlwaysChoose)
         },
         'X': {
             # UP_BOLTX#0 // #4 #8 // COUNTERFEIT OPTICAL ENERGY LATTICE, UNLICENSED
@@ -332,7 +346,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
-            'number': 4,  # 2 (AlwaysChoose + NumStats)
+            'number': 4,  # 2 (AlwaysChoose)
         },
     },
 
@@ -495,65 +509,77 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_SHOT': {
         '1': {
+            # UP_SHOT1#0 // #17 #19 // COPPER WIRING, REINFORCED
+            # UP_SHOT1#50000 // #50000 #50007 // GOLD-PLATED WIRING, PRESSURISED
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
                 ('Weapon_Projectile_ReloadTime', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
             ],
-            'number': 2,
+            'number': 3,  # 2 (AlwaysChoose)
         },
         '2': {
+            # UP_SHOT2#0 // #17 #19 // ELECTRIFIED WIRING, HIGH
+            # UP_SHOT2#50000 // #50000 #50007 // CADMIUM WIRING, HIGH
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 2),
+                ('Weapon_Projectile_Damage', 1, 1),
                 ('Weapon_Projectile_ReloadTime', 10, 15),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 0, 5),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 10),
             ],
-            'number': 3,
+            'number': 4,  # 3 (AlwaysChoose)
         },
         '3': {
+            # UP_SHOT3#0 // KORVAX-MADE WIRING, HIGH-ENERGY
+            # UP_SHOT3#50000 // EMERIL WIRING, KORVAX
             'meta': [
-                ('Weapon_Projectile_Damage', 2, 4),
+                ('Weapon_Projectile_Damage', 1, 2),
                 ('Weapon_Projectile_ReloadTime', 15, 20),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 10, 15),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose)
         },
         '4': {
+            # UP_SHOT4#0 // SOLID GOLD WIRING, PERFECT
+            # UP_SHOT4#50000 // INDIUM WIRING, FLAWLESS
             'meta': [
-                ('Weapon_Projectile_Damage', 3, 5),
+                ('Weapon_Projectile_Damage', 2, 3),
                 ('Weapon_Projectile_ReloadTime', 20, 25),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 10, 15),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 15, 20),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose)
         },
         'X': {
+            # UP_SHOTX#0 // #4 #8 // COUNTERFEIT ELECTRIFIED WIRING, SMUGGLED
+            # UP_SHOTX#50000 // #50001 #500002 // PROHIBITED CADMIUM WIRING, FORBIDDEN
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 6),
+                ('Weapon_Projectile_Damage', 1, 3),
                 ('Weapon_Projectile_ReloadTime', 5, 30),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 0, 20),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 25),
             ],
-            'number': 4,
+            'number': 4,  # 2 (AlwaysChoose)
         },
     },
 
     # TODO verify values
     'UP_SMG': {
         '1': {
+            # TODO verify values
+            # UP_SMG1#0 // #4 #8 // COUNTERFEIT ELECTRIFIED WIRING, SMUGGLED
+            # UP_SMG1#50000 // #50001 #500002 // PROHIBITED CADMIUM WIRING, FORBIDDEN
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
                 ('Weapon_Projectile_Rate', 0, 10),
@@ -1955,7 +1981,7 @@ f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
 with open(f_name, 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
     writer.writeheader()
-    print('Range:', begin, '-', stop)
+    print('Range:', begin, '-', stop - 1)
     for i in range(begin, stop):
         i_next = i + 1
 
