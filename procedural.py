@@ -33,7 +33,7 @@ def init_meta(data):
     Convert and enrich list of stats to dictionary.
     """
     return {
-        TRANSLATION[line[0]][0]: line + (TRANSLATION[line[0]][1],)
+        TRANSLATION[line[0]][0]: line + (TRANSLATION[line[0]][1], TRANSLATION[line[0]][2])
         for line in data
     }
 
@@ -62,6 +62,10 @@ def extract_int_percent_thousand(data):
 
 # region stats
 
+re_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
+re_int_percent = re.compile("^[-+][0-9]{1,3}%$")
+re_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
+
 # C1 improving <STELLAR><>.
 # C2 improving <STELLAR><> and <STELLAR><>.
 # C3 improving <STELLAR><>, <STELLAR><> and
@@ -85,89 +89,89 @@ def extract_int_percent_thousand(data):
 # X1 targets <STELLAR><>.
 # X2 targets <STELLAR><> and <STELLAR><>.
 # X3 targets <STELLAR><>, <STELLAR><> and
-# X4 targets <STELLAR><>, <STELLAR><>,
+# X4 affects <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
-    'Suit_Energy': ('Life Support Tanks', extract_int_percent),
-    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent),
+    'Suit_Energy': ('Life Support Tanks', extract_int_percent, re_int_percent),
+    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, re_int_percent),
 
-    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent),
-    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent),
-    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent),
-    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent),
+    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent, re_int_percent),
+    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, re_int_percent),
+    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, re_int_percent),
+    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, re_int_percent),
 
-    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent),
-    'Weapon_Grenade_Damage': ('Damage', extract_int_percent),
-    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent),
-    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent),
+    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, re_int_percent),
+    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, re_int_percent),
+    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, re_int_percent),
+    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, re_int_percent),
 
-    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent),
-    'Weapon_Laser_Damage': ('Damage', extract_int_percent),
-    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent),
-    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent),
-    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent),
-    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent),
+    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, re_int_percent),
+    'Weapon_Laser_Damage': ('Damage', extract_int_percent, re_int_percent),
+    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, re_int_percent),
+    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
+    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, re_int_percent),
+    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, re_int_percent),
 
-    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float),
-    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent),
-    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float),
-    'Weapon_Projectile_Damage': ('Damage', extract_int_percent),
-    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent),
-    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent),
+    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, re_float),
+    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, re_int_percent),
+    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, re_float),
+    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, re_int_percent),
+    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, re_int_percent),
+    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, re_int_percent),
 
-    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand),
-    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand),
-    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent),
+    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, re_int_percent_thousand),
+    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, re_int_percent_thousand),
+    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, re_int_percent),
 
-    # 'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent),
-    # 'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent),
-    # 'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent),
-    # 'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent),
-    # 'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent),
-    # 'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent),
-    # 'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent),
-    # 'Suit_Armour_Health': ('Core Health', extract_int_percent),
-    # 'Suit_Underwater': ('Oxygen Tank', extract_int_percent),
-    # 'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent),
-    # 'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent),
-    # 'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent),
-    # 'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent),
-    # 'Suit_Protection_Cold': ('Cold Protection', extract_int_percent),
-    # 'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent),
-    # 'Suit_Protection_Heat': ('Heat Protection', extract_int_percent),
-    # 'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent),
-    # 'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent),
-    # 'Ship_Boost': ('Boost', extract_int_percent),
-    # 'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent),  # TODO: rename with mod to "Boost-Maneuverability"?
-    # 'Ship_Maneuverability': ('Maneuverability', extract_int_percent),
-    # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent),
-    # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent),
-    # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent),
-    # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent),
-    # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent),
-    # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent),
-    # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent),
-    # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent),
-    # 'Vehicle_GunDamage': ('Damage', extract_int_percent),
-    # 'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent),
-    # 'Vehicle_GunRate': ('Rate of Fire', extract_int_percent),
-    # 'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent),
-    # 'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent),
-    # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent),
-    # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent),
-    # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent),
-    # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent),
-    # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent),
-    # 'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent),
-    # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent),
-    # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent),
-    # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent),
-    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent),
-    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent),
-    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent),
-    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent),
-    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent),
-    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent),
+    # 'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent, re_int_percent),
+    # 'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent, re_int_percent),
+    # 'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent, re_int_percent),
+    # 'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent, re_int_percent),
+    # 'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent, re_int_percent),
+    # 'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent, re_int_percent),
+    # 'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, re_int_percent),
+    # 'Suit_Armour_Health': ('Core Health', extract_int_percent, re_int_percent),
+    # 'Suit_Underwater': ('Oxygen Tank', extract_int_percent, re_int_percent),
+    # 'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, re_int_percent),
+    # 'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, re_int_percent),
+    # 'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, re_int_percent),
+    # 'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, re_int_percent),
+    # 'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, re_int_percent),
+    # 'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, re_int_percent),
+    # 'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, re_int_percent),
+    # 'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, re_int_percent),
+    # 'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, re_int_percent),
+    # 'Ship_Boost': ('Boost', extract_int_percent, re_int_percent),
+    # 'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, re_int_percent),  # TODO: rename with mod to "Boost-Maneuverability"?
+    # 'Ship_Maneuverability': ('Maneuverability', extract_int_percent, re_int_percent),
+    # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, re_int_percent),
+    # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, re_int_percent),
+    # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, re_int_percent),
+    # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, re_int_percent),
+    # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, re_int_percent),
+    # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
+    # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
+    # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, re_int_percent),
+    # 'Vehicle_GunDamage': ('Damage', extract_int_percent, re_int_percent),
+    # 'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, re_int_percent),
+    # 'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, re_int_percent),
+    # 'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, re_int_percent),
+    # 'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, re_int_percent),
+    # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, re_int_percent),
+    # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, re_int_percent),
+    # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, re_int_percent),
+    # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, re_int_percent),
+    # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, re_int_percent),
+    # 'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, re_int_percent),
+    # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, re_int_percent),
+    # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, re_int_percent),
+    # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, re_int_percent),
+    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, re_int_percent),
 }
 
 # In the mapping below, the values are composed as follows:
@@ -574,54 +578,60 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_SMG': {
         '1': {
-            # TODO verify values
-            # UP_SMG1#0 // #4 #8 // COUNTERFEIT ELECTRIFIED WIRING, SMUGGLED
-            # UP_SMG1#50000 // #50001 #500002 // PROHIBITED CADMIUM WIRING, FORBIDDEN
+            # UP_SMG1#0 // #17 #19 // INFRARED SOLIDIFIER, ION
+            # UP_SMG1#50000 // #50000 #500007 // PLASMA SOLIDIFIER, BEAM
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 3, 3),
                 ('Weapon_Projectile_Rate', 0, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
+            # UP_SMG2#0 // #17 #20 // OVERLOADED SOLIDIFIER, WAVEFORM
+            # UP_SMG2#50000 // #50000 #50020 // SURGE SOLIDIFIER, ATOMIC
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 2),
+                ('Weapon_Projectile_Damage', 3, 6),
                 ('Weapon_Projectile_Rate', 0, 10),
                 ('Weapon_Projectile_ReloadTime', 0, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
         '3': {
+            # UP_SMG3#0 // #17 #19 // MASS SOLIDIFIER, SUPERHEATED
+            # UP_SMG3#50000 // #50000 #50020 // HEAVY METAL SOLIDIFIER, NEUTRON
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 3),
+                ('Weapon_Projectile_Damage', 3, 9),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_ReloadTime', 0, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 4,
+            'number': 4,  # 3
         },
         '4': {
+            # UP_SMG4#0 // X-RAY SOLIDIFIER, COSMIC
+            # UP_SMG4#50000 // GAMMA RAY SOLIDIFIER, POSITRON
             'meta': [
-                ('Weapon_Projectile_Damage', 2, 3),
+                ('Weapon_Projectile_Damage', 6, 9),
                 ('Weapon_Projectile_Rate', 10, 15),
                 ('Weapon_Projectile_ReloadTime', 5, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 4,
+            'number': 4,  # 4
         },
         'X': {
+            # UP_SMGX#0 // #20 #37 // COUNTERFEIT OVERLOADED SOLIDIFIER, SUSPECT
+            # UP_SMGX#50000 // #50001 #50002 // PROHIBITED SURGE SOLIDIFIER, FORBIDDEN
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 4),
+                ('Weapon_Projectile_Damage', 3, 13),
                 ('Weapon_Projectile_Rate', 0, 20),
                 ('Weapon_Projectile_ReloadTime', 0, 15),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 4,
+            'number': 4,  # 1
         },
     },
 
@@ -1975,7 +1985,13 @@ round_digits = 2
 begin = int(pm.read_string(addr_off, byte=16))
 count = int(TOTAL_SEEDS / iteration_necessary)
 
-stop = max(0, min(begin + count, TOTAL_SEEDS))
+iteration_stop = TOTAL_SEEDS
+for i in range(1, iteration_necessary + 1):
+    iteration_stop = i * count
+    if begin < iteration_stop:
+        break
+
+stop = max(0, min(begin + count, iteration_stop))
 
 f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
 with open(f_name, 'w', newline='') as f:
@@ -1992,16 +2008,19 @@ with open(f_name, 'w', newline='') as f:
 
             values = [pm.read_string(a) for a in addr_stats]
 
-            # First check that description and title are fully loaded.
-            if all(text != '' for text in [description, title]):
+            # First check that description and title are loaded.
+            if (
+                (description.startswith('UPGRADE_0') or '<STELLAR>' in description and description.endswith('.'))
+                and title != ''
+            ):
                 # Then extract stat names from the description and make sure it's fully loaded
-                # and contains the complete name of a possible stat. Also ensure that
-                # the current number of stats is loaded.
+                # with the complete name of a possible stat and its value.
                 # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
                 keys = re.findall(pattern, description)
                 if (
-                    all(key in key_possibilities for key in keys) and all(value != '' for value in values[:len(keys)])
-                ) or description.startswith('UPGRADE_0'):
+                    all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
+                    or description.startswith('UPGRADE_0')
+                ):
                     break
 
         if i_next < stop:
