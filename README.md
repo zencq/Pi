@@ -10,7 +10,7 @@ Each file includes the seed, procedural name, its perfection in percent and the
 actual values of the stats.
 
 There might be an ultra-low percentage of values that are not 100% accurate. There are
-also cases where the value of a stat cannot be determined exactly/at all due to
+also cases where the value of a stat cannot be determined exactly due to
 how it's displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but is always
 displayed as `+2%`).
 

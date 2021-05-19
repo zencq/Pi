@@ -62,14 +62,14 @@ def extract_int_percent_thousand(data):
 
 # region stats
 
-re_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
-re_int_percent = re.compile("^[-+][0-9]{1,3}%$")
-re_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
+pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
+pattern_int_percent = re.compile("^[-+][0-9]{1,3}%$")
+pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 
 # C1 improving <STELLAR><>.
 # C2 improving <STELLAR><> and <STELLAR><>.
 # C3 improving <STELLAR><>, <STELLAR><> and
-# C4 improving <STELLAR><>, <STELLAR><> and
+# C4 improving <STELLAR><>, <STELLAR><>,
 
 # B2 to <STELLAR><>.
 # B2 to <STELLAR><> and <STELLAR><>.
@@ -92,86 +92,93 @@ re_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # X4 affects <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
-    'Suit_Energy': ('Life Support Tanks', extract_int_percent, re_int_percent),
-    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, re_int_percent),
+    # region Suit
+    'Suit_Energy': ('Life Support Tanks', extract_int_percent, pattern_int_percent),
+    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, pattern_int_percent),
 
-    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent, re_int_percent),
-    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, re_int_percent),
-    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, re_int_percent),
-    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, re_int_percent),
+    'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent, pattern_int_percent),
+    'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent, pattern_int_percent),
+    'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent, pattern_int_percent),
 
-    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, re_int_percent),
-    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, re_int_percent),
-    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, re_int_percent),
-    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, re_int_percent),
+    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
+    # endregion
 
-    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, re_int_percent),
-    'Weapon_Laser_Damage': ('Damage', extract_int_percent, re_int_percent),
-    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, re_int_percent),
-    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
-    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, re_int_percent),
-    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, re_int_percent),
+    # region Weapon
+    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, pattern_int_percent),
 
-    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, re_float),
-    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, re_int_percent),
-    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, re_float),
-    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, re_int_percent),
-    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, re_int_percent),
-    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, re_int_percent),
+    'Weapon_Laser_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, pattern_int_percent),
 
-    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, re_int_percent_thousand),
-    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, re_int_percent_thousand),
-    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, re_int_percent),
+    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
+    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),
 
-    # 'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent, re_int_percent),
-    # 'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent, re_int_percent),
-    # 'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent, re_int_percent),
-    # 'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent, re_int_percent),
-    # 'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent, re_int_percent),
-    # 'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent, re_int_percent),
-    # 'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, re_int_percent),
-    # 'Suit_Armour_Health': ('Core Health', extract_int_percent, re_int_percent),
-    # 'Suit_Underwater': ('Oxygen Tank', extract_int_percent, re_int_percent),
-    # 'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, re_int_percent),
-    # 'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, re_int_percent),
-    # 'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, re_int_percent),
-    # 'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, re_int_percent),
-    # 'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, re_int_percent),
-    # 'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, re_int_percent),
-    # 'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, re_int_percent),
-    # 'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, re_int_percent),
-    # 'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, re_int_percent),
-    # 'Ship_Boost': ('Boost', extract_int_percent, re_int_percent),
-    # 'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, re_int_percent),  # TODO: rename with mod to "Boost-Maneuverability"?
-    # 'Ship_Maneuverability': ('Maneuverability', extract_int_percent, re_int_percent),
-    # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, re_int_percent),
-    # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, re_int_percent),
-    # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, re_int_percent),
-    # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, re_int_percent),
-    # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, re_int_percent),
-    # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
-    # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, re_int_percent),
-    # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, re_int_percent),
-    # 'Vehicle_GunDamage': ('Damage', extract_int_percent, re_int_percent),
-    # 'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, re_int_percent),
-    # 'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, re_int_percent),
-    # 'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, re_int_percent),
-    # 'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, re_int_percent),
-    # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, re_int_percent),
-    # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, re_int_percent),
-    # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, re_int_percent),
-    # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, re_int_percent),
-    # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, re_int_percent),
-    # 'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, re_int_percent),
-    # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, re_int_percent),
-    # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, re_int_percent),
-    # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, re_int_percent),
-    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, re_int_percent),
+    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
+    # endregion
+
+    # region TODO
+    # 'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+    # 'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
+    # 'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
+    # 'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, pattern_int_percent),
+    # 'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, pattern_int_percent),
+    # 'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
+    # 'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, pattern_int_percent),
+    # 'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
+    # 'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
+    # 'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, pattern_int_percent),
+    # 'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, pattern_int_percent),
+    # 'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
+    # 'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # TODO: rename with mod to "Boost-Maneuverability"?
+    # 'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
+    # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
+    # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+    # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
+    # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
+    # 'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
+    # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
+    # endregion
 }
 
 # In the mapping below, the values are composed as follows:
@@ -183,6 +190,7 @@ data = {
     'UP_LASER': {
         '1': {
             # UP_LASER1#0 // #19 #20 // ENHANCED PHOTON MIRROR, ?
+            # UP_LASER1#50000 // #500?? #500?? // ???? MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 10),
                 ('Weapon_Laser_HeatTime', 5, 15),
@@ -193,6 +201,7 @@ data = {
         },
         '2': {
             # UP_LASER2#0 // #17 #19 // FINE-TUNED PHOTON MIRROR, ?
+            # UP_LASER2#50000 // #500?? #500?? // ???? MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 15),
                 ('Weapon_Laser_HeatTime', 15, 20),
@@ -203,6 +212,7 @@ data = {
         },
         '3': {
             # UP_LASER3#0 // #17 #19 // HIGH-ENERGY PHOTON MIRROR, ?
+            # UP_LASER3#50000 // #500?? #500?? // ???? MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 10, 20),
                 ('Weapon_Laser_HeatTime', 20, 40),
@@ -213,6 +223,7 @@ data = {
         },
         '4': {
             # UP_LASER4#0 // BRILLIANT PHOTON MIRROR, ?
+            # UP_LASER4#50000 // #500?? #500?? // ???? MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 15, 20),
                 ('Weapon_Laser_HeatTime', 40, 50),
@@ -223,6 +234,7 @@ data = {
         },
         'X': {
             # UP_LASERX#0 // #22 #24 // COUNTERFEIT FINE-TUNED PHOTON MIRROR, ?
+            # UP_LASERX#50000 // #500?? #500?? // ???? MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 20),
                 ('Weapon_Laser_HeatTime', 5, 55),
@@ -298,7 +310,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
-            'number': 3,  # 2 (AlwaysChoose)
+            'number': 3,  # 2 (AlwaysChoose x1)
         },
         '2': {
             # UP_BOLT2#0 // #19 #20 // OPTICAL ENERGY LATTICE, LUMINOUS
@@ -311,7 +323,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose)
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '3': {
             # UP_BOLT3#0 // INCANDESCENT ENERGY LATTICE, PLATINUM
@@ -324,7 +336,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 10, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose)
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         '4': {
             # UP_BOLT4#0 // PUGNEUM ENERGY LATTICE, NEUTRINO
@@ -337,7 +349,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 15, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose)
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         'X': {
             # UP_BOLTX#0 // #4 #8 // COUNTERFEIT OPTICAL ENERGY LATTICE, UNLICENSED
@@ -350,7 +362,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
-            'number': 4,  # 2 (AlwaysChoose)
+            'number': 4,  # 2 (AlwaysChoose x1)
         },
     },
 
@@ -522,7 +534,7 @@ data = {
                 ('Weapon_Projectile_ReloadTime', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
             ],
-            'number': 3,  # 2 (AlwaysChoose)
+            'number': 3,  # 2 (AlwaysChoose x1)
         },
         '2': {
             # UP_SHOT2#0 // #17 #19 // ELECTRIFIED WIRING, HIGH
@@ -535,7 +547,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose)
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '3': {
             # UP_SHOT3#0 // KORVAX-MADE WIRING, HIGH-ENERGY
@@ -548,7 +560,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 10, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose)
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         '4': {
             # UP_SHOT4#0 // SOLID GOLD WIRING, PERFECT
@@ -561,7 +573,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 15, 20),
             ],
-            'number': 4,  # 4 (AlwaysChoose)
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         'X': {
             # UP_SHOTX#0 // #4 #8 // COUNTERFEIT ELECTRIFIED WIRING, SMUGGLED
@@ -574,7 +586,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 5, 25),
             ],
-            'number': 4,  # 2 (AlwaysChoose)
+            'number': 4,  # 2 (AlwaysChoose x1)
         },
     },
 
@@ -687,221 +699,236 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_JET': {
         '1': {
+            # UP_JET1#0 // #17 #19 // AUGMENTED JETS, UPGRADED
             'meta': [
-                ('Suit_Jetpack_Tank', 0, 50),
+                ('Suit_Jetpack_Tank', 100, 150),
                 ('Suit_Stamina_Strength', 10, 20),
                 ('Suit_Stamina_Recovery', 0, 10),
                 ('Suit_Jetpack_Drain', 5, 10),
                 ('Suit_Jetpack_Refill', 0, 5),
             ],
-            'number': 3,
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '2': {
-            'meta': [
-                ('Suit_Jetpack_Tank', 0, 50),
+           'meta': [
+                ('Suit_Jetpack_Tank', 100, 150),
                 ('Suit_Stamina_Strength', 10, 30),
                 ('Suit_Stamina_Recovery', 10, 20),
                 ('Suit_Jetpack_Drain', 10, 15),
                 ('Suit_Jetpack_Ignition', 0, 5),
-                ('Suit_Jetpack_Refill', 0, 5),
+                ('Suit_Jetpack_Refill', 5, 10),
             ],
-            'number': 4,
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '3': {
+            # UP_JET3#0 // LIQUID FUEL JETS, MULTI
             'meta': [
-                ('Suit_Jetpack_Tank', 50, 100),
+                ('Suit_Jetpack_Tank', 150, 200),
                 ('Suit_Stamina_Strength', 20, 50),
                 ('Suit_Stamina_Recovery', 20, 30),
                 ('Suit_Jetpack_Drain', 10, 20),
                 ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 10, 15),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         '4': {
+            # UP_JET4#0 // ANTIMATTER JETS, PLUTONIUM
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 125),
+                ('Suit_Jetpack_Tank', 200, 225),
                 ('Suit_Stamina_Strength', 40, 50),
                 ('Suit_Stamina_Recovery', 30, 50),
                 ('Suit_Jetpack_Drain', 10, 20),
                 ('Suit_Jetpack_Ignition', 5, 10),
                 ('Suit_Jetpack_Refill', 15, 25),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose x2)
         },
         'X': {
+            # UP_JETX#0 // COUNTERFEIT URANIUM JETS, SMUGGLED
             'meta': [
-                ('Suit_Jetpack_Tank', 0, 130),
+                ('Suit_Jetpack_Tank', 100, 230),
                 ('Suit_Stamina_Strength', 10, 60),
                 ('Suit_Stamina_Recovery', 0, 60),
                 ('Suit_Jetpack_Drain', 5, 25),
                 ('Suit_Jetpack_Ignition', 0, 15),
                 ('Suit_Jetpack_Refill', 5, 30),
             ],
-            'number': 4,
+            'number': 4,  # 4 (AlwaysChoose x2)
         },
     },
 
     # TODO verify values
     'UP_SHLD': {
         '1': {
+            # TODO verify values
+            # UP_SHLD1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Armour_Shield_Strength', 5, 10),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 15),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 20),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 20),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
             'meta': [
                 ('Suit_Armour_Shield_Strength', 5, 25),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
     },
 
     # TODO verify values
     'UP_UNW': {
         '1': {
+            # TODO verify values
+            # UP_UNW1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Underwater', 60, 85),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Suit_Underwater', 75, 105),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Suit_Underwater', 95, 105),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
     # TODO verify values
     'UP_RAD': {
         '1': {
+            # TODO verify values
+            # UP_RAD1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Protection_Radiation', 180, 265),
                 ('Suit_DamageReduce_Radiation', 0, 5),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '2': {
             'meta': [
                 ('Suit_Protection_Radiation', 200, 265),
                 ('Suit_DamageReduce_Radiation', 5, 15),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
                 ('Suit_Protection_Radiation', 220, 265),
                 ('Suit_DamageReduce_Radiation', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
     # TODO verify values
     'UP_TOX': {
         '1': {
+            # TODO verify values
+            # UP_TOX1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Protection_Toxic', 180, 265),
                 ('Suit_DamageReduce_Toxic', 0, 5),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '2': {
             'meta': [
                 ('Suit_Protection_Toxic', 200, 265),
                 ('Suit_DamageReduce_Toxic', 5, 15),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
                 ('Suit_Protection_Toxic', 220, 265),
                 ('Suit_DamageReduce_Toxic', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         }, },
 
     # TODO verify values
     'UP_COLD': {
         '1': {
+            # TODO verify values
+            # UP_COLD1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Protection_Cold', (180, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (0, 5, extract_int_percent)),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '2': {
             'meta': [
                 ('Suit_Protection_Cold', (200, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (5, 15, extract_int_percent)),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
                 ('Suit_Protection_Cold', (220, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (10, 20, extract_int_percent)),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
     # TODO verify values
     'UP_HOT': {
         '1': {
+            # TODO verify values
+            # UP_HOT1#0 // XXXX ABC, XXXX
             'meta': [
                 ('Suit_Protection_Heat', 180, 265),
                 ('Suit_DamageReduce_Heat', 0, 5),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '2': {
             'meta': [
                 ('Suit_Protection_Heat', 200, 265),
                 ('Suit_DamageReduce_Heat', 5, 15),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
                 ('Suit_Protection_Heat', 220, 265),
                 ('Suit_DamageReduce_Heat', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -909,16 +936,20 @@ data = {
 
     # region Ship
 
+    # TODO UP_LAUN (3.4)
+
     # TODO verify values
     'UP_PULSE': {
         '1': {
+            # TODO verify values
+            # UP_PULSE1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 2,
+            'number': 3,  # 2 (AlwaysChoose x1)
         },
         '2': {
             'meta': [
@@ -927,7 +958,7 @@ data = {
                 ('Ship_BoostManeuverability', 0, 10),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 2,
+            'number': 3,  # 3 (AlwaysChoose x1)
         },
         '3': {
             'meta': [
@@ -936,7 +967,7 @@ data = {
                 ('Ship_BoostManeuverability', 5, 12),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 3,
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '4': {
             'meta': [
@@ -945,7 +976,7 @@ data = {
                 ('Ship_BoostManeuverability', 5, 12),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 3,
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
         'X': {
             'meta': [
@@ -954,7 +985,7 @@ data = {
                 ('Ship_BoostManeuverability', 0, 14),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 3,
+            'number': 4,  # 2 (AlwaysChoose x1)
         },
     },
 
@@ -964,34 +995,34 @@ data = {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 150, 200),
                 ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 200, 250),
                 ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 300),
                 ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
     },
 
@@ -1001,31 +1032,31 @@ data = {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 10, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 20, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         'X': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 25),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1037,7 +1068,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 0.1, 1.1),
                 ('Ship_Weapons_Guns_HeatTime', 0.1, 1.0),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1045,7 +1076,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 0.6, 1.6),
                 ('Ship_Weapons_Guns_HeatTime', 1.0, 2.0),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
@@ -1053,7 +1084,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1.6, 2.1),
                 ('Ship_Weapons_Guns_HeatTime', 2.0, 3.0),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '4': {
             'meta': [
@@ -1061,7 +1092,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 2.1, 2.1),
                 ('Ship_Weapons_Guns_HeatTime', 3.0, 3.0),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             'meta': [
@@ -1069,7 +1100,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 0.1, 2.6),
                 ('Ship_Weapons_Guns_HeatTime', 0.1, 3.5),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -1080,35 +1111,35 @@ data = {
                 ('Ship_Weapons_Lasers_HeatTime', 10, 35),
                 ('Ship_Weapons_Lasers_Damage', 30, 40),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 35, 55),
                 ('Ship_Weapons_Lasers_Damage', 40, 50),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
                 ('Ship_Weapons_Lasers_Damage', 50, 60),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
                 ('Ship_Weapons_Lasers_Damage', 60, 70),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 10, 100),
                 ('Ship_Weapons_Lasers_Damage', 30, 80),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
     },
 
@@ -1120,7 +1151,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 1, 5),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1128,7 +1159,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 10, 13.5),
                 ('Ship_Weapons_Guns_HeatTime', 5, 10),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
@@ -1136,7 +1167,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 13.5, 15),
                 ('Ship_Weapons_Guns_HeatTime', 10, 15),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         '4': {
             'meta': [
@@ -1144,7 +1175,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 15, 15),
                 ('Ship_Weapons_Guns_HeatTime', 15, 15),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             'meta': [
@@ -1152,7 +1183,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 5, 20),
                 ('Ship_Weapons_Guns_HeatTime', 1, 20),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -1164,7 +1195,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 5),
                 ('Ship_Weapons_Guns_HeatTime', 1, 3),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1172,7 +1203,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 5),
                 ('Ship_Weapons_Guns_HeatTime', 3, 5),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
@@ -1180,7 +1211,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 5, 7),
             ],
-            'number': 3,
+            'number': 3,  #3
         },
         '4': {
             'meta': [
@@ -1188,7 +1219,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 7, 9),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             'meta': [
@@ -1196,7 +1227,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 15),
                 ('Ship_Weapons_Guns_HeatTime', 1, 13),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -1208,7 +1239,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 5),
                 ('Ship_Weapons_Guns_HeatTime', 10, 20),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1216,7 +1247,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 5),
                 ('Ship_Weapons_Guns_HeatTime', 20, 25),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
@@ -1224,7 +1255,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 25, 30),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         '4': {
             'meta': [
@@ -1232,7 +1263,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 10, 15),
                 ('Ship_Weapons_Guns_HeatTime', 30, 35),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         'X': {
             'meta': [
@@ -1240,7 +1271,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1, 20),
                 ('Ship_Weapons_Guns_HeatTime', 10, 40),
             ],
-            'number': 3,
+            'number': 3,  # 1
         },
     },
 
@@ -1251,12 +1282,14 @@ data = {
     # TODO verify values
     'UP_EXGUN': {
         '1': {
+            # TODO verify values
+            # UP_EXGUN1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Vehicle_GunDamage', 5, 10),
                 ('Vehicle_GunHeatTime', 1, 5),
                 ('Vehicle_GunRate', 1, 5),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1264,7 +1297,7 @@ data = {
                 ('Vehicle_GunHeatTime', 5, 10),
                 ('Vehicle_GunRate', 5, 10),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
@@ -1272,7 +1305,7 @@ data = {
                 ('Vehicle_GunHeatTime', 10, 15),
                 ('Vehicle_GunRate', 10, 15),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         '4': {
             'meta': [
@@ -1280,7 +1313,7 @@ data = {
                 ('Vehicle_GunHeatTime', 15, 20),
                 ('Vehicle_GunRate', 15, 20),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
     },
 
@@ -1291,28 +1324,28 @@ data = {
                 ('Vehicle_LaserDamage', 5, 10),
                 ('Vehicle_LaserHeatTime', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Vehicle_LaserDamage', 10, 20),
                 ('Vehicle_LaserHeatTime', 5, 10),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_LaserDamage', 20, 30),
                 ('Vehicle_LaserHeatTime', 10, 15),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_LaserDamage', 30, 40),
                 ('Vehicle_LaserHeatTime', 15, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1323,28 +1356,28 @@ data = {
                 ('Vehicle_BoostSpeed', 10, 20),
                 ('Vehicle_BoostTanks', 10, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Vehicle_BoostSpeed', 20, 35),
                 ('Vehicle_BoostTanks', 15, 30),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_BoostSpeed', 35, 55),
                 ('Vehicle_BoostTanks', 30, 50),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_BoostSpeed', 55, 70),
                 ('Vehicle_BoostTanks', 50, 60),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1355,28 +1388,28 @@ data = {
                 ('Vehicle_EngineFuelUse', 1, 5),
                 ('Vehicle_EngineTopSpeed', 1, 3),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 5, 10),
                 ('Vehicle_EngineTopSpeed', 3, 8),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 10, 15),
                 ('Vehicle_EngineTopSpeed', 8, 15),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
                 ('Vehicle_EngineTopSpeed', 10, 15),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1388,7 +1421,7 @@ data = {
                 ('Vehicle_EngineTopSpeed', 1, 3),
                 ('Vehicle_SubBoostSpeed', 10, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
@@ -1396,7 +1429,7 @@ data = {
                 ('Vehicle_EngineTopSpeed', 3, 8),
                 ('Vehicle_SubBoostSpeed', 20, 35),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
@@ -1404,7 +1437,7 @@ data = {
                 ('Vehicle_EngineTopSpeed', 8, 15),
                 ('Vehicle_SubBoostSpeed', 35, 55),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '4': {
             'meta': [
@@ -1412,7 +1445,7 @@ data = {
                 ('Vehicle_EngineTopSpeed', 10, 15),
                 ('Vehicle_SubBoostSpeed', 55, 70),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
     },
 
@@ -1423,28 +1456,28 @@ data = {
                 ('Vehicle_GunDamage', 5, 10),
                 ('Vehicle_GunRate', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Vehicle_GunDamage', 10, 20),
                 ('Vehicle_GunRate', 5, 10),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_GunDamage', 20, 30),
                 ('Vehicle_GunRate', 10, 15),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_GunDamage', 30, 40),
                 ('Vehicle_GunRate', 15, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1455,21 +1488,21 @@ data = {
                 ('Vehicle_LaserDamage', 10, 20),
                 ('Vehicle_LaserHeatTime', 5, 10),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_LaserDamage', 20, 30),
                 ('Vehicle_LaserHeatTime', 10, 15),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_LaserDamage', 30, 40),
                 ('Vehicle_LaserHeatTime', 15, 20),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1481,7 +1514,7 @@ data = {
                 ('Vehicle_GunHeatTime', 5, 10),
                 ('Vehicle_GunRate', 5, 10),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
@@ -1489,7 +1522,7 @@ data = {
                 ('Vehicle_GunHeatTime', 10, 15),
                 ('Vehicle_GunRate', 10, 15),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
         '4': {
             'meta': [
@@ -1497,7 +1530,7 @@ data = {
                 ('Vehicle_GunHeatTime', 15, 20),
                 ('Vehicle_GunRate', 15, 20),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
     },
 
@@ -1508,21 +1541,21 @@ data = {
                 ('Vehicle_EngineFuelUse', 5, 10),
                 ('Vehicle_BoostTanks', 10, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 10, 15),
                 ('Vehicle_BoostTanks', 15, 25),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
                 ('Vehicle_BoostTanks', 25, 30),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1533,13 +1566,15 @@ data = {
     # TODO verify values
     'UA_PULSE': {
         '1': {
+            # TODO verify values
+            # UA_PULSE1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 2,
+            'number': 3,  # 2 (AlwaysChoose x1)
         },
         '2': {
             'meta': [
@@ -1548,7 +1583,7 @@ data = {
                 ('Ship_BoostManeuverability', 0, 10),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 2,
+            'number': 3,  # 3 (AlwaysChoose x1)
         },
         '3': {
             'meta': [
@@ -1557,7 +1592,7 @@ data = {
                 ('Ship_BoostManeuverability', 5, 12),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 3,
+            'number': 4,  # 3 (AlwaysChoose x1)
         },
         '4': {
             'meta': [
@@ -1566,7 +1601,7 @@ data = {
                 ('Ship_BoostManeuverability', 5, 12),
                 ('Ship_Maneuverability', 0.5, 0.5),
             ],
-            'number': 3,
+            'number': 4,  # 4 (AlwaysChoose x1)
         },
     },
 
@@ -1576,26 +1611,26 @@ data = {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 10, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 15, 20),
             ],
-            'number': 1,
+            'number': 1,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 20, 20),
                 ('Ship_Launcher_AutoCharge', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1605,27 +1640,27 @@ data = {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 150, 200),
                 ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 200, 250),
                 ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1635,25 +1670,25 @@ data = {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 10, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 20, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1665,7 +1700,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 0.1, 1.1),
                 ('Ship_Weapons_Guns_HeatTime', 0.1, 1.0),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -1673,7 +1708,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 0.6, 1.6),
                 ('Ship_Weapons_Guns_HeatTime', 1.0, 2.0),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
@@ -1681,7 +1716,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 1.6, 2.1),
                 ('Ship_Weapons_Guns_HeatTime', 2.0, 3.0),
             ],
-            'number': 3,
+            'number': 3,  # 2
         },
         '4': {
             'meta': [
@@ -1689,7 +1724,7 @@ data = {
                 ('Ship_Weapons_Guns_Rate', 2.1, 2.1),
                 ('Ship_Weapons_Guns_HeatTime', 3.0, 3.0),
             ],
-            'number': 3,
+            'number': 3,  # 3
         },
     },
 
@@ -1700,28 +1735,28 @@ data = {
                 ('Ship_Weapons_Lasers_HeatTime', 10, 35),
                 ('Ship_Weapons_Lasers_Damage', 30, 40),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 35, 55),
                 ('Ship_Weapons_Lasers_Damage', 40, 50),
             ],
-            'number': 2,
+            'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
                 ('Ship_Weapons_Lasers_Damage', 50, 60),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
                 ('Ship_Weapons_Lasers_Damage', 60, 70),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1732,30 +1767,32 @@ data = {
     # TODO verify values
     'UP_FRHYP': {
         '1': {
+            # TODO verify values
+            # UP_FRHYP1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 50, 100),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 100, 150),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 150, 200),
                 ('Freighter_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 200, 250),
                 ('Freighter_Hyperdrive_JumpsPerCell', 1, 1),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
     },
 
@@ -1765,25 +1802,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Speed', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Speed', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Speed', 10, 14),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Speed', 15, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1793,25 +1830,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Fuel', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 10, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 15, 20),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1821,25 +1858,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Combat', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Combat', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Combat', 10, 14),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Combat', 15, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1849,25 +1886,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Trade', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Trade', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Trade', 10, 14),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Trade', 15, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1877,25 +1914,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Explore', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Explore', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Explore', 10, 14),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Explore', 15, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
@@ -1905,25 +1942,25 @@ data = {
             'meta': [
                 ('Freighter_Fleet_Mine', 1, 5),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '2': {
             'meta': [
                 ('Freighter_Fleet_Mine', 5, 10),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '3': {
             'meta': [
                 ('Freighter_Fleet_Mine', 10, 14),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
                 ('Freighter_Fleet_Mine', 15, 15),
             ],
-            'number': 1,
+            'number': 1,  # 1
         },
     },
 
