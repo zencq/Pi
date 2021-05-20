@@ -52,6 +52,13 @@ def extract_int_percent(data):
     return int(data[1:-1])
 
 
+def extract_int_percent_shield_strength(data):
+    """
+    Convert string percent value to integer.
+    """
+    return 100 - extract_int_percent(data)
+
+
 def extract_int_percent_thousand(data):
     """
     Convert string percent value with thousand separator to integer.
@@ -92,7 +99,17 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # X4 affects <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
+    # region Ship
+    'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
+    'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
+    'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
+    'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    # endregion
+
     # region Suit
+    'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent_shield_strength, pattern_int_percent),  # TODO check if display is really inverted
+    'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
+
     'Suit_Energy': ('Life Support Tanks', extract_int_percent, pattern_int_percent),
     'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, pattern_int_percent),
 
@@ -107,6 +124,22 @@ TRANSLATION = {
     'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, pattern_int_percent),
     'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
     'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
+
+    # TODO: values of stats below not displayed
+
+    'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
     # endregion
 
     # region Weapon
@@ -135,21 +168,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
-    # 'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
-    # 'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
-    # 'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, pattern_int_percent),
-    # 'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, pattern_int_percent),
-    # 'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
-    # 'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, pattern_int_percent),
-    # 'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
-    # 'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
-    # 'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, pattern_int_percent),
-    # 'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, pattern_int_percent),
-    # 'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
-    # 'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
-    # 'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # TODO: rename with mod to "Boost-Maneuverability"?
-    # 'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
     # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
     # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
     # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
@@ -649,6 +667,7 @@ data = {
 
     # endregion
 
+    # TODO
     # region Suit
 
     'UP_ENGY': {
@@ -760,11 +779,11 @@ data = {
         },
     },
 
-    # TODO verify values
+    # ! TODO verify values
     'UP_SHLD': {
         '1': {
             # TODO verify values
-            # UP_SHLD1#0 // XXXX ABC, XXXX
+            # UP_SHLD1#0 // #17 #19 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
             'meta': [
                 ('Suit_Armour_Shield_Strength', 5, 10),
                 ('Suit_Armour_Health', 33, 33),
@@ -772,6 +791,8 @@ data = {
             'number': 2,  # 1
         },
         '2': {
+            # TODO verify values
+            # UP_SHLD2#0 // #1 #8 // LIGHTNING GRAFTS, VECTOR
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 15),
                 ('Suit_Armour_Health', 33, 33),
@@ -779,6 +800,8 @@ data = {
             'number': 2,  # 1
         },
         '3': {
+            # TODO verify values
+            # UP_SHLD3#0 // XXXX GRAFTS, XXXX
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 20),
                 ('Suit_Armour_Health', 33, 33),
@@ -786,6 +809,8 @@ data = {
             'number': 2,  # 2
         },
         '4': {
+            # TODO verify values
+            # UP_SHLD4#0 // XXXX GRAFTS, XXXX
             'meta': [
                 ('Suit_Armour_Shield_Strength', 10, 20),
                 ('Suit_Armour_Health', 33, 33),
@@ -793,6 +818,8 @@ data = {
             'number': 2,  # 2
         },
         'X': {
+            # TODO verify values
+            # UP_SHLDX#0 // # # // XXXX GRAFTS, XXXX
             'meta': [
                 ('Suit_Armour_Shield_Strength', 5, 25),
                 ('Suit_Armour_Health', 33, 33),
@@ -801,23 +828,24 @@ data = {
         },
     },
 
-    # TODO verify values
+    # TODO values not displayed (3.4)
     'UP_UNW': {
         '1': {
-            # TODO verify values
-            # UP_UNW1#0 // XXXX ABC, XXXX
+            # UP_UNW1#0 // SECONDARY GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 60, 85),
             ],
             'number': 1,  # 1
         },
         '2': {
+            # UP_UNW2#0 // EXTREME GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 75, 105),
             ],
             'number': 1,  # 1
         },
         '3': {
+            # UP_UNW3#0 // DEEP WATER GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 95, 105),
             ],
@@ -825,11 +853,10 @@ data = {
         },
     },
 
-    # TODO verify values
+    # TODO values not displayed (3.4)
     'UP_RAD': {
         '1': {
-            # TODO verify values
-            # UP_RAD1#0 // XXXX ABC, XXXX
+            # UP_RAD1#0 // EFFECTIVE SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 180, 265),
                 ('Suit_DamageReduce_Radiation', 0, 5),
@@ -837,6 +864,7 @@ data = {
             'number': 2,  # 2
         },
         '2': {
+            # UP_RAD2#0 // POSITRON SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 200, 265),
                 ('Suit_DamageReduce_Radiation', 5, 15),
@@ -844,6 +872,7 @@ data = {
             'number': 2,  # 2
         },
         '3': {
+            # UP_RAD3#0 // NON-LINEAR SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 220, 265),
                 ('Suit_DamageReduce_Radiation', 10, 20),
@@ -852,11 +881,10 @@ data = {
         },
     },
 
-    # TODO verify values
+    # TODO values not displayed (3.4)
     'UP_TOX': {
         '1': {
-            # TODO verify values
-            # UP_TOX1#0 // XXXX ABC, XXXX
+            # UP_TOX1#0 // EFFICIENT POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 180, 265),
                 ('Suit_DamageReduce_Toxic', 0, 5),
@@ -864,6 +892,7 @@ data = {
             'number': 2,  # 2
         },
         '2': {
+            # UP_TOX2#0 // BIOLOGICAL POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 200, 265),
                 ('Suit_DamageReduce_Toxic', 5, 15),
@@ -871,6 +900,7 @@ data = {
             'number': 2,  # 2
         },
         '3': {
+            # UP_TOX3#0 // VERMIFORM POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 220, 265),
                 ('Suit_DamageReduce_Toxic', 10, 20),
@@ -878,11 +908,10 @@ data = {
             'number': 2,  # 2
         }, },
 
-    # TODO verify values
+    # TODO values not displayed (3.4)
     'UP_COLD': {
         '1': {
-            # TODO verify values
-            # UP_COLD1#0 // XXXX ABC, XXXX
+            # UP_COLD1#0 // EFFICIENT CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (180, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (0, 5, extract_int_percent)),
@@ -890,6 +919,7 @@ data = {
             'number': 2,  # 2
         },
         '2': {
+            # UP_COLD2#0 // NITROGEN-BASED CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (200, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (5, 15, extract_int_percent)),
@@ -897,6 +927,7 @@ data = {
             'number': 2,  # 2
         },
         '3': {
+            # UP_COLD3#0 // SOLVENT-FUELED CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (220, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (10, 20, extract_int_percent)),
@@ -905,11 +936,10 @@ data = {
         },
     },
 
-    # TODO verify values
+    # TODO values not displayed (3.4)
     'UP_HOT': {
         '1': {
-            # TODO verify values
-            # UP_HOT1#0 // XXXX ABC, XXXX
+            # UP_HOT1#0 // CERAMIC FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 180, 265),
                 ('Suit_DamageReduce_Heat', 0, 5),
@@ -917,6 +947,7 @@ data = {
             'number': 2,  # 2
         },
         '2': {
+            # UP_HOT2#0 // GOLD-PLATED FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 200, 265),
                 ('Suit_DamageReduce_Heat', 5, 15),
@@ -924,6 +955,7 @@ data = {
             'number': 2,  # 2
         },
         '3': {
+            # UP_HOT3#0 // ABLATIVE FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 220, 265),
                 ('Suit_DamageReduce_Heat', 10, 20),
@@ -934,58 +966,118 @@ data = {
 
     # endregion
 
+    # TODO
     # region Ship
 
-    # TODO UP_LAUN (3.4)
-
-    # TODO verify values
     'UP_PULSE': {
         '1': {
-            # TODO verify values
-            # UP_PULSE1#0 // # # // XXXX ABC, XXXX
+            # UP_PULSE1#0 // #17 #33 // ALTERNATE MAGNETIC FAN, BACKUP
+            # UP_PULSE1#50000 // #50000 #50007 // EFFICIENT MAGNETIC FAN, SECONDARY
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 3,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 1
         },
         '2': {
+            # UP_PULSE2#0 // HEATED MAGNETIC FAN, UPGRADED
+            # UP_PULSE2#50000 // POLISHED MAGNETIC FAN, REWIRED
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 10, 15),
                 ('Ship_Boost', 5, 10),
                 ('Ship_BoostManeuverability', 0, 10),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 3,  # 3 (AlwaysChoose x1)
+            'number': 2,  # 2
         },
         '3': {
+            # UP_PULSE3#0 // #17 #19 // AUGMENTED MAGNETIC FAN, GYROSCOPIC
+            # UP_PULSE3#50000 // #50000 #50007 // EXTREME MAGNETIC FAN, GYROSCOPIC
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 15, 20),
                 ('Ship_Boost', 5, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 3,  # 2
         },
         '4': {
+            # UP_PULSE4#0 // HYPERSONIC MAGNETIC FAN, HARMONIC
+            # UP_PULSE4#50000 // FLAWLESS MAGNETIC FAN, GLORIOUS
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 20, 20),
                 ('Ship_Boost', 10, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 3,  # 3
         },
         'X': {
+            # UP_PULSEX#0 // #22 #24 // COUNTERFEIT HEATED MAGNETIC FAN, SMUGGLED
+            # UP_PULSEX#50000 // #50001 #50006 // PROHIBITED POLISHED MAGNETIC FAN, FORBIDDEN
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 25),
                 ('Ship_Boost', 0, 20),
                 ('Ship_BoostManeuverability', 0, 14),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 4,  # 2 (AlwaysChoose x1)
+            'number': 3,  # 1
+        },
+    },
+
+    # TODO verify values
+    'UP_LAUN': {
+        '1': {
+            # TODO verify values
+            # UP_LAUN1#0 // # # // ??? ABC, ???
+            # UP_LAUN1#50000 // # # // ??? ABC, ???
+            'meta': [
+                ('Ship_Launcher_TakeOffCost', 5, 10),
+                ('Ship_Boost', 0, 1),
+            ],
+            'number': 2,  # 2 (AlwaysChoose x1)
+        },
+        '2': {
+            # TODO verify values
+            # UP_LAUN2#0 // # # // ??? ABC, ???
+            # UP_LAUN2#50000 // # # // ??? ABC, ???
+            'meta': [
+                ('Ship_Launcher_TakeOffCost', 10, 15),
+                ('Ship_Boost', 2, 5),
+            ],
+            'number': 2,  # 2 (AlwaysChoose x1)
+        },
+        '3': {
+            # TODO verify values
+            # UP_LAUN3#0 // # # // ??? ABC, ???
+            # UP_LAUN3#50000 // # # // ??? ABC, ???
+            'meta': [
+                ('Ship_Launcher_TakeOffCost', 15, 20),
+                ('Ship_Boost', 5, 8),
+            ],
+            'number': 2,  # 2 (AlwaysChoose x1)
+        },
+        '4': {
+            # TODO verify values
+            # UP_LAUN4#0 // # # // ??? ABC, ???
+            # UP_LAUN4#50000 // # # // ??? ABC, ???
+            'meta': [
+                ('Ship_Launcher_TakeOffCost', 20, 20),
+                ('Ship_Boost', 8, 10),
+            ],
+            'number': 2,  # 2 (AlwaysChoose x1)
+        },
+        'X': {
+            # TODO verify values
+            # UP_LAUNX#0 // # # // ??? ABC, ???
+            # UP_LAUNX#50000 // # # // ??? ABC, ???
+            'meta': [
+                ('Ship_Launcher_TakeOffCost', 5, 25),
+                ('Ship_Boost', 0, 10),
+            ],
+            'number': 2,  # 2 (AlwaysChoose x1)
         },
     },
 
@@ -1277,7 +1369,8 @@ data = {
 
     # endregion
 
-    # region Vehicle
+    # TODO
+    # region Exocraft
 
     # TODO verify values
     'UP_EXGUN': {
@@ -1413,6 +1506,11 @@ data = {
         },
     },
 
+    # endregion
+
+    # TODO
+    # region Submarine
+
     # TODO verify values
     'UP_EXSUB': {
         '1': {
@@ -1480,6 +1578,11 @@ data = {
             'number': 2,  # 2
         },
     },
+
+    # endregion
+
+    # TODO
+    # region Mech
 
     # TODO verify values
     'UP_MCLAS': {
@@ -1561,7 +1664,8 @@ data = {
 
     # endregion
 
-    # region Living Ship
+    # TODO
+    # region AlienShip
 
     # TODO verify values
     'UA_PULSE': {
@@ -1762,6 +1866,7 @@ data = {
 
     # endregion
 
+    # TODO
     # region Freighter
 
     # TODO verify values
@@ -2005,7 +2110,11 @@ if tech_name not in data or tech_class not in data[tech_name]:
 
 tech_stats = data[tech_name][tech_class]
 
-if len(addr_stats) != tech_stats['number']:
+high_number = tech_stats['number']
+
+addr_stats = addr_stats[:high_number]
+
+if len(addr_stats) != high_number:
     print(f'ERROR: Your number of memory addresses ({len(addr_stats)}) does not match the max number of stats ({len(tech_stats)})')
     exit()
 
@@ -2013,10 +2122,9 @@ tech_stats['meta'] = init_meta(tech_stats['meta'])
 
 addr_off = addr_id_seed + hashtag_index + 1
 fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in tech_stats['meta'].values()]
-high_number = tech_stats['number']
 key_possibilities = tech_stats['meta'].keys()
 middle = start
-pattern = '(?<=R>).*?(?=<)'
+pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
 round_digits = 2
 
 begin = int(pm.read_string(addr_off, byte=16))
@@ -2053,7 +2161,7 @@ with open(f_name, 'w', newline='') as f:
                 # Then extract stat names from the description and make sure it's fully loaded
                 # with the complete name of a possible stat and its value.
                 # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
-                keys = re.findall(pattern, description)
+                keys = pattern.findall(description)[:high_number]
                 if (
                     all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
                     or description.startswith('UPGRADE_0')
