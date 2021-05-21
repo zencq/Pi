@@ -10,6 +10,11 @@ from datetime import datetime
 # region const
 
 STEPS = 10000
+TITLE_FIX = [
+    ('Ph Balancer', 'pH Balancer'),  # UP_HAZ
+    ('Di-Hydrogen', 'Di-hydrogen'),  # UP_LAUN
+    ('De-Ionised', 'De-ionised'),  # UP_LAUN
+]
 TOTAL_SEEDS = 100000
 
 # endregion
@@ -93,7 +98,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # S3 to <STELLAR><>, <STELLAR><> and
 # S4 to <STELLAR><>, <STELLAR><>,
 
-# X1 targets <STELLAR><>.
+# X1 affects <STELLAR><>.
 # X2 targets <STELLAR><> and <STELLAR><>.
 # X3 targets <STELLAR><>, <STELLAR><> and
 # X4 affects <STELLAR><>, <STELLAR><>,
@@ -101,6 +106,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 TRANSLATION = {
     # region Ship
     'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
+    'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
     'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
     'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
     'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
@@ -186,7 +192,6 @@ TRANSLATION = {
     # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
     # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
     # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
-    # 'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
     # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
@@ -215,7 +220,7 @@ data = {
                 ('Weapon_Laser_Drain', 0, 10),
                 ('Weapon_Laser_ReloadTime', 5, 10),
             ],
-            'number': 2,  # 1
+            'number': 2,  # 0 (Weapon_Laser_Drain with 0)
         },
         '2': {
             # UP_LASER2#0 // #17 #19 // FINE-TUNED PHOTON MIRROR, ?
@@ -259,14 +264,14 @@ data = {
                 ('Weapon_Laser_Drain', 0, 25),
                 ('Weapon_Laser_ReloadTime', 5, 25),
             ],
-            'number': 3,  # 1
+            'number': 3,  # 0 (Weapon_Laser_Drain with 0)
         },
     },
 
     'UP_SCAN': {
         '1': {
-            # UP_SCAN1#0 // #19 #20 // WAVEFORM DETECTOR, ?
-            # UP_SCAN1#50000 // #50007 #50033 // LOW-HEAT DETECTOR, ?
+            # UP_SCAN1#0 // #19 #20 // WAVEFORM DETECTOR, ANALOG
+            # UP_SCAN1#50000 // #50007 #50033 // LOW-HEAT DETECTOR, OVERCLOCKED
             'meta': [
                 ('Weapon_Scan_Radius', 5, 10),
                 ('Weapon_Scan_Discovery_Creature', 1000, 2000),
@@ -275,8 +280,8 @@ data = {
             'number': 2,  # 1
         },
         '2': {
-            # UP_SCAN2#0 // NANITE-POWERED DETECTOR, ?
-            # UP_SCAN1#50000 // CALIBRATED DETECTOR, ?
+            # UP_SCAN2#0 // NANITE-POWERED DETECTOR, PARALLEL
+            # UP_SCAN1#50000 // CALIBRATED DETECTOR, FREQUENCY
             'meta': [
                 ('Weapon_Scan_Radius', 10, 20),
                 ('Weapon_Scan_Discovery_Creature', 2500, 5000),
@@ -285,8 +290,8 @@ data = {
             'number': 2,  # 2
         },
         '3': {
-            # UP_SCAN3#0 // #1 #8 // FLUX DETECTOR, ?
-            # UP_SCAN3#50000 // #50000 #50003 // GENOME DETECTOR, ?
+            # UP_SCAN3#0 // #1 #8 // FLUX DETECTOR, GENOME
+            # UP_SCAN3#50000 // #50000 #50003 // GENOME DETECTOR, FLUX
             'meta': [
                 ('Weapon_Scan_Radius', 20, 30),
                 ('Weapon_Scan_Discovery_Creature', 5000, 10000),
@@ -295,8 +300,8 @@ data = {
             'number': 3,  # 2
         },
         '4': {
-            # UP_SCAN4#0 // HOLOGRAPHIC DETECTOR, ?
-            # UP_SCAN4#50000 // VACUUM DETECTOR, ?
+            # UP_SCAN4#0 // HOLOGRAPHIC DETECTOR, QUANTUM
+            # UP_SCAN4#50000 // VACUUM DETECTOR, NON
             'meta': [
                 ('Weapon_Scan_Radius', 30, 40),
                 ('Weapon_Scan_Discovery_Creature', 6500, 10000),
@@ -305,8 +310,8 @@ data = {
             'number': 3,  # 3
         },
         'X': {
-            # UP_SCANX#0 // #20 #22 // NANITE-POWERED DETECTOR, ?
-            # UP_SCANX#50000 // #50001 #50002 // PROHIBITED CALIBRATED DETECTOR, ?
+            # UP_SCANX#0 // #20 #22 // COUNTERFEIT NANITE-POWERED DETECTOR, SUSPECT
+            # UP_SCANX#50000 // #50001 #50002 // PROHIBITED CALIBRATED DETECTOR, FORBIDDEN
             'meta': [
                 ('Weapon_Scan_Radius', 5, 50),
                 ('Weapon_Scan_Discovery_Creature', 1000, 11000),
@@ -328,7 +333,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
-            'number': 3,  # 2 (AlwaysChoose x1)
+            'number': 3,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
         '2': {
             # UP_BOLT2#0 // #19 #20 // OPTICAL ENERGY LATTICE, LUMINOUS
@@ -380,7 +385,7 @@ data = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
-            'number': 4,  # 2 (AlwaysChoose x1)
+            'number': 4,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
     },
 
@@ -672,49 +677,49 @@ data = {
 
     'UP_ENGY': {
         '1': {
-            # UP_ENGY1#0 // #17 #31 // GAS PURIFIER, ?
+            # UP_ENGY1#0 // #17 #31 // GAS PURIFIER, NITROGEN
             'meta': [
                 ('Suit_Energy', 5, 20),
                 ('Suit_Energy_Regen', 0, 10),
             ],
-            'number': 2,
+            'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
         '2': {
-            # UP_ENGY2#0 // HIGH-VOLUME PURIFIER, ?
+            # UP_ENGY2#0 // #0 #1 // HIGH-VOLUME PURIFIER, MICROBE
             'meta': [
                 ('Suit_Energy', 20, 50),
                 ('Suit_Energy_Regen', 0, 25),
             ],
-            'number': 2,
+            'number': 2,  # 1 (Suit_Energy_Regen with 0)
         },
         '3': {
-            # UP_ENGY3#0 // T-GEL PURIFIER, ?
+            # UP_ENGY3#0 // T-GEL PURIFIER, VACUUM
             'meta': [
                 ('Suit_Energy', 50, 100),
                 ('Suit_Energy_Regen', 25, 50),
             ],
-            'number': 2,
+            'number': 2,  # 2
         },
         'X': {
-            # UP_ENGYX#0 // #4 #8 // COUNTERFEIT GAS PURIFIER, ?
+            # UP_ENGYX#0 // #4 #8 // COUNTERFEIT GAS PURIFIER, RISKY
             'meta': [
                 ('Suit_Energy', 5, 110),
                 ('Suit_Energy_Regen', 0, 75),
             ],
-            'number': 2,
+            'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
     },
 
     'UP_HAZ': {
         'X': {
-            # UP_HAZX#0 // COUNTERFEIT CRYOSTATIC AIR PURIFIER, ?
+            # UP_HAZX#0 // COUNTERFEIT CRYOSTATIC AIR PURIFIER, UNLICENSED
             'meta': [
                  ('Suit_Protection_ColdDrain', 1, 10),
                  ('Suit_Protection_HeatDrain', 1, 10),
                  ('Suit_Protection_RadDrain', 1, 10),
                  ('Suit_Protection_ToxDrain', 1, 10),
             ],
-            'number': 4,
+            'number': 4,  # 4
         },
     },
 
@@ -728,7 +733,7 @@ data = {
                 ('Suit_Jetpack_Drain', 5, 10),
                 ('Suit_Jetpack_Refill', 0, 5),
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 4,  # 1 (AlwaysChoose x1 but Suit_Stamina_Recovery and Suit_Jetpack_Refill with 0)
         },
         '2': {
            'meta': [
@@ -739,7 +744,7 @@ data = {
                 ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 5, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 4,  # 2 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
         },
         '3': {
             # UP_JET3#0 // LIQUID FUEL JETS, MULTI
@@ -751,7 +756,7 @@ data = {
                 ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 10, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 4,  # 3 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
         },
         '4': {
             # UP_JET4#0 // ANTIMATTER JETS, PLUTONIUM
@@ -775,7 +780,7 @@ data = {
                 ('Suit_Jetpack_Ignition', 0, 15),
                 ('Suit_Jetpack_Refill', 5, 30),
             ],
-            'number': 4,  # 4 (AlwaysChoose x2)
+            'number': 4,  # 3 (AlwaysChoose x2 but Suit_Jetpack_Ignition with 0)
         },
     },
 
@@ -819,7 +824,7 @@ data = {
         },
         'X': {
             # TODO verify values
-            # UP_SHLDX#0 // # # // XXXX GRAFTS, XXXX
+            # UP_SHLDX#0 // #4 #8 // COUNTERFEIT LIGHTNING GRAFTS, RISKY
             'meta': [
                 ('Suit_Armour_Shield_Strength', 5, 25),
                 ('Suit_Armour_Health', 33, 33),
@@ -1027,57 +1032,54 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_LAUN': {
         '1': {
-            # TODO verify values
-            # UP_LAUN1#0 // # # // ??? ABC, ???
-            # UP_LAUN1#50000 // # # // ??? ABC, ???
+            # UP_LAUN1#0 // #0 #19 // UPGRADED GRAVITY HARMONISER, DYNAMIC
+            # UP_LAUN1#50000 // #50000 #50002 // EFFICIENT GRAVITY HARMONISER, SECONDARY
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 5, 10),
                 ('Ship_Boost', 0, 1),
             ],
-            'number': 2,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
         '2': {
-            # TODO verify values
-            # UP_LAUN2#0 // # # // ??? ABC, ???
-            # UP_LAUN2#50000 // # # // ??? ABC, ???
+            # UP_LAUN2#0 // AUTOMATIC GRAVITY HARMONISER, UPGRADED
+            # UP_LAUN2#50000 // INVERTED GRAVITY HARMONISER, REWIRED
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 10, 15),
                 ('Ship_Boost', 2, 5),
             ],
             'number': 2,  # 2 (AlwaysChoose x1)
+            'description': 'A substantial upgrade to the Launch Thruster, offering significant improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '3': {
-            # TODO verify values
-            # UP_LAUN3#0 // # # // ??? ABC, ???
-            # UP_LAUN3#50000 // # # // ??? ABC, ???
+            # UP_LAUN3#0 // AUGMENTED GRAVITY HARMONISER, PHOTONIC
+            # UP_LAUN3#50000 // HIGH SPEED GRAVITY HARMONISER, CATALYTIC
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 15, 20),
                 ('Ship_Boost', 5, 8),
             ],
             'number': 2,  # 2 (AlwaysChoose x1)
+            'description': 'A powerful upgrade module for the Launch Thruster, with the potential to drastically improve <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '4': {
-            # TODO verify values
-            # UP_LAUN4#0 // # # // ??? ABC, ???
-            # UP_LAUN4#50000 // # # // ??? ABC, ???
+            # UP_LAUN4#0 // DE-IONISED GRAVITY HARMONISER, QUANTUM
+            # UP_LAUN4#50000 // FLAWLESS GRAVITY HARMONISER, BARYONIC
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 20, 20),
                 ('Ship_Boost', 8, 10),
             ],
             'number': 2,  # 2 (AlwaysChoose x1)
+            'description': 'An almost total rework of the Launch Thruster, this upgrade module brings unparalleled improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         'X': {
-            # TODO verify values
-            # UP_LAUNX#0 // # # // ??? ABC, ???
-            # UP_LAUNX#50000 // # # // ??? ABC, ???
+            # UP_LAUNX#0 // #0 #30 // COUNTERFEIT AUTOMATIC GRAVITY HARMONISER, SMUGGLED
+            # UP_LAUNX#50000 // #50000 #50092 // PROHIBITED INVERTED GRAVITY HARMONISER, UNLICENSED
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 5, 25),
                 ('Ship_Boost', 0, 10),
             ],
-            'number': 2,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
     },
 
@@ -2126,6 +2128,7 @@ key_possibilities = tech_stats['meta'].keys()
 middle = start
 pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
 round_digits = 2
+static_description = tech_stats['description'] if 'description' in tech_stats else ''
 
 begin = int(pm.read_string(addr_off, byte=16))
 count = int(TOTAL_SEEDS / iteration_necessary)
@@ -2148,7 +2151,7 @@ with open(f_name, 'w', newline='') as f:
 
         # Loops until all data is fully loaded.
         while True:
-            description = pm.read_string(addr_description, byte=512)
+            description = static_description or pm.read_string(addr_description, byte=512)
             title = pm.read_string(addr_title, byte=64)
 
             values = [pm.read_string(a) for a in addr_stats]
@@ -2172,8 +2175,9 @@ with open(f_name, 'w', newline='') as f:
             pm.write_string(addr_off, str(i_next))
 
         # Set to \0 to avoid duplicates in next while True
-        pm.write_uchar(addr_description, 0)
         pm.write_uchar(addr_title, 0)
+        if not static_description:
+            pm.write_uchar(addr_description, 0)
         for a in addr_stats:
             pm.write_uchar(a, 0)
 
@@ -2196,8 +2200,10 @@ with open(f_name, 'w', newline='') as f:
             perfection.append(p)
 
         perfection = round(sum(perfection) / high_number, round_digits) if perfection else ''
-        title = title.title() \
-            .replace('Ph Balancer', 'pH Balancer')  # UP_HAZ
+
+        title = title.title()
+        for original, replacement in TITLE_FIX:
+            title = title.replace(original, replacement)
 
         row.update({
             'Name': title,

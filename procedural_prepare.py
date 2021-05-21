@@ -34,6 +34,7 @@ ITEMS_PRODUCT = [
 ]
 ITEMS_SHIP = [
     'UP_PULSE',
+    'UP_LAUN',
     'UP_HYP',
     'UP_S_SHL',
     'UP_SGUN',
