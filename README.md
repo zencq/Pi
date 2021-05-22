@@ -11,8 +11,8 @@ actual values of the stats.
 
 There might be an ultra-low percentage of values that are not 100% accurate. There are
 also cases where the value of a stat cannot be determined exactly due to
-how it's displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but is always
-displayed as `+2%`).
+how it's displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but always
+shows `+2%`).
 
 ## Usage
 
@@ -25,6 +25,7 @@ To run them, I suggest [**Python 3.7**](https://www.python.org) or newer.
 The first script **prepare**s your save by adding up to 100,000 seeds to it.
 If your save wont load or for any other reason you can easily split this step into
 multiple parts by appending the current iteration and how many you need in total.
+There need to be at least one procedural item in the corresponding inventory.
 
 ```
 python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_ITERATIONS]
@@ -42,14 +43,14 @@ four stats.
 For me the following worked best:
 1. Scan for the first seed that controls the UI (e.g. `UP_BOLT4#0`).
 1. Scan for the procedural name which should result in a single address after second scan.
-1. Scan for the description by searching for the listed stats (e.g. `improve <STELLAR>Damage<>, <STELLAR>Clip Size<>`).
-   You may end up with 2 addresses but you're looking for the one before and closest to
+1. Scan for the description by searching for the listed stats (e.g. `improve <STELLAR>Damage<> and <STELLAR>Clip Size<>.`).
+   You may end up with 2 addresses but you're looking for the one closest to
    the address of the name.
 1. Scan for the value of each stat (e.g. `+12%`). There might be occurrences of a not changing value.
    Then scan for the others first and check on that later. All addresses for the values
-   are close together and in the order you see in the description.
+   are close together and most of the time in the order you see in the description.
 
-The `TOTAL_ITERATIONS` here should match those from the preparation script (defaults to
+The `TOTAL_ITERATIONS` here must match those from the preparation script (defaults to
 `1` if not set). You can directly enter the addresses as they are displayed in
 Cheat Engine and don't need to prepend a `0x`.
 

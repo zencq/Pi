@@ -57,13 +57,6 @@ def extract_int_percent(data):
     return int(data[1:-1])
 
 
-def extract_int_percent_shield_strength(data):
-    """
-    Convert string percent value to integer.
-    """
-    return 100 - extract_int_percent(data)
-
-
 def extract_int_percent_thousand(data):
     """
     Convert string percent value with thousand separator to integer.
@@ -83,7 +76,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # C3 improving <STELLAR><>, <STELLAR><> and
 # C4 improving <STELLAR><>, <STELLAR><>,
 
-# B2 to <STELLAR><>.
+# B1 to <STELLAR><>.
 # B2 to <STELLAR><> and <STELLAR><>.
 # B3 to <STELLAR><>, <STELLAR><> and
 # B4 to <STELLAR><>, <STELLAR><>,
@@ -110,10 +103,13 @@ TRANSLATION = {
     'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
     'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
     'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
+    'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
     # endregion
 
     # region Suit
-    'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent_shield_strength, pattern_int_percent),  # TODO check if display is really inverted
+    'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
     'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
 
     'Suit_Energy': ('Life Support Tanks', extract_int_percent, pattern_int_percent),
@@ -174,8 +170,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
-    # 'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
     # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
@@ -784,56 +778,50 @@ data = {
         },
     },
 
-    # ! TODO verify values
     'UP_SHLD': {
         '1': {
-            # TODO verify values
             # UP_SHLD1#0 // #17 #19 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
             'meta': [
-                ('Suit_Armour_Shield_Strength', 5, 10),
+                ('Suit_Armour_Shield_Strength', 90, 95),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '2': {
-            # TODO verify values
             # UP_SHLD2#0 // #1 #8 // LIGHTNING GRAFTS, VECTOR
             'meta': [
-                ('Suit_Armour_Shield_Strength', 10, 15),
+                ('Suit_Armour_Shield_Strength', 85, 90),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '3': {
-            # TODO verify values
-            # UP_SHLD3#0 // XXXX GRAFTS, XXXX
+            # UP_SHLD3#0 // M-FIELD GRAFTS, INDUCTION
             'meta': [
-                ('Suit_Armour_Shield_Strength', 10, 20),
+                ('Suit_Armour_Shield_Strength', 80, 90),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
         },
         '4': {
-            # TODO verify values
-            # UP_SHLD4#0 // XXXX GRAFTS, XXXX
+            # UP_SHLD4#0 // NANITE GRAFTS, HARMONIC
             'meta': [
-                ('Suit_Armour_Shield_Strength', 10, 20),
+                ('Suit_Armour_Shield_Strength', 80, 90),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
         },
         'X': {
-            # TODO verify values
             # UP_SHLDX#0 // #4 #8 // COUNTERFEIT LIGHTNING GRAFTS, RISKY
             'meta': [
-                ('Suit_Armour_Shield_Strength', 5, 25),
+                ('Suit_Armour_Shield_Strength', 75, 95),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
     },
 
-    # TODO values not displayed (3.4)
+    # ! TODO values not displayed (as of 3.4)
     'UP_UNW': {
         '1': {
             # UP_UNW1#0 // SECONDARY GAS PRESSURISER, ?
@@ -858,7 +846,7 @@ data = {
         },
     },
 
-    # TODO values not displayed (3.4)
+    # ! TODO values not displayed (as of 3.4)
     'UP_RAD': {
         '1': {
             # UP_RAD1#0 // EFFECTIVE SIEVERT BARRIER, ?
@@ -886,7 +874,7 @@ data = {
         },
     },
 
-    # TODO values not displayed (3.4)
+    # ! TODO values not displayed (as of 3.4)
     'UP_TOX': {
         '1': {
             # UP_TOX1#0 // EFFICIENT POISON REMOVER, ?
@@ -913,7 +901,7 @@ data = {
             'number': 2,  # 2
         }, },
 
-    # TODO values not displayed (3.4)
+    # ! TODO values not displayed (as of 3.4)
     'UP_COLD': {
         '1': {
             # UP_COLD1#0 // EFFICIENT CONVECTION UNIT, ?
@@ -941,7 +929,7 @@ data = {
         },
     },
 
-    # TODO values not displayed (3.4)
+    # ! TODO values not displayed (as of 3.4)
     'UP_HOT': {
         '1': {
             # UP_HOT1#0 // CERAMIC FLAME CYCLER, ?
@@ -2199,7 +2187,7 @@ with open(f_name, 'w', newline='') as f:
                 p -= (meta[2] - value) / (meta[2] - meta[1])
             perfection.append(p)
 
-        perfection = round(sum(perfection) / high_number, round_digits) if perfection else ''
+        perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
 
         title = title.title()
         for original, replacement in TITLE_FIX:
