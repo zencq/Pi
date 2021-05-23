@@ -11,9 +11,12 @@ from datetime import datetime
 
 STEPS = 10000
 TITLE_FIX = [
-    ('Ph Balancer', 'pH Balancer'),  # UP_HAZ
     ('Di-Hydrogen', 'Di-hydrogen'),  # UP_LAUN
     ('De-Ionised', 'De-ionised'),  # UP_LAUN
+
+    ('Ph Balancer', 'pH Balancer'),  # UP_HAZ
+
+    ('Non-Causal', 'Non-causal'),  # UP_SCAN
 ]
 TOTAL_SEEDS = 100000
 
@@ -115,6 +118,8 @@ TRANSLATION = {
 
     'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
     'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
     # endregion
 
     # region Suit
@@ -179,7 +184,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
@@ -210,7 +214,7 @@ TRANSLATION = {
 # In the mapping below, the values are composed as follows:
 # * meta: type used by the game, min value, max value
 # * number: max possible stats
-data = {
+DATA = {
     # region Weapon
 
     'UP_LASER': {
@@ -675,7 +679,6 @@ data = {
 
     # endregion
 
-    # TODO
     # region Suit
 
     'UP_ENGY': {
@@ -1131,23 +1134,27 @@ data = {
     # TODO verify values
     'UP_S_SHL': {
         '1': {
-            # TODO verify values
-            # UP_S_SHL1#0 // ??? ABC, ???
-            # UP_S_SHL1#50000 //  ??? ABC, ???
+            # UP_S_SHL1#0 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
+            # UP_S_SHL1#50000 // SECONDARY GRAFTS, SODIUM
             'meta': [
-                ('Ship_Armour_Shield_Strength', 5, 10),
+                ('Ship_Armour_Shield_Strength', 7, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'Upgrades the Deflector Shield, improving <STELLAR>Shield Strength<>.',
         },
         '2': {
+            # UP_S_SHL2#0 // LIGHTNING GRAFTS, VECTOR
+            # UP_S_SHL2#50000 // URANIUM GRAFTS, BIONIC
             'meta': [
-                ('Ship_Armour_Shield_Strength', 5, 10),
+                ('Ship_Armour_Shield_Strength', 7, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'A substantial upgrade to the Deflector Shield, offering significant improvements to <STELLAR>Shield Strength<>.',
         },
         '3': {
+            # TODO verify values
+            # UP_S_SHL1#0 // ??? GRAFTS, ???
+            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
             'meta': [
                 ('Ship_Armour_Shield_Strength', 10, 20),
             ],
@@ -1155,6 +1162,9 @@ data = {
             'description': '',
         },
         '4': {
+            # TODO verify values
+            # UP_S_SHL1#0 // ??? GRAFTS, ???
+            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
             'meta': [
                 ('Ship_Armour_Shield_Strength', 20, 20),
             ],
@@ -1162,6 +1172,9 @@ data = {
             'description': '',
         },
         'X': {
+            # TODO verify values
+            # UP_S_SHL1#0 // ??? GRAFTS, ???
+            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 25),
             ],
@@ -2092,154 +2105,155 @@ data = {
 
 # endregion
 
-# region input
+if __name__ == "__main__":
+    # region input
 
-if len(sys.argv) < 5:
-    print('ERROR: Not enough arguments! Usage: python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDRESS_TITLE ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]')
-    exit()
+    if len(sys.argv) < 5:
+        print('ERROR: Not enough arguments! Usage: python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDRESS_TITLE ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]')
+        exit()
 
-addr_id_seed = init_cheatengine_address(sys.argv[2])
-addr_description = init_cheatengine_address(sys.argv[3])
-addr_stats = init_cheatengine_address(sys.argv[5:])
-addr_title = init_cheatengine_address(sys.argv[4])
-iteration_necessary = int(sys.argv[1])
+    addr_id_seed = init_cheatengine_address(sys.argv[2])
+    addr_description = init_cheatengine_address(sys.argv[3])
+    addr_stats = init_cheatengine_address(sys.argv[5:])
+    addr_title = init_cheatengine_address(sys.argv[4])
+    iteration_necessary = int(sys.argv[1])
 
-# endregion
+    # endregion
 
-# region algorithm
+    # region algorithm
 
-start = datetime.now()
+    start = datetime.now()
 
-exe = 'NMS.exe'
+    exe = 'NMS.exe'
 
-pm = pymem.Pymem(exe)
+    pm = pymem.Pymem(exe)
 
-module_game = pymem.process.module_from_name(pm.process_handle, exe).lpBaseOfDll
-module = pm.read_string(addr_id_seed, byte=16)
+    module_game = pymem.process.module_from_name(pm.process_handle, exe).lpBaseOfDll
+    module = pm.read_string(addr_id_seed, byte=16)
 
-hashtag_index = module.index('#')
+    hashtag_index = module.index('#')
 
-tech_name = module[:hashtag_index - 1]  # 'UP_HAZ'
-tech_class = module[hashtag_index - 1:hashtag_index]  # 'X'
+    tech_name = module[:hashtag_index - 1]  # 'UP_HAZ'
+    tech_class = module[hashtag_index - 1:hashtag_index]  # 'X'
 
-if tech_name not in data or tech_class not in data[tech_name]:
-    print(f'ERROR: Your procedural item ({tech_name}{tech_class}) is not configured')
-    exit()
+    if tech_name not in DATA or tech_class not in DATA[tech_name]:
+        print(f'ERROR: Your procedural item ({tech_name}{tech_class}) is not configured')
+        exit()
 
-tech_stats = data[tech_name][tech_class]
+    tech_stats = DATA[tech_name][tech_class]
 
-high_number = tech_stats['number']
+    high_number = tech_stats['number']
 
-addr_stats = addr_stats[:high_number]
+    addr_stats = addr_stats[:high_number]
 
-if len(addr_stats) != high_number:
-    print(f'ERROR: Your number of memory addresses ({len(addr_stats)}) does not match the max number of stats ({len(tech_stats)})')
-    exit()
+    if len(addr_stats) != high_number:
+        print(f'ERROR: Your number of memory addresses ({len(addr_stats)}) does not match the max number of stats ({len(tech_stats)})')
+        exit()
 
-tech_stats['meta'] = init_meta(tech_stats['meta'])
+    tech_stats['meta'] = init_meta(tech_stats['meta'])
 
-addr_off = addr_id_seed + hashtag_index + 1
-fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in tech_stats['meta'].values()]
-key_possibilities = tech_stats['meta'].keys()
-middle = start
-pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
-round_digits = 3
-static_description = tech_stats['description'] if 'description' in tech_stats else ''
+    addr_off = addr_id_seed + hashtag_index + 1
+    fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in tech_stats['meta'].values()]
+    key_possibilities = tech_stats['meta'].keys()
+    middle = start
+    pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
+    round_digits = 3
+    static_description = tech_stats['description'] if 'description' in tech_stats else ''
 
-begin = int(pm.read_string(addr_off, byte=16))
-count = 500#int(TOTAL_SEEDS / iteration_necessary)
+    begin = int(pm.read_string(addr_off, byte=16))
+    count = int(TOTAL_SEEDS / iteration_necessary)
 
-iteration_stop = TOTAL_SEEDS
-for i in range(1, iteration_necessary + 1):
-    iteration_stop = i * count
-    if begin < iteration_stop:
-        break
+    iteration_stop = TOTAL_SEEDS
+    for i in range(1, iteration_necessary + 1):
+        iteration_stop = i * count
+        if begin < iteration_stop:
+            break
 
-stop = max(0, min(begin + count, iteration_stop))
+    stop = max(0, min(begin + count, iteration_stop))
 
-f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
-with open(f_name, 'w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
-    writer.writeheader()
-    print('Item  ', tech_name, tech_class)
-    print('Range ', begin, '-', stop - 1)
-    for i in range(begin, stop):
-        i_next = i + 1
+    f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
+    with open(f_name, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
+        writer.writeheader()
+        print('Item  ', tech_name, tech_class)
+        print('Range ', begin, '-', stop - 1)
+        for i in range(begin, stop):
+            i_next = i + 1
 
-        # Loops until all data is fully loaded.
-        while True:
-            description = static_description or pm.read_string(addr_description, byte=512)
-            title = pm.read_string(addr_title, byte=64)
+            # Loops until all data is fully loaded.
+            while True:
+                description = static_description or pm.read_string(addr_description, byte=512)
+                title = pm.read_string(addr_title, byte=64)
 
-            values = [pm.read_string(a) for a in addr_stats]
+                values = [pm.read_string(a) for a in addr_stats]
 
-            # First check that description and title are loaded.
-            if (
-                (description.startswith('UPGRADE_0') or '<STELLAR>' in description and description.endswith('.'))
-                and title != ''
-            ):
-                # Then extract stat names from the description and make sure it's fully loaded
-                # with the complete name of a possible stat and its value.
-                # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
-                keys = pattern.findall(description)[:high_number]
+                # First check that description and title are loaded.
                 if (
-                    all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
-                    or description.startswith('UPGRADE_0')
+                    (description.startswith('UPGRADE_0') or '<STELLAR>' in description and description.endswith('.'))
+                    and title != ''
                 ):
-                    break
+                    # Then extract stat names from the description and make sure it's fully loaded
+                    # with the complete name of a possible stat and its value.
+                    # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
+                    keys = pattern.findall(description)[:high_number]
+                    if (
+                        all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
+                        or description.startswith('UPGRADE_0')
+                    ):
+                        break
 
-        if i_next < stop:
-            pm.write_string(addr_off, str(i_next))
+            if i_next < stop:
+                pm.write_string(addr_off, str(i_next))
 
-        # Set to \0 to avoid duplicates in next while True
-        pm.write_uchar(addr_title, 0)
-        if not static_description:
-            pm.write_uchar(addr_description, 0)
-        for a in addr_stats:
-            pm.write_uchar(a, 0)
+            # Set to \0 to avoid duplicates in next while True
+            pm.write_uchar(addr_title, 0)
+            if not static_description:
+                pm.write_uchar(addr_description, 0)
+            for a in addr_stats:
+                pm.write_uchar(a, 0)
 
-        perfection = []
-        row = {}
+            perfection = []
+            row = {}
 
-        # Get actual values of the current item.
-        for index, key in enumerate(keys):
-            meta = tech_stats['meta'][key]
+            # Get actual values of the current item.
+            for index, key in enumerate(keys):
+                meta = tech_stats['meta'][key]
 
-            row.update({meta[0]: values[index]})
+                row.update({meta[0]: values[index]})
 
-            extract_method = meta[3]
+                extract_method = meta[3]
 
-            value = extract_method(values[index])
+                value = extract_method(values[index])
 
-            p = 1.0
-            if meta[2] - meta[1] > 0:
-                p -= (meta[2] - value) / (meta[2] - meta[1])
-            perfection.append(p)
+                p = 1.0
+                if meta[2] - meta[1] > 0:
+                    p -= (meta[2] - value) / (meta[2] - meta[1])
+                perfection.append(p)
 
-        perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
+            perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
 
-        title = title.title()
-        for original, replacement in TITLE_FIX:
-            title = title.replace(original, replacement)
+            title = title.title()
+            for original, replacement in TITLE_FIX:
+                title = title.replace(original, replacement)
 
-        row.update({
-            'Name': title,
-            'Perfection': perfection,
-            'Seed': i,
-        })
+            row.update({
+                'Name': title,
+                'Perfection': perfection,
+                'Seed': i,
+            })
 
-        writer.writerow(row)
-        if (i - (STEPS - 1)) % STEPS == 0:
-            middle_next = datetime.now()
-            print(f'{i:>6} ({middle_next - middle})')
-            middle = middle_next
-            f.flush()
-    else:
-        # 7 = tech_class (1) + # (1) + 99999 (5)
-        pm.write_string(addr_id_seed, f'{tech_name}{tech_class}#{begin}'.ljust(len(tech_name) + 7, '\0'))
+            writer.writerow(row)
+            if (i - (STEPS - 1)) % STEPS == 0:
+                middle_next = datetime.now()
+                print(f'{i:>6} ({middle_next - middle})')
+                middle = middle_next
+                f.flush()
+        else:
+            # 7 = tech_class (1) + # (1) + 99999 (5)
+            pm.write_string(addr_id_seed, f'{tech_name}{tech_class}#{begin}'.ljust(len(tech_name) + 7, '\0'))
 
-end = datetime.now()
+    end = datetime.now()
 
-print(f'{stop - begin:>6} module(s) added to {f_name} in {end - start}')
+    print(f'{stop - begin:>6} module(s) added to {f_name} in {end - start}')
 
-# endregion
+    # endregion
