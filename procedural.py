@@ -50,6 +50,13 @@ def extract_float(data):
     return float(data[1:])
 
 
+def extract_int_lightyear(data):
+    """
+    Convert string with lightyear (ly) to integer.
+    """
+    return int(data[:-3])
+
+
 def extract_int_percent(data):
     """
     Convert string percent value to integer.
@@ -67,8 +74,10 @@ def extract_int_percent_thousand(data):
 
 # region stats
 
-pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
+
+pattern_int_lightyear = re.compile("^[0-9]{2,3} ly$")
 pattern_int_percent = re.compile("^[-+][0-9]{1,3}%$")
+pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
 pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 
 # C1 improving <STELLAR><>.
@@ -104,7 +113,7 @@ TRANSLATION = {
     'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
     'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
 
-    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
+    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
     'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
     # endregion
 
@@ -1071,38 +1080,49 @@ data = {
         },
     },
 
-    # TODO verify values
     'UP_HYP': {
         '1': {
+            # UP_HYP1#0 // ALTERNATE PRESSURE INVERTER, BACKUP
+            # UP_HYP1#50000 // EFFICIENT PRESSURE INVERTER, SECONDARY
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
             'number': 1,  # 1
+            'description': 'Upgrades the Hyperdrive, improving <STELLAR>Hyperdrive Range<>.',
         },
         '2': {
+            # UP_HYP2#0 // HEATED PRESSURE INVERTER, UPGRADED
+            # UP_HYP2#50000 // POLISHED PRESSURE INVERTER, REWIRED
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
             'number': 1,  # 1
+            'description': 'A substantial upgrade to the Hyperdrive, offering significant improvements to <STELLAR>Hyperdrive Range<>.',
         },
         '3': {
+            # UP_HYP3#0 // AUGMENTED PRESSURE INVERTER, SOLID
+            # UP_HYP3#50000 // EXTREME PRESSURE INVERTER, GYROSCOPIC
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 150, 200),
-                ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
+                ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
             ],
             'number': 2,  # 2
         },
         '4': {
+            # UP_HYP4#0 // HYPERSONIC PRESSURE INVERTER, HARMONIC
+            # UP_HYP4#50000 // FLAWLESS PRESSURE INVERTER, GLORIOUS
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 200, 250),
-                ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
+                ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
             ],
             'number': 2,  # 2
         },
         'X': {
+            # UP_HYPX#0 // #4 #8 // COUNTERFEIT HEATED PRESSURE INVERTER, SMUGGLED
+            # UP_HYPX#50000 // #50001 #50006 // PROHIBITED POLISHED PRESSURE INVERTER, FORBIDDEN
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 300),
-                ('Ship_Hyperdrive_JumpsPerCell', 1, 1),
+                ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
             ],
             'number': 2,  # 1
         },
@@ -1111,34 +1131,42 @@ data = {
     # TODO verify values
     'UP_S_SHL': {
         '1': {
+            # TODO verify values
+            # UP_S_SHL1#0 // ??? ABC, ???
+            # UP_S_SHL1#50000 //  ??? ABC, ???
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         '2': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         '3': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 10, 20),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         '4': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 20, 20),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         'X': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 25),
             ],
             'number': 1,  # 1
+            'description': '',
         },
     },
 
@@ -2115,11 +2143,11 @@ fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in tech_stats[
 key_possibilities = tech_stats['meta'].keys()
 middle = start
 pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
-round_digits = 2
+round_digits = 3
 static_description = tech_stats['description'] if 'description' in tech_stats else ''
 
 begin = int(pm.read_string(addr_off, byte=16))
-count = int(TOTAL_SEEDS / iteration_necessary)
+count = 500#int(TOTAL_SEEDS / iteration_necessary)
 
 iteration_stop = TOTAL_SEEDS
 for i in range(1, iteration_necessary + 1):
@@ -2133,7 +2161,8 @@ f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
 with open(f_name, 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
     writer.writeheader()
-    print('Range:', begin, '-', stop - 1)
+    print('Item  ', tech_name, tech_class)
+    print('Range ', begin, '-', stop - 1)
     for i in range(begin, stop):
         i_next = i + 1
 

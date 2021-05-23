@@ -104,12 +104,12 @@ TOTAL_SEEDS = 100000
 TYPES = OrderedDict([
     ('freighter', 'Freighter'),
     ('product', 'Product'),
-    ('ship', 'Starship 0: Normal'),
-    ('living', 'Starship 1: Living'),
+    ('ship', 'Starship 0 (Normal)'),
+    ('living', 'Starship 1 (Living)'),
     ('suit', 'Exosuit'),
-    ('vehicle', 'Exocraft 2: Colossus'),
-    ('submarine', 'Exocraft 5: Nautilon'),
-    ('mech', 'Exocraft 6: Minotaur'),
+    ('vehicle', 'Exocraft 2 (Colossus)'),
+    ('submarine', 'Exocraft 5 (Nautilon)'),
+    ('mech', 'Exocraft 6 (Minotaur)'),
     ('weapon', 'Weapon 0'),
 ])
 
