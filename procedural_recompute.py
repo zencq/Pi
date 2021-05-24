@@ -1,5 +1,5 @@
 # This script iterates over all stored seeds and recomputes the perfection.
-# Usage: python recompute.py
+# Usage: python procedural_recompute.py
 
 import csv
 import os
@@ -23,103 +23,103 @@ def init_meta(data):
 # endregion
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     f_list = [
         # region Ship
-        'Ship\\UP_HYP1.csv',
-        'Ship\\UP_HYP2.csv',
-        'Ship\\UP_HYP3.csv',
-        'Ship\\UP_HYP4.csv',
-        'Ship\\UP_HYPX.csv',
+        # 'Ship\\UP_HYP1.csv',
+        # 'Ship\\UP_HYP2.csv',
+        # 'Ship\\UP_HYP3.csv',
+        # 'Ship\\UP_HYP4.csv',
+        # 'Ship\\UP_HYPX.csv',
 
-        'Ship\\UP_LAUN1.csv',
-        'Ship\\UP_LAUN2.csv',
-        'Ship\\UP_LAUN3.csv',
-        'Ship\\UP_LAUN4.csv',
-        'Ship\\UP_LAUNX.csv',
+        # 'Ship\\UP_LAUN1.csv',
+        # 'Ship\\UP_LAUN2.csv',
+        # 'Ship\\UP_LAUN3.csv',
+        # 'Ship\\UP_LAUN4.csv',
+        # 'Ship\\UP_LAUNX.csv',
 
-        'Ship\\UP_PULSE1.csv',
-        'Ship\\UP_PULSE2.csv',
-        'Ship\\UP_PULSE3.csv',
-        'Ship\\UP_PULSE4.csv',
-        'Ship\\UP_PULSEX.csv',
+        # 'Ship\\UP_PULSE1.csv',
+        # 'Ship\\UP_PULSE2.csv',
+        # 'Ship\\UP_PULSE3.csv',
+        # 'Ship\\UP_PULSE4.csv',
+        # 'Ship\\UP_PULSEX.csv',
 
-        'Ship\\UP_S_SHL1.csv',
-        'Ship\\UP_S_SHL2.csv',
-        'Ship\\UP_S_SHL3.csv',
-        'Ship\\UP_S_SHL4.csv',
+        # 'Ship\\UP_S_SHL1.csv',
+        # 'Ship\\UP_S_SHL2.csv',
+        # 'Ship\\UP_S_SHL3.csv',
+        # 'Ship\\UP_S_SHL4.csv',
         'Ship\\UP_S_SHLX.csv',
         # endregion
 
         # region Suit
-        'Suit\\UP_ENGY1.csv',
-        'Suit\\UP_ENGY2.csv',
-        'Suit\\UP_ENGY3.csv',
-        'Suit\\UP_ENGYX.csv',
+        # 'Suit\\UP_ENGY1.csv',
+        # 'Suit\\UP_ENGY2.csv',
+        # 'Suit\\UP_ENGY3.csv',
+        # 'Suit\\UP_ENGYX.csv',
 
-        'Suit\\UP_HAZX.csv',
+        # 'Suit\\UP_HAZX.csv',
 
-        'Suit\\UP_JET1.csv',
-        'Suit\\UP_JET2.csv',
-        'Suit\\UP_JET3.csv',
-        'Suit\\UP_JET4.csv',
-        'Suit\\UP_JETX.csv',
+        # 'Suit\\UP_JET1.csv',
+        # 'Suit\\UP_JET2.csv',
+        # 'Suit\\UP_JET3.csv',
+        # 'Suit\\UP_JET4.csv',
+        # 'Suit\\UP_JETX.csv',
 
-        'Suit\\UP_SHLD1.csv',
-        'Suit\\UP_SHLD2.csv',
-        'Suit\\UP_SHLD3.csv',
-        'Suit\\UP_SHLD4.csv',
-        'Suit\\UP_SHLDX.csv',
+        # 'Suit\\UP_SHLD1.csv',
+        # 'Suit\\UP_SHLD2.csv',
+        # 'Suit\\UP_SHLD3.csv',
+        # 'Suit\\UP_SHLD4.csv',
+        # 'Suit\\UP_SHLDX.csv',
         # endregion
 
         # region Weapon
-        'Weapon\\UP_BOLT1.csv',
-        'Weapon\\UP_BOLT2.csv',
-        'Weapon\\UP_BOLT3.csv',
-        'Weapon\\UP_BOLT4.csv',
-        'Weapon\\UP_BOLTX.csv',
+        # 'Weapon\\UP_BOLT1.csv',
+        # 'Weapon\\UP_BOLT2.csv',
+        # 'Weapon\\UP_BOLT3.csv',
+        # 'Weapon\\UP_BOLT4.csv',
+        # 'Weapon\\UP_BOLTX.csv',
 
-        'Weapon\\UP_GREN1.csv',
-        'Weapon\\UP_GREN2.csv',
-        'Weapon\\UP_GREN3.csv',
-        'Weapon\\UP_GREN4.csv',
-        'Weapon\\UP_GRENX.csv',
+        # 'Weapon\\UP_GREN1.csv',
+        # 'Weapon\\UP_GREN2.csv',
+        # 'Weapon\\UP_GREN3.csv',
+        # 'Weapon\\UP_GREN4.csv',
+        # 'Weapon\\UP_GRENX.csv',
 
-        'Weapon\\UP_LASER1.csv',
-        'Weapon\\UP_LASER2.csv',
-        'Weapon\\UP_LASER3.csv',
-        'Weapon\\UP_LASER4.csv',
-        'Weapon\\UP_LASERX.csv',
+        # 'Weapon\\UP_LASER1.csv',
+        # 'Weapon\\UP_LASER2.csv',
+        # 'Weapon\\UP_LASER3.csv',
+        # 'Weapon\\UP_LASER4.csv',
+        # 'Weapon\\UP_LASERX.csv',
 
-        'Weapon\\UP_RAIL1.csv',
-        'Weapon\\UP_RAIL2.csv',
-        'Weapon\\UP_RAIL3.csv',
-        'Weapon\\UP_RAIL4.csv',
-        'Weapon\\UP_RAILX.csv',
+        # 'Weapon\\UP_RAIL1.csv',
+        # 'Weapon\\UP_RAIL2.csv',
+        # 'Weapon\\UP_RAIL3.csv',
+        # 'Weapon\\UP_RAIL4.csv',
+        # 'Weapon\\UP_RAILX.csv',
 
-        'Weapon\\UP_SCAN1.csv',
-        'Weapon\\UP_SCAN2.csv',
-        'Weapon\\UP_SCAN3.csv',
-        'Weapon\\UP_SCAN4.csv',
-        'Weapon\\UP_SCANX.csv',
+        # 'Weapon\\UP_SCAN1.csv',
+        # 'Weapon\\UP_SCAN2.csv',
+        # 'Weapon\\UP_SCAN3.csv',
+        # 'Weapon\\UP_SCAN4.csv',
+        # 'Weapon\\UP_SCANX.csv',
 
-        'Weapon\\UP_SHOT1.csv',
-        'Weapon\\UP_SHOT2.csv',
-        'Weapon\\UP_SHOT3.csv',
-        'Weapon\\UP_SHOT4.csv',
-        'Weapon\\UP_SHOTX.csv',
+        # 'Weapon\\UP_SHOT1.csv',
+        # 'Weapon\\UP_SHOT2.csv',
+        # 'Weapon\\UP_SHOT3.csv',
+        # 'Weapon\\UP_SHOT4.csv',
+        # 'Weapon\\UP_SHOTX.csv',
 
-        'Weapon\\UP_SMG1.csv',
-        'Weapon\\UP_SMG2.csv',
-        'Weapon\\UP_SMG3.csv',
-        'Weapon\\UP_SMG4.csv',
-        'Weapon\\UP_SMGX.csv',
+        # 'Weapon\\UP_SMG1.csv',
+        # 'Weapon\\UP_SMG2.csv',
+        # 'Weapon\\UP_SMG3.csv',
+        # 'Weapon\\UP_SMG4.csv',
+        # 'Weapon\\UP_SMGX.csv',
 
-        'Weapon\\UP_TGREN1.csv',
-        'Weapon\\UP_TGREN2.csv',
-        'Weapon\\UP_TGREN3.csv',
-        'Weapon\\UP_TGREN4.csv',
-        'Weapon\\UP_TGRENX.csv',
+        # 'Weapon\\UP_TGREN1.csv',
+        # 'Weapon\\UP_TGREN2.csv',
+        # 'Weapon\\UP_TGREN3.csv',
+        # 'Weapon\\UP_TGREN4.csv',
+        # 'Weapon\\UP_TGRENX.csv',
         # endregion
     ]
     round_digits = 3
@@ -191,6 +191,6 @@ if __name__ == "__main__":
 
         end = datetime.now()
 
-        print(f'{count} module(s) perfection for {item} recomputed in {end - start}')
+        print(f'{count:>6} module(s) perfection for {item} recomputed in {end - start}')
 
     # endregion

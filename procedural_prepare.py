@@ -1,5 +1,5 @@
 # The first script prepares your save by adding up to 100,000 seeds to it.
-# Usage: python prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]
+# Usage: python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]
 
 import sys
 import json
@@ -163,34 +163,36 @@ def iter_slot(inventory, item, starting_seed, nec_iter):
 
 # endregion
 
-# region input
 
-if len(sys.argv) < 3:
-    print('ERROR: Not enough arguments! Usage: python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]')
-    exit()
+if __name__ == '__main__':
+    # region input
 
-f_name = sys.argv[1]
-intruction = {
-    'item': sys.argv[2],
-    'iteration': int(sys.argv[3]) if len(sys.argv) >= 5 else 1,
-    'iteration_necessary': int(sys.argv[4]) if len(sys.argv) >= 5 else 1,
-}
+    if len(sys.argv) < 3:
+        print('ERROR: Not enough arguments! Usage: python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]')
+        exit()
 
-item = intruction['item'][:-1]
-type_identifier = None
+    f_name = sys.argv[1]
+    intruction = {
+        'item': sys.argv[2],
+        'iteration': int(sys.argv[3]) if len(sys.argv) >= 5 else 1,
+        'iteration_necessary': int(sys.argv[4]) if len(sys.argv) >= 5 else 1,
+    }
 
-# determine where to put the item
-for t, l in zip(TYPES.keys(), ITEMS):
-    if item in l:
-        type_identifier = t
+    item = intruction['item'][:-1]
+    type_identifier = None
 
-if not type_identifier:
-    print(f'ERROR: Unknown item ({intruction["item"]})')
-    exit()
+    # determine where to put the item
+    for t, l in zip(TYPES.keys(), ITEMS):
+        if item in l:
+            type_identifier = t
 
-# endregion
+    if not type_identifier:
+        print(f'ERROR: Unknown item ({intruction["item"]})')
+        exit()
 
-# region algorithm
+    # endregion
+
+    # region algorithm
 
 with open(f_name, 'r') as f:
     print('Read')

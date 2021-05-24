@@ -93,7 +93,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # B3 to <STELLAR><>, <STELLAR><> and
 # B4 to <STELLAR><>, <STELLAR><>,
 
-# A1 improve <STELLAR><>.
+# A1 improving <STELLAR><>.
 # A2 improve <STELLAR><> and <STELLAR><>.
 # A3 improve <STELLAR><>, <STELLAR><> and
 # A4 improve <STELLAR><>, <STELLAR><>,
@@ -220,7 +220,7 @@ DATA = {
     'UP_LASER': {
         '1': {
             # UP_LASER1#0 // #19 #20 // ENHANCED PHOTON MIRROR, ?
-            # UP_LASER1#50000 // #500?? #500?? // ???? MIRROR, ?
+            # UP_LASER1#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 10),
                 ('Weapon_Laser_HeatTime', 5, 15),
@@ -231,7 +231,7 @@ DATA = {
         },
         '2': {
             # UP_LASER2#0 // #17 #19 // FINE-TUNED PHOTON MIRROR, ?
-            # UP_LASER2#50000 // #500?? #500?? // ???? MIRROR, ?
+            # UP_LASER2#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 15),
                 ('Weapon_Laser_HeatTime', 15, 20),
@@ -242,7 +242,7 @@ DATA = {
         },
         '3': {
             # UP_LASER3#0 // #17 #19 // HIGH-ENERGY PHOTON MIRROR, ?
-            # UP_LASER3#50000 // #500?? #500?? // ???? MIRROR, ?
+            # UP_LASER3#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 10, 20),
                 ('Weapon_Laser_HeatTime', 20, 40),
@@ -253,7 +253,7 @@ DATA = {
         },
         '4': {
             # UP_LASER4#0 // BRILLIANT PHOTON MIRROR, ?
-            # UP_LASER4#50000 // #500?? #500?? // ???? MIRROR, ?
+            # UP_LASER4#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 15, 20),
                 ('Weapon_Laser_HeatTime', 40, 50),
@@ -264,7 +264,7 @@ DATA = {
         },
         'X': {
             # UP_LASERX#0 // #22 #24 // COUNTERFEIT FINE-TUNED PHOTON MIRROR, ?
-            # UP_LASERX#50000 // #500?? #500?? // ???? MIRROR, ?
+            # UP_LASERX#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 5, 20),
                 ('Weapon_Laser_HeatTime', 5, 55),
@@ -679,6 +679,7 @@ DATA = {
 
     # endregion
 
+    # ! TODO
     # region Suit
 
     'UP_ENGY': {
@@ -1131,7 +1132,6 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_S_SHL': {
         '1': {
             # UP_S_SHL1#0 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
@@ -1152,40 +1152,41 @@ DATA = {
             'description': 'A substantial upgrade to the Deflector Shield, offering significant improvements to <STELLAR>Shield Strength<>.',
         },
         '3': {
-            # TODO verify values
-            # UP_S_SHL1#0 // ??? GRAFTS, ???
-            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
+            # UP_S_SHL3#0 // M-FIELD GRAFTS, INDUCTION
+            # UP_S_SHL3#50000 // NUCLEAR GRAFTS, NEUTRON
             'meta': [
-                ('Ship_Armour_Shield_Strength', 10, 20),
+                ('Ship_Armour_Shield_Strength', 15, 30),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'A powerful upgrade module for the Deflector Shield, drastically improving <STELLAR>Shield Strength<>.',
         },
         '4': {
-            # TODO verify values
-            # UP_S_SHL1#0 // ??? GRAFTS, ???
-            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
+            # UP_S_SHL4#0 // NANITE GRAFTS, HARMONIC
+            # UP_S_SHL4#50000 // LORENTZ GRAFTS, LUMEN
             'meta': [
-                ('Ship_Armour_Shield_Strength', 20, 20),
+                ('Ship_Armour_Shield_Strength', 30, 30),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'An almost total rework of the Deflector Shield, this upgrade module brings unparalleled improvements to <STELLAR>Shield Strength<>.',
+            'value': '+30%',
         },
         'X': {
-            # TODO verify values
-            # UP_S_SHL1#0 // ??? GRAFTS, ???
-            # UP_S_SHL1#50000 //  ??? GRAFTS, ???
+            # UP_S_SHLX#0 // COUNTERFEIT LIGHTNING GRAFTS, UNLICENSED
+            # UP_S_SHLX#50000 // PROHIBITED URANIUM GRAFTS, FORBIDDEN
             'meta': [
-                ('Ship_Armour_Shield_Strength', 5, 25),
+                ('Ship_Armour_Shield_Strength', 7, 38),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'Bypassing nearly every galactic standard for workmanship and safety, this upgrade module affects <STELLAR>Shield Strength<>.',
         },
     },
 
     # TODO verify values
     'UP_SGUN': {
         '1': {
+            # TODO verify values
+            # UP_SGUN1#0 // # # // ??? ABC, ???
+            # UP_SGUN1#50000 // # # // ??? ABC, ???
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 8, 16),
                 ('Ship_Weapons_Guns_Rate', 0.1, 1.1),
@@ -2105,7 +2106,7 @@ DATA = {
 
 # endregion
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # region input
 
     if len(sys.argv) < 5:
@@ -2159,6 +2160,7 @@ if __name__ == "__main__":
     pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
     round_digits = 3
     static_description = tech_stats['description'] if 'description' in tech_stats else ''
+    static_value = tech_stats['value'] if 'value' in tech_stats else ''
 
     begin = int(pm.read_string(addr_off, byte=16))
     count = int(TOTAL_SEEDS / iteration_necessary)
@@ -2185,7 +2187,7 @@ if __name__ == "__main__":
                 description = static_description or pm.read_string(addr_description, byte=512)
                 title = pm.read_string(addr_title, byte=64)
 
-                values = [pm.read_string(a) for a in addr_stats]
+                values = [static_value] if static_value else [pm.read_string(a) for a in addr_stats]
 
                 # First check that description and title are loaded.
                 if (
@@ -2209,8 +2211,9 @@ if __name__ == "__main__":
             pm.write_uchar(addr_title, 0)
             if not static_description:
                 pm.write_uchar(addr_description, 0)
-            for a in addr_stats:
-                pm.write_uchar(a, 0)
+            if not static_value:
+                for a in addr_stats:
+                    pm.write_uchar(a, 0)
 
             perfection = []
             row = {}
