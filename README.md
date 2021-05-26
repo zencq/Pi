@@ -46,7 +46,7 @@ python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDR
 ```
 
 The third script **recompute**s the perfection of all entries in a file. This can
-be necessary if you want to changed the digits or he values range is different than you
+be necessary if you want to changed the digits or the values range is different than you
 thought when you run the second script to gather the data.
 
 Just uncomment the items you want to recompute and run the script.
