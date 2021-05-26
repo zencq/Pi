@@ -6,7 +6,7 @@ import os
 import shutil
 from datetime import datetime
 
-from procedural import DATA, TITLE_FIX, TRANSLATION
+from procedural import DATA, TRANSLATION
 
 # region methods
 
@@ -48,7 +48,13 @@ if __name__ == '__main__':
         # 'Ship\\UP_S_SHL2.csv',
         # 'Ship\\UP_S_SHL3.csv',
         # 'Ship\\UP_S_SHL4.csv',
-        'Ship\\UP_S_SHLX.csv',
+        # 'Ship\\UP_S_SHLX.csv',
+
+        # 'Ship\\UP_SGUN1.csv',
+        # 'Ship\\UP_SGUN2.csv',
+        # 'Ship\\UP_SGUN3.csv',
+        # 'Ship\\UP_SGUN4.csv',
+        # 'Ship\\UP_SGUNX.csv',
         # endregion
 
         # region Suit
@@ -176,12 +182,7 @@ if __name__ == '__main__':
 
                     perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
 
-                    title = row['Name']
-                    for original, replacement in TITLE_FIX:
-                        title = title.replace(original, replacement)
-
                     row.update({
-                        'Name': title,
                         'Perfection': perfection,
                     })
 

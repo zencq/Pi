@@ -10,14 +10,6 @@ from datetime import datetime
 # region const
 
 STEPS = 10000
-TITLE_FIX = [
-    ('Di-Hydrogen', 'Di-hydrogen'),  # UP_LAUN
-    ('De-Ionised', 'De-ionised'),  # UP_LAUN
-
-    ('Ph Balancer', 'pH Balancer'),  # UP_HAZ
-
-    ('Non-Causal', 'Non-causal'),  # UP_SCAN
-]
 TOTAL_SEEDS = 100000
 
 # endregion
@@ -120,6 +112,10 @@ TRANSLATION = {
     'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
 
     'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
     # endregion
 
     # region Suit
@@ -184,9 +180,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    # 'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
-    # 'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
     # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     # 'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
@@ -219,57 +212,47 @@ DATA = {
 
     'UP_LASER': {
         '1': {
-            # UP_LASER1#0 // #19 #20 // ENHANCED PHOTON MIRROR, ?
-            # UP_LASER1#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
-                ('Weapon_Laser_Mining_Speed', 5, 10),
+                ('Weapon_Laser_Mining_Speed', 6, 10),
                 ('Weapon_Laser_HeatTime', 5, 15),
-                ('Weapon_Laser_Drain', 0, 10),
-                ('Weapon_Laser_ReloadTime', 5, 10),
+                ('Weapon_Laser_Drain', 1, 10),
+                ('Weapon_Laser_ReloadTime', 6, 10),
             ],
             'number': 2,  # 0 (Weapon_Laser_Drain with 0)
         },
         '2': {
-            # UP_LASER2#0 // #17 #19 // FINE-TUNED PHOTON MIRROR, ?
-            # UP_LASER2#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
-                ('Weapon_Laser_Mining_Speed', 5, 15),
+                ('Weapon_Laser_Mining_Speed', 6, 15),
                 ('Weapon_Laser_HeatTime', 15, 20),
-                ('Weapon_Laser_Drain', 10, 15),
-                ('Weapon_Laser_ReloadTime', 10, 15),
+                ('Weapon_Laser_Drain', 11, 15),
+                ('Weapon_Laser_ReloadTime', 11, 15),
             ],
             'number': 3,  # 2
         },
         '3': {
-            # UP_LASER3#0 // #17 #19 // HIGH-ENERGY PHOTON MIRROR, ?
-            # UP_LASER3#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
-                ('Weapon_Laser_Mining_Speed', 10, 20),
-                ('Weapon_Laser_HeatTime', 20, 40),
+                ('Weapon_Laser_Mining_Speed', 11, 20),
+                ('Weapon_Laser_HeatTime', 21, 40),
                 ('Weapon_Laser_Drain', 15, 20),
-                ('Weapon_Laser_ReloadTime', 10, 15),
+                ('Weapon_Laser_ReloadTime', 11, 15),
             ],
             'number': 4,  # 3
         },
         '4': {
-            # UP_LASER4#0 // BRILLIANT PHOTON MIRROR, ?
-            # UP_LASER4#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 15, 20),
                 ('Weapon_Laser_HeatTime', 40, 50),
-                ('Weapon_Laser_Drain', 20, 20),
+                ('Weapon_Laser_Drain', 21, 21),
                 ('Weapon_Laser_ReloadTime', 15, 20),
             ],
             'number': 4,  # 4
         },
         'X': {
-            # UP_LASERX#0 // #22 #24 // COUNTERFEIT FINE-TUNED PHOTON MIRROR, ?
-            # UP_LASERX#50000 // #500?? #500?? // ??? PHOTON MIRROR, ?
             'meta': [
-                ('Weapon_Laser_Mining_Speed', 5, 20),
+                ('Weapon_Laser_Mining_Speed', 6, 20),
                 ('Weapon_Laser_HeatTime', 5, 55),
-                ('Weapon_Laser_Drain', 0, 25),
-                ('Weapon_Laser_ReloadTime', 5, 25),
+                ('Weapon_Laser_Drain', 1, 25),
+                ('Weapon_Laser_ReloadTime', 6, 25),
             ],
             'number': 3,  # 0 (Weapon_Laser_Drain with 0)
         },
@@ -277,52 +260,42 @@ DATA = {
 
     'UP_SCAN': {
         '1': {
-            # UP_SCAN1#0 // #19 #20 // WAVEFORM DETECTOR, ANALOG
-            # UP_SCAN1#50000 // #50007 #50033 // LOW-HEAT DETECTOR, OVERCLOCKED
             'meta': [
                 ('Weapon_Scan_Radius', 5, 10),
-                ('Weapon_Scan_Discovery_Creature', 1000, 2000),
-                ('Weapon_Scan_Discovery_Flora', 1000, 2000),
+                ('Weapon_Scan_Discovery_Creature', 1000, 1999),
+                ('Weapon_Scan_Discovery_Flora', 1000, 1999),
             ],
             'number': 2,  # 1
         },
         '2': {
-            # UP_SCAN2#0 // NANITE-POWERED DETECTOR, PARALLEL
-            # UP_SCAN1#50000 // CALIBRATED DETECTOR, FREQUENCY
             'meta': [
-                ('Weapon_Scan_Radius', 10, 20),
-                ('Weapon_Scan_Discovery_Creature', 2500, 5000),
-                ('Weapon_Scan_Discovery_Flora', 2500, 5000),
+                ('Weapon_Scan_Radius', 11, 20),
+                ('Weapon_Scan_Discovery_Creature', 2500, 4999),
+                ('Weapon_Scan_Discovery_Flora', 2500, 4999),
             ],
             'number': 2,  # 2
         },
         '3': {
-            # UP_SCAN3#0 // #1 #8 // FLUX DETECTOR, GENOME
-            # UP_SCAN3#50000 // #50000 #50003 // GENOME DETECTOR, FLUX
             'meta': [
-                ('Weapon_Scan_Radius', 20, 30),
-                ('Weapon_Scan_Discovery_Creature', 5000, 10000),
-                ('Weapon_Scan_Discovery_Flora', 5000, 10000),
+                ('Weapon_Scan_Radius', 21, 30),
+                ('Weapon_Scan_Discovery_Creature', 5004, 9999),
+                ('Weapon_Scan_Discovery_Flora', 5004, 9999),
             ],
             'number': 3,  # 2
         },
         '4': {
-            # UP_SCAN4#0 // HOLOGRAPHIC DETECTOR, QUANTUM
-            # UP_SCAN4#50000 // VACUUM DETECTOR, NON
             'meta': [
                 ('Weapon_Scan_Radius', 30, 40),
-                ('Weapon_Scan_Discovery_Creature', 6500, 10000),
-                ('Weapon_Scan_Discovery_Flora', 6500, 10000),
+                ('Weapon_Scan_Discovery_Creature', 6500, 9999),
+                ('Weapon_Scan_Discovery_Flora', 6500, 9999),
             ],
             'number': 3,  # 3
         },
         'X': {
-            # UP_SCANX#0 // #20 #22 // COUNTERFEIT NANITE-POWERED DETECTOR, SUSPECT
-            # UP_SCANX#50000 // #50001 #50002 // PROHIBITED CALIBRATED DETECTOR, FORBIDDEN
             'meta': [
                 ('Weapon_Scan_Radius', 5, 50),
-                ('Weapon_Scan_Discovery_Creature', 1000, 11000),
-                ('Weapon_Scan_Discovery_Flora', 1000, 11000),
+                ('Weapon_Scan_Discovery_Creature', 1000, 10999),
+                ('Weapon_Scan_Discovery_Flora', 1000, 10999),
             ],
             'number': 3,  # 1
         },
@@ -330,67 +303,57 @@ DATA = {
 
     'UP_BOLT': {
         '1': {
-            # UP_BOLT1#0 // #17 #19 // BYPASS ENERGY LATTICE
-            # UP_BOLT1#50000 // #50000 #50007 // WELL-CRAFTED ENERGY LATTICE
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
-                ('Weapon_Projectile_ReloadTime', 5, 10),
+                ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 2, 2),
-                ('Weapon_Projectile_Rate', 0, 10),
+                ('Weapon_Projectile_Rate', 1, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 0, 5),
+                ('Weapon_Projectile_BurstCooldown', 1, 5),
             ],
             'number': 3,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
         '2': {
-            # UP_BOLT2#0 // #19 #20 // OPTICAL ENERGY LATTICE, LUMINOUS
-            # UP_BOLT2#50000 // #50000 #50007 // VACUUM ENERGY LATTICE, ISOTROPIC
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
-                ('Weapon_Projectile_ReloadTime', 10, 15),
+                ('Weapon_Projectile_ReloadTime', 11, 15),
                 ('Weapon_Projectile_ClipSize', 4, 4),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 5, 10),
+                ('Weapon_Projectile_BurstCooldown', 6, 10),
             ],
             'number': 4,  # 3 (AlwaysChoose x1)
         },
         '3': {
-            # UP_BOLT3#0 // INCANDESCENT ENERGY LATTICE, PLATINUM
-            # UP_BOLT3#50000 // RADIANT ENERGY LATTICE, DEUTERIUM
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
-                ('Weapon_Projectile_ReloadTime', 10, 20),
+                ('Weapon_Projectile_ReloadTime', 11, 20),
                 ('Weapon_Projectile_ClipSize', 6, 6),
-                ('Weapon_Projectile_Rate', 10, 15),
+                ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 2),
-                ('Weapon_Projectile_BurstCooldown', 10, 15),
+                ('Weapon_Projectile_BurstCooldown', 11, 15),
             ],
             'number': 4,  # 4 (AlwaysChoose x1)
         },
         '4': {
-            # UP_BOLT4#0 // PUGNEUM ENERGY LATTICE, NEUTRINO
-            # UP_BOLT4#50000 // ANCIENT ENERGY LATTICE, STARLIGHT
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 2),
-                ('Weapon_Projectile_ReloadTime', 10, 20),
+                ('Weapon_Projectile_ReloadTime', 11, 20),
                 ('Weapon_Projectile_ClipSize', 8, 8),
-                ('Weapon_Projectile_Rate', 10, 15),
+                ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 15, 15),
             ],
             'number': 4,  # 4 (AlwaysChoose x1)
         },
         'X': {
-            # UP_BOLTX#0 // #4 #8 // COUNTERFEIT OPTICAL ENERGY LATTICE, UNLICENSED
-            # UP_BOLTX#50000 // #50001 #50002 // PROHIBITED VACUUM ENERGY LATTICE, FORBIDDEN
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 2),
-                ('Weapon_Projectile_ReloadTime', 5, 25),
+                ('Weapon_Projectile_ReloadTime', 6, 25),
                 ('Weapon_Projectile_ClipSize', 2, 10),
-                ('Weapon_Projectile_Rate', 0, 20),
+                ('Weapon_Projectile_Rate', 1, 20),
                 ('Weapon_Projectile_BurstCap', 1, 2),
-                ('Weapon_Projectile_BurstCooldown', 0, 20),
+                ('Weapon_Projectile_BurstCooldown', 1, 20),
             ],
             'number': 4,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
@@ -398,57 +361,47 @@ DATA = {
 
     'UP_GREN': {
         '1': {
-            # UP_GREN1#0 // #17 #19 // SECONDARY GAS EXPANDER, TERTIARY
-            # UP_GREN1#50000 // #50000 #50007 // BOOSTED GAS EXPANDER, EFFICIENT
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 20),
+                ('Weapon_Grenade_Damage', 10, 19),
                 ('Weapon_Grenade_Bounce', 33, 33),
-                ('Weapon_Grenade_Radius', 0, 5),
-                ('Weapon_Grenade_Speed', 100, 200),
+                ('Weapon_Grenade_Radius', 1, 5),
+                ('Weapon_Grenade_Speed', 100, 199),
             ],
             'number': 2,  # 1
         },
         '2': {
-            # UP_GREN2#0 // #19 #33 // UNSTABLE GAS EXPANDER, LINEAR
-            # UP_GREN2#50000 // #50007 #50022 // PUGNEUM GAS EXPANDER, KINETIC
             'meta': [
-                ('Weapon_Grenade_Damage', 20, 30),
+                ('Weapon_Grenade_Damage', 20, 29),
                 ('Weapon_Grenade_Bounce', 33, 66),
-                ('Weapon_Grenade_Radius', 5, 10),
-                ('Weapon_Grenade_Speed', 100, 300),
+                ('Weapon_Grenade_Radius', 6, 10),
+                ('Weapon_Grenade_Speed', 100, 299),
             ],
             'number': 3,  # 1
         },
         '3': {
-            # UP_GREN3#0 // #1 #8 // GEOMETRIC GAS EXPANDER, GYROSCOPIC
-            # UP_GREN3#50000 // #50000 #50003 // SUPERCRITICAL GAS EXPANDER, GEOMETRIC
             'meta': [
-                ('Weapon_Grenade_Damage', 30, 40),
-                ('Weapon_Grenade_Bounce', 66, 100),
+                ('Weapon_Grenade_Damage', 30, 39),
+                ('Weapon_Grenade_Bounce', 66, 99),
                 ('Weapon_Grenade_Radius', 5, 10),
-                ('Weapon_Grenade_Speed', 100, 300),
+                ('Weapon_Grenade_Speed', 100, 299),
             ],
             'number': 3,  # 2
         },
         '4': {
-            # UP_GREN4#0 // ANTIMATTER GAS EXPANDER, GRAVITATIONAL
-            # UP_GREN4#50000 // M-FIELD GAS EXPANDER, NANO
             'meta': [
-                ('Weapon_Grenade_Damage', 35, 40),
+                ('Weapon_Grenade_Damage', 35, 39),
                 ('Weapon_Grenade_Bounce', 100, 100),
-                ('Weapon_Grenade_Radius', 10, 15),
-                ('Weapon_Grenade_Speed', 200, 300),
+                ('Weapon_Grenade_Radius', 11, 15),
+                ('Weapon_Grenade_Speed', 200, 299),
             ],
             'number': 3,  # 3
         },
         'X': {
-            # UP_GRENX#0 // #20 #37 // COUNTERFEIT UNSTABLE GAS EXPANDER, SMUGGLED
-            # UP_GRENX#50000 // #50001 #50002 // PROHIBITED PUGNEUM GAS EXPANDER, FORBIDDEN
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 45),
+                ('Weapon_Grenade_Damage', 10, 44),
                 ('Weapon_Grenade_Bounce', 33, 133),
-                ('Weapon_Grenade_Radius', 0, 20),
-                ('Weapon_Grenade_Speed', 100, 400),
+                ('Weapon_Grenade_Radius', 1, 20),
+                ('Weapon_Grenade_Speed', 100, 399),
             ],
             'number': 3,  # 1
         },
@@ -456,52 +409,42 @@ DATA = {
 
     'UP_TGREN': {
         '1': {
-            # UP_TGREN1#0 // SECONDARY GAS EXPANDER, TERTIARY
-            # UP_TGREN1#50000 // BOOSTED GAS EXPANDER, EFFICIENT
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 20),
-                ('Weapon_Grenade_Radius', 10, 20),
-                ('Weapon_Grenade_Speed', 100, 200),
+                ('Weapon_Grenade_Damage', 10, 19),
+                ('Weapon_Grenade_Radius', 11, 20),
+                ('Weapon_Grenade_Speed', 100, 199),
             ],
             'number': 1,  # 1
         },
         '2': {
-            # UP_TGREN2#0 // #17 #19 // UNSTABLE GAS EXPANDER, LINEAR
-            # UP_TGREN2#50000 // #50000 #50007 // PUGNEUM GAS EXPANDER, XXXX
             'meta': [
-                ('Weapon_Grenade_Damage', 20, 30),
-                ('Weapon_Grenade_Radius', 20, 30),
-                ('Weapon_Grenade_Speed', 100, 300),
+                ('Weapon_Grenade_Damage', 20, 39),
+                ('Weapon_Grenade_Radius', 32, 30),
+                ('Weapon_Grenade_Speed', 100, 299),
             ],
             'number': 2,  # 1
         },
         '3': {
-            # UP_TGREN3#0 // #17 #19 // GEOMETRIC UNSTABLE GAS EXPANDER, LINEAR
-            # UP_TGREN3#50000 // #50000 #50007 // SUPERCRITICAL GAS EXPANDER, NANITE
             'meta': [
-                ('Weapon_Grenade_Damage', 30, 40),
+                ('Weapon_Grenade_Damage', 30, 39),
                 ('Weapon_Grenade_Radius', 30, 50),
-                ('Weapon_Grenade_Speed', 100, 300),
+                ('Weapon_Grenade_Speed', 100, 299),
             ],
             'number': 2,  # 1
         },
         '4': {
-            # UP_TGREN4#0 // ANTIMATTER GAS EXPANDER, GRAVITATIONAL
-            # UP_TGREN4#50000 // M-FIELD GAS EXPANDER, NANO
             'meta': [
-                ('Weapon_Grenade_Damage', 35, 40),
+                ('Weapon_Grenade_Damage', 35, 39),
                 ('Weapon_Grenade_Radius', 40, 50),
-                ('Weapon_Grenade_Speed', 200, 300),
+                ('Weapon_Grenade_Speed', 200, 299),
             ],
             'number': 2,  # 2
         },
         'X': {
-            # UP_TGRENX#0 // #8 #16 // UNLICENSED UNSTABLE GAS EXPANDER, SMUGGLED
-            # UP_TGRENX#50000 // #50001 #50010 // PROHIBITED PUGNEUM GAS EXPANDER, FORBIDDEN
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 45),
-                ('Weapon_Grenade_Radius', 10, 60),
-                ('Weapon_Grenade_Speed', 100, 400),
+                ('Weapon_Grenade_Damage', 10, 44),
+                ('Weapon_Grenade_Radius', 11, 60),
+                ('Weapon_Grenade_Speed', 100, 399),
             ],
             'number': 2,  # 1
         },
@@ -509,47 +452,37 @@ DATA = {
 
     'UP_RAIL': {
         '1': {
-            # UP_RAIL1#0 // REINFORCED RECYCLER, ADDITIONAL
-            # UP_RAIL1#50000 // COPPER RECYCLER, BACKUP
             'meta': [
                 ('Weapon_Laser_Damage', 2, 2),
-                ('Weapon_Laser_ChargeTime', 5, 10),
+                ('Weapon_Laser_ChargeTime', 6, 10),
             ],
             'number': 1,  # 1
         },
         '2': {
-            # UP_RAIL2#0 // #1 #8 // LIVING GLASS RECYCLER, ILLEGAL
-            # UP_RAIL2#50000 // #50000 #50007 // CADMIUM RECYCLER, SUPERCHARGED
             'meta': [
                 ('Weapon_Laser_Damage', 2, 3),
-                ('Weapon_Laser_ChargeTime', 10, 15),
+                ('Weapon_Laser_ChargeTime', 11, 15),
             ],
             'number': 2,  # 1
         },
         '3': {
-            # UP_RAIL3#0 // PLASMA RECYCLER, PARALLEL
-            # UP_RAIL3#50000 // EMERIL RECYCLER, SUPERCONDUCTIVE
             'meta': [
                 ('Weapon_Laser_Damage', 3, 3),
-                ('Weapon_Laser_ChargeTime', 10, 20),
+                ('Weapon_Laser_ChargeTime', 11, 20),
             ],
             'number': 2,  # 2
         },
         '4': {
-            # UP_RAIL4#0 // ANTIMATTER RECYCLER, VECTORISED
-            # UP_RAIL4#50000 // INDIUM RECYCLER, FAULTLESS
             'meta': [
                 ('Weapon_Laser_Damage', 4, 4),
-                ('Weapon_Laser_ChargeTime', 10, 20),
+                ('Weapon_Laser_ChargeTime', 11, 20),
             ],
             'number': 2,  # 2
         },
         'X': {
-            # UP_RAILX#0 // #4 #8 // COUNTERFEIT LIVING GLASS RECYCLER, SMUGGLED
-            # UP_RAILX#50000 // #50001 #50010 // PROHIBITED CADMIUM RECYCLER, FORBIDDEN
             'meta': [
                 ('Weapon_Laser_Damage', 2, 5),
-                ('Weapon_Laser_ChargeTime', 5, 25),
+                ('Weapon_Laser_ChargeTime', 6, 25),
             ],
             'number': 2,  # 1
         },
@@ -557,64 +490,54 @@ DATA = {
 
     'UP_SHOT': {
         '1': {
-            # UP_SHOT1#0 // #17 #19 // COPPER WIRING, REINFORCED
-            # UP_SHOT1#50000 // #50000 #50007 // GOLD-PLATED WIRING, PRESSURISED
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
-                ('Weapon_Projectile_ReloadTime', 5, 10),
+                ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
             ],
             'number': 3,  # 2 (AlwaysChoose x1)
         },
         '2': {
-            # UP_SHOT2#0 // #17 #19 // ELECTRIFIED WIRING, HIGH
-            # UP_SHOT2#50000 // #50000 #50007 // CADMIUM WIRING, HIGH
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 1),
-                ('Weapon_Projectile_ReloadTime', 10, 15),
+                ('Weapon_Projectile_ReloadTime', 11, 15),
                 ('Weapon_Projectile_ClipSize', 8, 8),
-                ('Weapon_Projectile_Rate', 0, 5),
+                ('Weapon_Projectile_Rate', 1, 5),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 5, 10),
+                ('Weapon_Projectile_BurstCooldown', 6, 10),
             ],
             'number': 4,  # 3 (AlwaysChoose x1)
         },
         '3': {
-            # UP_SHOT3#0 // KORVAX-MADE WIRING, HIGH-ENERGY
-            # UP_SHOT3#50000 // EMERIL WIRING, KORVAX
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 2),
                 ('Weapon_Projectile_ReloadTime', 15, 20),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 10, 15),
+                ('Weapon_Projectile_BurstCooldown', 11, 15),
             ],
             'number': 4,  # 4 (AlwaysChoose x1)
         },
         '4': {
-            # UP_SHOT4#0 // SOLID GOLD WIRING, PERFECT
-            # UP_SHOT4#50000 // INDIUM WIRING, FLAWLESS
             'meta': [
                 ('Weapon_Projectile_Damage', 2, 3),
                 ('Weapon_Projectile_ReloadTime', 20, 25),
                 ('Weapon_Projectile_ClipSize', 8, 8),
-                ('Weapon_Projectile_Rate', 10, 15),
+                ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 15, 20),
+                ('Weapon_Projectile_BurstCooldown', 16, 20),
             ],
             'number': 4,  # 4 (AlwaysChoose x1)
         },
         'X': {
-            # UP_SHOTX#0 // #4 #8 // COUNTERFEIT ELECTRIFIED WIRING, SMUGGLED
-            # UP_SHOTX#50000 // #50001 #500002 // PROHIBITED CADMIUM WIRING, FORBIDDEN
             'meta': [
                 ('Weapon_Projectile_Damage', 1, 3),
-                ('Weapon_Projectile_ReloadTime', 5, 30),
+                ('Weapon_Projectile_ReloadTime', 6, 30),
                 ('Weapon_Projectile_ClipSize', 8, 8),
-                ('Weapon_Projectile_Rate', 0, 20),
+                ('Weapon_Projectile_Rate', 1, 20),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 5, 25),
+                ('Weapon_Projectile_BurstCooldown', 6, 25),
             ],
             'number': 4,  # 2 (AlwaysChoose x1)
         },
@@ -622,55 +545,45 @@ DATA = {
 
     'UP_SMG': {
         '1': {
-            # UP_SMG1#0 // #17 #19 // INFRARED SOLIDIFIER, ION
-            # UP_SMG1#50000 // #50000 #500007 // PLASMA SOLIDIFIER, BEAM
             'meta': [
                 ('Weapon_Projectile_Damage', 3, 3),
-                ('Weapon_Projectile_Rate', 0, 10),
+                ('Weapon_Projectile_Rate', 1, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 2,  # 1
         },
         '2': {
-            # UP_SMG2#0 // #17 #20 // OVERLOADED SOLIDIFIER, WAVEFORM
-            # UP_SMG2#50000 // #50000 #50020 // SURGE SOLIDIFIER, ATOMIC
             'meta': [
                 ('Weapon_Projectile_Damage', 3, 6),
-                ('Weapon_Projectile_Rate', 0, 10),
-                ('Weapon_Projectile_ReloadTime', 0, 10),
+                ('Weapon_Projectile_Rate', 1, 10),
+                ('Weapon_Projectile_ReloadTime', 1, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 3,  # 1
         },
         '3': {
-            # UP_SMG3#0 // #17 #19 // MASS SOLIDIFIER, SUPERHEATED
-            # UP_SMG3#50000 // #50000 #50020 // HEAVY METAL SOLIDIFIER, NEUTRON
             'meta': [
                 ('Weapon_Projectile_Damage', 3, 9),
                 ('Weapon_Projectile_Rate', 5, 10),
-                ('Weapon_Projectile_ReloadTime', 0, 10),
+                ('Weapon_Projectile_ReloadTime', 1, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 4,  # 3
         },
         '4': {
-            # UP_SMG4#0 // X-RAY SOLIDIFIER, COSMIC
-            # UP_SMG4#50000 // GAMMA RAY SOLIDIFIER, POSITRON
             'meta': [
                 ('Weapon_Projectile_Damage', 6, 9),
-                ('Weapon_Projectile_Rate', 10, 15),
-                ('Weapon_Projectile_ReloadTime', 5, 10),
+                ('Weapon_Projectile_Rate', 11, 15),
+                ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 4,  # 4
         },
         'X': {
-            # UP_SMGX#0 // #20 #37 // COUNTERFEIT OVERLOADED SOLIDIFIER, SUSPECT
-            # UP_SMGX#50000 // #50001 #50002 // PROHIBITED SURGE SOLIDIFIER, FORBIDDEN
             'meta': [
                 ('Weapon_Projectile_Damage', 3, 13),
-                ('Weapon_Projectile_Rate', 0, 20),
-                ('Weapon_Projectile_ReloadTime', 0, 15),
+                ('Weapon_Projectile_Rate', 1, 20),
+                ('Weapon_Projectile_ReloadTime', 1, 15),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 4,  # 1
@@ -684,34 +597,30 @@ DATA = {
 
     'UP_ENGY': {
         '1': {
-            # UP_ENGY1#0 // #17 #31 // GAS PURIFIER, NITROGEN
             'meta': [
-                ('Suit_Energy', 5, 20),
-                ('Suit_Energy_Regen', 0, 10),
+                ('Suit_Energy', 5, 19),
+                ('Suit_Energy_Regen', 1, 10),
             ],
             'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
         '2': {
-            # UP_ENGY2#0 // #0 #1 // HIGH-VOLUME PURIFIER, MICROBE
             'meta': [
-                ('Suit_Energy', 20, 50),
-                ('Suit_Energy_Regen', 0, 25),
+                ('Suit_Energy', 20, 49),
+                ('Suit_Energy_Regen', 1, 25),
             ],
             'number': 2,  # 1 (Suit_Energy_Regen with 0)
         },
         '3': {
-            # UP_ENGY3#0 // T-GEL PURIFIER, VACUUM
             'meta': [
-                ('Suit_Energy', 50, 100),
+                ('Suit_Energy', 50, 99),
                 ('Suit_Energy_Regen', 25, 50),
             ],
             'number': 2,  # 2
         },
         'X': {
-            # UP_ENGYX#0 // #4 #8 // COUNTERFEIT GAS PURIFIER, RISKY
             'meta': [
-                ('Suit_Energy', 5, 110),
-                ('Suit_Energy_Regen', 0, 75),
+                ('Suit_Energy', 5, 109),
+                ('Suit_Energy_Regen', 1, 75),
             ],
             'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
@@ -719,7 +628,6 @@ DATA = {
 
     'UP_HAZ': {
         'X': {
-            # UP_HAZX#0 // COUNTERFEIT CRYOSTATIC AIR PURIFIER, UNLICENSED
             'meta': [
                  ('Suit_Protection_ColdDrain', 1, 10),
                  ('Suit_Protection_HeatDrain', 1, 10),
@@ -732,59 +640,55 @@ DATA = {
 
     'UP_JET': {
         '1': {
-            # UP_JET1#0 // #17 #19 // AUGMENTED JETS, UPGRADED
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 150),
-                ('Suit_Stamina_Strength', 10, 20),
-                ('Suit_Stamina_Recovery', 0, 10),
-                ('Suit_Jetpack_Drain', 5, 10),
-                ('Suit_Jetpack_Refill', 0, 5),
+                ('Suit_Jetpack_Tank', 100, 149),
+                ('Suit_Stamina_Strength', 10, 19),
+                ('Suit_Stamina_Recovery', 1, 10),
+                ('Suit_Jetpack_Drain', 6, 10),
+                ('Suit_Jetpack_Refill', 1, 5),
             ],
             'number': 4,  # 1 (AlwaysChoose x1 but Suit_Stamina_Recovery and Suit_Jetpack_Refill with 0)
         },
         '2': {
-           'meta': [
-                ('Suit_Jetpack_Tank', 100, 150),
-                ('Suit_Stamina_Strength', 10, 30),
-                ('Suit_Stamina_Recovery', 10, 20),
-                ('Suit_Jetpack_Drain', 10, 15),
-                ('Suit_Jetpack_Ignition', 0, 5),
+            'meta': [
+                ('Suit_Jetpack_Tank', 100, 149),
+                ('Suit_Stamina_Strength', 10, 29),
+                ('Suit_Stamina_Recovery', 11, 20),
+                ('Suit_Jetpack_Drain', 11, 15),
+                ('Suit_Jetpack_Ignition', 1, 5),
                 ('Suit_Jetpack_Refill', 5, 10),
             ],
             'number': 4,  # 2 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
         },
         '3': {
-            # UP_JET3#0 // LIQUID FUEL JETS, MULTI
             'meta': [
-                ('Suit_Jetpack_Tank', 150, 200),
-                ('Suit_Stamina_Strength', 20, 50),
-                ('Suit_Stamina_Recovery', 20, 30),
-                ('Suit_Jetpack_Drain', 10, 20),
-                ('Suit_Jetpack_Ignition', 0, 5),
-                ('Suit_Jetpack_Refill', 10, 15),
+                ('Suit_Jetpack_Tank', 150, 199),
+                ('Suit_Stamina_Strength', 20, 49),
+                ('Suit_Stamina_Recovery', 21, 30),
+                ('Suit_Jetpack_Drain', 11, 20),
+                ('Suit_Jetpack_Ignition', 1, 5),
+                ('Suit_Jetpack_Refill', 11, 15),
             ],
             'number': 4,  # 3 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
         },
         '4': {
-            # UP_JET4#0 // ANTIMATTER JETS, PLUTONIUM
             'meta': [
-                ('Suit_Jetpack_Tank', 200, 225),
-                ('Suit_Stamina_Strength', 40, 50),
+                ('Suit_Jetpack_Tank', 200, 224),
+                ('Suit_Stamina_Strength', 40, 49),
                 ('Suit_Stamina_Recovery', 30, 50),
-                ('Suit_Jetpack_Drain', 10, 20),
+                ('Suit_Jetpack_Drain', 11, 20),
                 ('Suit_Jetpack_Ignition', 5, 10),
                 ('Suit_Jetpack_Refill', 15, 25),
             ],
             'number': 4,  # 4 (AlwaysChoose x2)
         },
         'X': {
-            # UP_JETX#0 // COUNTERFEIT URANIUM JETS, SMUGGLED
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 230),
-                ('Suit_Stamina_Strength', 10, 60),
-                ('Suit_Stamina_Recovery', 0, 60),
-                ('Suit_Jetpack_Drain', 5, 25),
-                ('Suit_Jetpack_Ignition', 0, 15),
+                ('Suit_Jetpack_Tank', 100, 229),
+                ('Suit_Stamina_Strength', 10, 59),
+                ('Suit_Stamina_Recovery', 1, 60),
+                ('Suit_Jetpack_Drain', 6, 25),
+                ('Suit_Jetpack_Ignition', 1, 15),
                 ('Suit_Jetpack_Refill', 5, 30),
             ],
             'number': 4,  # 3 (AlwaysChoose x2 but Suit_Jetpack_Ignition with 0)
@@ -793,7 +697,6 @@ DATA = {
 
     'UP_SHLD': {
         '1': {
-            # UP_SHLD1#0 // #17 #19 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
             'meta': [
                 ('Suit_Armour_Shield_Strength', 90, 95),
                 ('Suit_Armour_Health', 33, 33),
@@ -801,7 +704,6 @@ DATA = {
             'number': 2,  # 1
         },
         '2': {
-            # UP_SHLD2#0 // #1 #8 // LIGHTNING GRAFTS, VECTOR
             'meta': [
                 ('Suit_Armour_Shield_Strength', 85, 90),
                 ('Suit_Armour_Health', 33, 33),
@@ -809,15 +711,13 @@ DATA = {
             'number': 2,  # 1
         },
         '3': {
-            # UP_SHLD3#0 // M-FIELD GRAFTS, INDUCTION
             'meta': [
-                ('Suit_Armour_Shield_Strength', 80, 90),
+                ('Suit_Armour_Shield_Strength', 80, 89),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
         },
         '4': {
-            # UP_SHLD4#0 // NANITE GRAFTS, HARMONIC
             'meta': [
                 ('Suit_Armour_Shield_Strength', 80, 90),
                 ('Suit_Armour_Health', 33, 33),
@@ -825,7 +725,6 @@ DATA = {
             'number': 2,  # 2
         },
         'X': {
-            # UP_SHLDX#0 // #4 #8 // COUNTERFEIT LIGHTNING GRAFTS, RISKY
             'meta': [
                 ('Suit_Armour_Shield_Strength', 75, 95),
                 ('Suit_Armour_Health', 33, 33),
@@ -837,21 +736,18 @@ DATA = {
     # ! TODO values not displayed (as of 3.4)
     'UP_UNW': {
         '1': {
-            # UP_UNW1#0 // SECONDARY GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 60, 85),
             ],
             'number': 1,  # 1
         },
         '2': {
-            # UP_UNW2#0 // EXTREME GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 75, 105),
             ],
             'number': 1,  # 1
         },
         '3': {
-            # UP_UNW3#0 // DEEP WATER GAS PRESSURISER, ?
             'meta': [
                 ('Suit_Underwater', 95, 105),
             ],
@@ -862,7 +758,6 @@ DATA = {
     # ! TODO values not displayed (as of 3.4)
     'UP_RAD': {
         '1': {
-            # UP_RAD1#0 // EFFECTIVE SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 180, 265),
                 ('Suit_DamageReduce_Radiation', 0, 5),
@@ -870,7 +765,6 @@ DATA = {
             'number': 2,  # 2
         },
         '2': {
-            # UP_RAD2#0 // POSITRON SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 200, 265),
                 ('Suit_DamageReduce_Radiation', 5, 15),
@@ -878,7 +772,6 @@ DATA = {
             'number': 2,  # 2
         },
         '3': {
-            # UP_RAD3#0 // NON-LINEAR SIEVERT BARRIER, ?
             'meta': [
                 ('Suit_Protection_Radiation', 220, 265),
                 ('Suit_DamageReduce_Radiation', 10, 20),
@@ -890,7 +783,6 @@ DATA = {
     # ! TODO values not displayed (as of 3.4)
     'UP_TOX': {
         '1': {
-            # UP_TOX1#0 // EFFICIENT POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 180, 265),
                 ('Suit_DamageReduce_Toxic', 0, 5),
@@ -898,7 +790,6 @@ DATA = {
             'number': 2,  # 2
         },
         '2': {
-            # UP_TOX2#0 // BIOLOGICAL POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 200, 265),
                 ('Suit_DamageReduce_Toxic', 5, 15),
@@ -906,7 +797,6 @@ DATA = {
             'number': 2,  # 2
         },
         '3': {
-            # UP_TOX3#0 // VERMIFORM POISON REMOVER, ?
             'meta': [
                 ('Suit_Protection_Toxic', 220, 265),
                 ('Suit_DamageReduce_Toxic', 10, 20),
@@ -917,7 +807,6 @@ DATA = {
     # ! TODO values not displayed (as of 3.4)
     'UP_COLD': {
         '1': {
-            # UP_COLD1#0 // EFFICIENT CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (180, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (0, 5, extract_int_percent)),
@@ -925,7 +814,6 @@ DATA = {
             'number': 2,  # 2
         },
         '2': {
-            # UP_COLD2#0 // NITROGEN-BASED CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (200, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (5, 15, extract_int_percent)),
@@ -933,7 +821,6 @@ DATA = {
             'number': 2,  # 2
         },
         '3': {
-            # UP_COLD3#0 // SOLVENT-FUELED CONVECTION UNIT, ?
             'meta': [
                 ('Suit_Protection_Cold', (220, 265, extract_int_percent)),
                 ('Suit_DamageReduce_Cold', (10, 20, extract_int_percent)),
@@ -945,7 +832,6 @@ DATA = {
     # ! TODO values not displayed (as of 3.4)
     'UP_HOT': {
         '1': {
-            # UP_HOT1#0 // CERAMIC FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 180, 265),
                 ('Suit_DamageReduce_Heat', 0, 5),
@@ -953,7 +839,6 @@ DATA = {
             'number': 2,  # 2
         },
         '2': {
-            # UP_HOT2#0 // GOLD-PLATED FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 200, 265),
                 ('Suit_DamageReduce_Heat', 5, 15),
@@ -961,7 +846,6 @@ DATA = {
             'number': 2,  # 2
         },
         '3': {
-            # UP_HOT3#0 // ABLATIVE FLAME CYCLER, ?
             'meta': [
                 ('Suit_Protection_Heat', 220, 265),
                 ('Suit_DamageReduce_Heat', 10, 20),
@@ -977,30 +861,24 @@ DATA = {
 
     'UP_PULSE': {
         '1': {
-            # UP_PULSE1#0 // #17 #33 // ALTERNATE MAGNETIC FAN, BACKUP
-            # UP_PULSE1#50000 // #50000 #50007 // EFFICIENT MAGNETIC FAN, SECONDARY
             'meta': [
-                ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
-                ('Ship_Boost', 0, 5),
-                ('Ship_BoostManeuverability', 0, 5),
+                ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 10),
+                ('Ship_Boost', 1, 5),
+                ('Ship_BoostManeuverability', 1, 5),
                 # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
             'number': 2,  # 1
         },
         '2': {
-            # UP_PULSE2#0 // HEATED MAGNETIC FAN, UPGRADED
-            # UP_PULSE2#50000 // POLISHED MAGNETIC FAN, REWIRED
             'meta': [
-                ('Ship_PulseDrive_MiniJumpFuelSpending', 10, 15),
+                ('Ship_PulseDrive_MiniJumpFuelSpending', 11, 15),
                 ('Ship_Boost', 5, 10),
-                ('Ship_BoostManeuverability', 0, 10),
+                ('Ship_BoostManeuverability', 1, 10),
                 # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
             'number': 2,  # 2
         },
         '3': {
-            # UP_PULSE3#0 // #17 #19 // AUGMENTED MAGNETIC FAN, GYROSCOPIC
-            # UP_PULSE3#50000 // #50000 #50007 // EXTREME MAGNETIC FAN, GYROSCOPIC
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 15, 20),
                 ('Ship_Boost', 5, 15),
@@ -1010,23 +888,19 @@ DATA = {
             'number': 3,  # 2
         },
         '4': {
-            # UP_PULSE4#0 // HYPERSONIC MAGNETIC FAN, HARMONIC
-            # UP_PULSE4#50000 // FLAWLESS MAGNETIC FAN, GLORIOUS
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 20, 20),
-                ('Ship_Boost', 10, 15),
+                ('Ship_Boost', 11, 15),
                 ('Ship_BoostManeuverability', 5, 12),
                 # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
             'number': 3,  # 3
         },
         'X': {
-            # UP_PULSEX#0 // #22 #24 // COUNTERFEIT HEATED MAGNETIC FAN, SMUGGLED
-            # UP_PULSEX#50000 // #50001 #50006 // PROHIBITED POLISHED MAGNETIC FAN, FORBIDDEN
             'meta': [
-                ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 25),
-                ('Ship_Boost', 0, 20),
-                ('Ship_BoostManeuverability', 0, 14),
+                ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 25),
+                ('Ship_Boost', 1, 20),
+                ('Ship_BoostManeuverability', 1, 14),
                 # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
             'number': 3,  # 1
@@ -1035,27 +909,21 @@ DATA = {
 
     'UP_LAUN': {
         '1': {
-            # UP_LAUN1#0 // #0 #19 // UPGRADED GRAVITY HARMONISER, DYNAMIC
-            # UP_LAUN1#50000 // #50000 #50002 // EFFICIENT GRAVITY HARMONISER, SECONDARY
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 5, 10),
-                ('Ship_Boost', 0, 1),
+                ('Ship_Launcher_TakeOffCost', 6, 10),
+                ('Ship_Boost', 1, 1),
             ],
             'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
         '2': {
-            # UP_LAUN2#0 // AUTOMATIC GRAVITY HARMONISER, UPGRADED
-            # UP_LAUN2#50000 // INVERTED GRAVITY HARMONISER, REWIRED
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 10, 15),
+                ('Ship_Launcher_TakeOffCost', 11, 15),
                 ('Ship_Boost', 2, 5),
             ],
             'number': 2,  # 2 (AlwaysChoose x1)
             'description': 'A substantial upgrade to the Launch Thruster, offering significant improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '3': {
-            # UP_LAUN3#0 // AUGMENTED GRAVITY HARMONISER, PHOTONIC
-            # UP_LAUN3#50000 // HIGH SPEED GRAVITY HARMONISER, CATALYTIC
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 15, 20),
                 ('Ship_Boost', 5, 8),
@@ -1064,21 +932,17 @@ DATA = {
             'description': 'A powerful upgrade module for the Launch Thruster, with the potential to drastically improve <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '4': {
-            # UP_LAUN4#0 // DE-IONISED GRAVITY HARMONISER, QUANTUM
-            # UP_LAUN4#50000 // FLAWLESS GRAVITY HARMONISER, BARYONIC
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 20, 20),
-                ('Ship_Boost', 8, 10),
+                ('Ship_Boost', 9, 10),
             ],
             'number': 2,  # 2 (AlwaysChoose x1)
             'description': 'An almost total rework of the Launch Thruster, this upgrade module brings unparalleled improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         'X': {
-            # UP_LAUNX#0 // #0 #30 // COUNTERFEIT AUTOMATIC GRAVITY HARMONISER, SMUGGLED
-            # UP_LAUNX#50000 // #50000 #50092 // PROHIBITED INVERTED GRAVITY HARMONISER, UNLICENSED
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 5, 25),
-                ('Ship_Boost', 0, 10),
+                ('Ship_Launcher_TakeOffCost', 6, 25),
+                ('Ship_Boost', 1, 10),
             ],
             'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
@@ -1086,8 +950,6 @@ DATA = {
 
     'UP_HYP': {
         '1': {
-            # UP_HYP1#0 // ALTERNATE PRESSURE INVERTER, BACKUP
-            # UP_HYP1#50000 // EFFICIENT PRESSURE INVERTER, SECONDARY
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
@@ -1095,8 +957,6 @@ DATA = {
             'description': 'Upgrades the Hyperdrive, improving <STELLAR>Hyperdrive Range<>.',
         },
         '2': {
-            # UP_HYP2#0 // HEATED PRESSURE INVERTER, UPGRADED
-            # UP_HYP2#50000 // POLISHED PRESSURE INVERTER, REWIRED
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
@@ -1104,8 +964,6 @@ DATA = {
             'description': 'A substantial upgrade to the Hyperdrive, offering significant improvements to <STELLAR>Hyperdrive Range<>.',
         },
         '3': {
-            # UP_HYP3#0 // AUGMENTED PRESSURE INVERTER, SOLID
-            # UP_HYP3#50000 // EXTREME PRESSURE INVERTER, GYROSCOPIC
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 150, 200),
                 ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
@@ -1113,8 +971,6 @@ DATA = {
             'number': 2,  # 2
         },
         '4': {
-            # UP_HYP4#0 // HYPERSONIC PRESSURE INVERTER, HARMONIC
-            # UP_HYP4#50000 // FLAWLESS PRESSURE INVERTER, GLORIOUS
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 200, 250),
                 ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
@@ -1122,8 +978,6 @@ DATA = {
             'number': 2,  # 2
         },
         'X': {
-            # UP_HYPX#0 // #4 #8 // COUNTERFEIT HEATED PRESSURE INVERTER, SMUGGLED
-            # UP_HYPX#50000 // #50001 #50006 // PROHIBITED POLISHED PRESSURE INVERTER, FORBIDDEN
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 300),
                 ('Ship_Hyperdrive_JumpsPerCell', 100, 100),
@@ -1134,8 +988,6 @@ DATA = {
 
     'UP_S_SHL': {
         '1': {
-            # UP_S_SHL1#0 // HIGH-FREQUENCY GRAFTS, SUPERCHARGED
-            # UP_S_SHL1#50000 // SECONDARY GRAFTS, SODIUM
             'meta': [
                 ('Ship_Armour_Shield_Strength', 7, 15),
             ],
@@ -1143,8 +995,6 @@ DATA = {
             'description': 'Upgrades the Deflector Shield, improving <STELLAR>Shield Strength<>.',
         },
         '2': {
-            # UP_S_SHL2#0 // LIGHTNING GRAFTS, VECTOR
-            # UP_S_SHL2#50000 // URANIUM GRAFTS, BIONIC
             'meta': [
                 ('Ship_Armour_Shield_Strength', 7, 15),
             ],
@@ -1152,8 +1002,6 @@ DATA = {
             'description': 'A substantial upgrade to the Deflector Shield, offering significant improvements to <STELLAR>Shield Strength<>.',
         },
         '3': {
-            # UP_S_SHL3#0 // M-FIELD GRAFTS, INDUCTION
-            # UP_S_SHL3#50000 // NUCLEAR GRAFTS, NEUTRON
             'meta': [
                 ('Ship_Armour_Shield_Strength', 15, 30),
             ],
@@ -1161,8 +1009,6 @@ DATA = {
             'description': 'A powerful upgrade module for the Deflector Shield, drastically improving <STELLAR>Shield Strength<>.',
         },
         '4': {
-            # UP_S_SHL4#0 // NANITE GRAFTS, HARMONIC
-            # UP_S_SHL4#50000 // LORENTZ GRAFTS, LUMEN
             'meta': [
                 ('Ship_Armour_Shield_Strength', 30, 30),
             ],
@@ -1171,8 +1017,6 @@ DATA = {
             'value': '+30%',
         },
         'X': {
-            # UP_S_SHLX#0 // COUNTERFEIT LIGHTNING GRAFTS, UNLICENSED
-            # UP_S_SHLX#50000 // PROHIBITED URANIUM GRAFTS, FORBIDDEN
             'meta': [
                 ('Ship_Armour_Shield_Strength', 7, 38),
             ],
@@ -1181,48 +1025,44 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_SGUN': {
         '1': {
-            # TODO verify values
-            # UP_SGUN1#0 // # # // ??? ABC, ???
-            # UP_SGUN1#50000 // # # // ??? ABC, ???
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 8, 16),
-                ('Ship_Weapons_Guns_Rate', 0.1, 1.1),
-                ('Ship_Weapons_Guns_HeatTime', 0.1, 1.0),
+                ('Ship_Weapons_Guns_Damage', 2, 4),
+                ('Ship_Weapons_Guns_Rate', 1, 2),
+                ('Ship_Weapons_Guns_HeatTime', 1, 1),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 12, 20),
-                ('Ship_Weapons_Guns_Rate', 0.6, 1.6),
-                ('Ship_Weapons_Guns_HeatTime', 1.0, 2.0),
+                ('Ship_Weapons_Guns_Damage', 3, 6),
+                ('Ship_Weapons_Guns_Rate', 1, 2),
+                ('Ship_Weapons_Guns_HeatTime', 1, 2),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 16, 24),
-                ('Ship_Weapons_Guns_Rate', 1.6, 2.1),
-                ('Ship_Weapons_Guns_HeatTime', 2.0, 3.0),
+                ('Ship_Weapons_Guns_Damage', 5, 7),
+                ('Ship_Weapons_Guns_Rate', 2, 3),
+                ('Ship_Weapons_Guns_HeatTime', 2, 3),
             ],
             'number': 3,  # 2
         },
         '4': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 20, 28),
-                ('Ship_Weapons_Guns_Rate', 2.1, 2.1),
-                ('Ship_Weapons_Guns_HeatTime', 3.0, 3.0),
+                ('Ship_Weapons_Guns_Damage', 6, 8),
+                ('Ship_Weapons_Guns_Rate', 3, 3),
+                ('Ship_Weapons_Guns_HeatTime', 3, 3),
             ],
             'number': 3,  # 3
         },
         'X': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 8, 32),
-                ('Ship_Weapons_Guns_Rate', 0.1, 2.6),
-                ('Ship_Weapons_Guns_HeatTime', 0.1, 3.5),
+                ('Ship_Weapons_Guns_Damage', 2, 9),
+                ('Ship_Weapons_Guns_Rate', 1, 3),
+                ('Ship_Weapons_Guns_HeatTime', 1, 4),
             ],
             'number': 3,  # 1
         },
@@ -2234,10 +2074,6 @@ if __name__ == '__main__':
                 perfection.append(p)
 
             perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
-
-            title = title.title()
-            for original, replacement in TITLE_FIX:
-                title = title.replace(original, replacement)
 
             row.update({
                 'Name': title,
