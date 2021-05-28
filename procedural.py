@@ -102,6 +102,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 
 TRANSLATION = {
     # region Ship
+
     'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
     'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
     'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
@@ -116,9 +117,14 @@ TRANSLATION = {
     'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
     'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
     # endregion
 
     # region Suit
+
     'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
     'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
 
@@ -152,9 +158,11 @@ TRANSLATION = {
     'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
 
     'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
+
     # endregion
 
     # region Weapon
+
     'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
@@ -177,11 +185,10 @@ TRANSLATION = {
     'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
     'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
     'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
+
     # endregion
 
     # region TODO
-    # 'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-    # 'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     # 'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
     # 'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
     # 'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
@@ -1068,40 +1075,39 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_SLASR': {
         '1': {
             'meta': [
-                ('Ship_Weapons_Lasers_HeatTime', 10, 35),
-                ('Ship_Weapons_Lasers_Damage', 30, 40),
+                ('Ship_Weapons_Lasers_HeatTime', 11, 35),
+                ('Ship_Weapons_Lasers_Damage', 12, 15),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
-                ('Ship_Weapons_Lasers_HeatTime', 35, 55),
-                ('Ship_Weapons_Lasers_Damage', 40, 50),
+                ('Ship_Weapons_Lasers_HeatTime', 36, 55),
+                ('Ship_Weapons_Lasers_Damage', 16, 19),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
-                ('Ship_Weapons_Lasers_Damage', 50, 60),
+                ('Ship_Weapons_Lasers_Damage', 20, 23),
             ],
             'number': 2,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
-                ('Ship_Weapons_Lasers_Damage', 60, 70),
+                ('Ship_Weapons_Lasers_Damage', 24, 27),
             ],
             'number': 2,  # 2
         },
         'X': {
             'meta': [
-                ('Ship_Weapons_Lasers_HeatTime', 10, 100),
-                ('Ship_Weapons_Lasers_Damage', 30, 80),
+                ('Ship_Weapons_Lasers_HeatTime', 11, 100),
+                ('Ship_Weapons_Lasers_Damage', 12, 31),
             ],
             'number': 2,  # 1
         },
@@ -1111,7 +1117,7 @@ DATA = {
     'UP_SSHOT': {
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 6),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 1, 5),
             ],

@@ -26,6 +26,7 @@ def init_meta(data):
 if __name__ == '__main__':
     f_list = [
         # region Ship
+
         # 'Ship\\UP_HYP1.csv',
         # 'Ship\\UP_HYP2.csv',
         # 'Ship\\UP_HYP3.csv',
@@ -55,9 +56,17 @@ if __name__ == '__main__':
         # 'Ship\\UP_SGUN3.csv',
         # 'Ship\\UP_SGUN4.csv',
         # 'Ship\\UP_SGUNX.csv',
+
+        # 'Ship\\UP_SLASR1.csv',
+        # 'Ship\\UP_SLASR2.csv',
+        # 'Ship\\UP_SLASR3.csv',
+        # 'Ship\\UP_SLASR4.csv',
+        # 'Ship\\UP_SLASRX.csv',
+
         # endregion
 
         # region Suit
+
         # 'Suit\\UP_ENGY1.csv',
         # 'Suit\\UP_ENGY2.csv',
         # 'Suit\\UP_ENGY3.csv',
@@ -76,9 +85,11 @@ if __name__ == '__main__':
         # 'Suit\\UP_SHLD3.csv',
         # 'Suit\\UP_SHLD4.csv',
         # 'Suit\\UP_SHLDX.csv',
+
         # endregion
 
         # region Weapon
+
         # 'Weapon\\UP_BOLT1.csv',
         # 'Weapon\\UP_BOLT2.csv',
         # 'Weapon\\UP_BOLT3.csv',
@@ -126,6 +137,7 @@ if __name__ == '__main__':
         # 'Weapon\\UP_TGREN3.csv',
         # 'Weapon\\UP_TGREN4.csv',
         # 'Weapon\\UP_TGRENX.csv',
+
         # endregion
     ]
     round_digits = 3
@@ -135,7 +147,7 @@ if __name__ == '__main__':
     for f_original in f_list:
         start = datetime.now()
 
-        f_backup = f'{f_original[:-4]}.bak.csv'
+        f_backup = f'{f_original[:-4]}.tmp.csv'
 
         shutil.copyfile(f_original, f_backup)
 
