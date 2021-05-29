@@ -1021,7 +1021,7 @@ DATA = {
             ],
             'number': 1,  # 1
             'description': 'An almost total rework of the Deflector Shield, this upgrade module brings unparalleled improvements to <STELLAR>Shield Strength<>.',
-            'value': '+30%',
+            'value': ['+30%'],
         },
         'X': {
             'meta': [
@@ -1113,11 +1113,10 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_SSHOT': {
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 1, 1),
+                ('Ship_Weapons_Guns_Damage', 1, 2),
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 1, 5),
             ],
@@ -1125,31 +1124,33 @@ DATA = {
         },
         '2': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 4, 10),
-                ('Ship_Weapons_Guns_Rate', 10, 13.5),
+                ('Ship_Weapons_Guns_Damage', 1, 3),
+                ('Ship_Weapons_Guns_Rate', 11, 14),
                 ('Ship_Weapons_Guns_HeatTime', 5, 10),
             ],
             'number': 3,  # 2
         },
         '3': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 8, 10),
-                ('Ship_Weapons_Guns_Rate', 13.5, 15),
-                ('Ship_Weapons_Guns_HeatTime', 10, 15),
+                ('Ship_Weapons_Guns_Damage', 2, 3),
+                ('Ship_Weapons_Guns_Rate', 14, 15),
+                ('Ship_Weapons_Guns_HeatTime', 11, 15),
             ],
             'number': 3,  # 3
         },
         '4': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 10, 10),
+                ('Ship_Weapons_Guns_Damage', 3, 3),
                 ('Ship_Weapons_Guns_Rate', 15, 15),
                 ('Ship_Weapons_Guns_HeatTime', 15, 15),
             ],
             'number': 3,  # 3
+            'description': 'An almost total rework of the Positron Ejector, this upgrade module brings unparalleled improvements to <STELLAR>Damage<>, <STELLAR>Fire Rate<> and <STELLAR>Heat Dispersion<>.',
+            'value': ['+3%', '+15%', '+15%'],
         },
         'X': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 12),
+                ('Ship_Weapons_Guns_Damage', 1, 4),
                 ('Ship_Weapons_Guns_Rate', 5, 20),
                 ('Ship_Weapons_Guns_HeatTime', 1, 20),
             ],
@@ -1161,12 +1162,13 @@ DATA = {
     'UP_SMINI': {
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 6),
+                ('Ship_Weapons_Guns_Damage', 1, 3),
                 ('Ship_Weapons_Guns_Rate', 1, 5),
                 ('Ship_Weapons_Guns_HeatTime', 1, 3),
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 4, 10),
@@ -1175,6 +1177,7 @@ DATA = {
             ],
             'number': 3,  # 2
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 8, 12),
@@ -1183,6 +1186,7 @@ DATA = {
             ],
             'number': 3,  #3
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 10, 12),
@@ -1191,6 +1195,7 @@ DATA = {
             ],
             'number': 3,  # 3
         },
+        # TODO verify values
         'X': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 2, 14),
@@ -2006,7 +2011,7 @@ if __name__ == '__main__':
     pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
     round_digits = 3
     static_description = tech_stats['description'] if 'description' in tech_stats else ''
-    static_value = tech_stats['value'] if 'value' in tech_stats else ''
+    static_value = tech_stats['value'] if 'value' in tech_stats else []
 
     begin = int(pm.read_string(addr_off, byte=16))
     count = int(TOTAL_SEEDS / iteration_necessary)
@@ -2033,7 +2038,7 @@ if __name__ == '__main__':
                 description = static_description or pm.read_string(addr_description, byte=512)
                 title = pm.read_string(addr_title, byte=64)
 
-                values = [static_value] if static_value else [pm.read_string(a) for a in addr_stats]
+                values = static_value or [pm.read_string(a) for a in addr_stats]
 
                 # First check that description and title are loaded.
                 if (
