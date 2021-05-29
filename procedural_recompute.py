@@ -69,6 +69,12 @@ if __name__ == '__main__':
         # 'Ship\\UP_SSHOT4.csv',
         # 'Ship\\UP_SSHOTX.csv',
 
+        # 'Ship\\UP_SMINI1.csv',
+        # 'Ship\\UP_SMINI2.csv',
+        # 'Ship\\UP_SMINI3.csv',
+        # 'Ship\\UP_SMINI4.csv',
+        # 'Ship\\UP_SMINIX.csv',
+
         # endregion
 
         # region Suit
