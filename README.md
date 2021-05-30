@@ -21,17 +21,17 @@ base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Seed C
 
 To run them, I suggest [**Python 3.7**](https://www.python.org) or newer.
 
-The first script **prepare**s your save by adding the seeds to it. If you need to,
+The first script **prepare**s your **save** by adding the seeds to it. If you need to,
 you can easily split this step into multiple parts by appending the current iteration
 and how many you need in total.
 
 There also needs to be at least one procedural item in the corresponding inventory.
 
 ```
-python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_ITERATIONS]
+python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_ITERATIONS]
 ```
 
-The second script reads the **procedural** data directly from memory. To do so,
+The second script **read**s the procedural **data** directly from memory. To do so,
 you need to hover the cursor over the first item to reveal its stats. Then you can use
 [Cheat Engine](https://cheatengine.org/downloads.php) to find the coresponding
 addresses of the item/seed itself, the name, the description, and each of the up to
@@ -42,15 +42,15 @@ The `TOTAL_ITERATIONS` here must match those from the preparation script (defaul
 Cheat Engine and don't need to prepend a `0x`.
 
 ```
-python procedural.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDRESS_TITLE ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]
+python read_data.py TOTAL_ITERATIONS ADDRESS_ITEM_SEED ADDRESS_DESCRIPTION ADDRESS_TITLE ADDRESS_STAT1 [ADDRESS_STAT2 [ADDRESS_STAT3 [ADDRESS_STAT4]]]
 ```
 
-The third script **recompute**s the perfection of all entries in a file. This can
+The third script **recompute**s the **perfection** of all entries in a file. This can
 be necessary if you want to changed the digits or the values range is different than you
 thought when you run the second script to gather the data.
 
 Just uncomment the items you want to recompute and run the script.
 
 ```
-python procedural_recompute.py
+python recompute_perfection.py
 ```
