@@ -131,7 +131,7 @@ def iter_slot(inventory, item, starting_seed, nec_iter):
     if starting_seed > MAX_SEED:
         return
 
-    width = 8  # max visible in-game
+    width = 8
     height = int(TOTAL_SEEDS / nec_iter / width)  # as much as possible
 
     inventory["=Tb"] = width
@@ -149,13 +149,14 @@ def iter_slot(inventory, item, starting_seed, nec_iter):
 
     # add item with seeds based on the passed arguments
     inventory[':No'] = []
+
     for i in range(width * height):
         if starting_seed > MAX_SEED:
             break
 
         duplicate = copy.deepcopy(template)
-        duplicate['3ZH']['>Qh'] = i % width
-        duplicate['3ZH']['XJ>'] = int(i / width)
+        duplicate['3ZH']['>Qh'] = i % width  # X
+        duplicate['3ZH']['XJ>'] = int(i / width)  # Y
         duplicate['b2n'] = f'^{item}#{starting_seed}'
         inventory[':No'].append(duplicate)
 

@@ -1201,50 +1201,44 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_SBLOB': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 6),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
                 ('Ship_Weapons_Guns_Rate', 1, 5),
-                ('Ship_Weapons_Guns_HeatTime', 10, 20),
+                ('Ship_Weapons_Guns_HeatTime', 11, 20),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 4, 10),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
                 ('Ship_Weapons_Guns_Rate', 1, 5),
-                ('Ship_Weapons_Guns_HeatTime', 20, 25),
+                ('Ship_Weapons_Guns_HeatTime', 21, 25),
             ],
             'number': 3,  # 2
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 8, 12),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
                 ('Ship_Weapons_Guns_Rate', 5, 10),
                 ('Ship_Weapons_Guns_HeatTime', 25, 30),
             ],
             'number': 3,  # 3
         },
-        # TODO verify values
         '4': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 10, 12),
-                ('Ship_Weapons_Guns_Rate', 10, 15),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
+                ('Ship_Weapons_Guns_Rate', 11, 15),
                 ('Ship_Weapons_Guns_HeatTime', 30, 35),
             ],
             'number': 3,  # 3
         },
-        # TODO verify values
         'X': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 14),
+                ('Ship_Weapons_Guns_Damage', 1, 2),
                 ('Ship_Weapons_Guns_Rate', 1, 20),
-                ('Ship_Weapons_Guns_HeatTime', 10, 40),
+                ('Ship_Weapons_Guns_HeatTime', 11, 40),
             ],
             'number': 3,  # 1
         },
@@ -2095,7 +2089,7 @@ if __name__ == '__main__':
             writer.writerow(row)
             if (i - (STEPS - 1)) % STEPS == 0:
                 middle_next = datetime.now()
-                print(f'{i:>6} ({middle_next - middle})')
+                print(f'{i:>6} ({middle_next - middle}) ({middle_next})')
                 middle = middle_next
                 f.flush()
         else:
