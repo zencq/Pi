@@ -1,5 +1,5 @@
 # This script iterates over all stored seeds and recomputes the perfection.
-# Usage: python procedural_recompute.py
+# Usage: python recompute_perfection.py
 
 import csv
 import os
@@ -31,6 +31,11 @@ if __name__ == '__main__':
         # 'Exocraft\\UP_EXGUN2.csv',
         # 'Exocraft\\UP_EXGUN3.csv',
         # 'Exocraft\\UP_EXGUN4.csv',
+
+        # 'Exocraft\\UP_EXLAS1.csv',
+        # 'Exocraft\\UP_EXLAS2.csv',
+        # 'Exocraft\\UP_EXLAS3.csv',
+        # 'Exocraft\\UP_EXLAS4.csv',
 
         # endregion
 

@@ -1,5 +1,5 @@
 # The first script prepares your save by adding up to 100,000 seeds to it.
-# Usage: python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]
+# Usage: python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]
 
 import sys
 import json
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     # region input
 
     if len(sys.argv) < 3:
-        print('ERROR: Not enough arguments! Usage: python procedural_prepare.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]')
+        print('ERROR: Not enough arguments! Usage: python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]')
         exit()
 
     f_name = sys.argv[1]

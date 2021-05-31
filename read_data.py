@@ -107,6 +107,9 @@ TRANSLATION = {
     'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
     'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
 
+    'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
+
     # endregion
 
     # region Ship
@@ -197,8 +200,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
-    # 'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
     # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
     # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
     # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
@@ -1288,32 +1289,31 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_EXLAS': {
         '1': {
             'meta': [
-                ('Vehicle_LaserDamage', 5, 10),
+                ('Vehicle_LaserDamage', 6, 12),
                 ('Vehicle_LaserHeatTime', 1, 5),
             ],
             'number': 1,  # 1
         },
         '2': {
             'meta': [
-                ('Vehicle_LaserDamage', 10, 20),
-                ('Vehicle_LaserHeatTime', 5, 10),
+                ('Vehicle_LaserDamage', 12, 24),
+                ('Vehicle_LaserHeatTime', 6, 10),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_LaserDamage', 20, 30),
-                ('Vehicle_LaserHeatTime', 10, 15),
+                ('Vehicle_LaserDamage', 25, 37),
+                ('Vehicle_LaserHeatTime', 11, 15),
             ],
             'number': 2,  # 1
         },
         '4': {
             'meta': [
-                ('Vehicle_LaserDamage', 30, 40),
+                ('Vehicle_LaserDamage', 37, 49),
                 ('Vehicle_LaserHeatTime', 15, 20),
             ],
             'number': 2,  # 2
@@ -1387,7 +1387,7 @@ DATA = {
     # endregion
 
     # TODO
-    # region Submarine
+    # region Submarine (2)
 
     # TODO verify values
     'UP_EXSUB': {
@@ -1460,7 +1460,7 @@ DATA = {
     # endregion
 
     # TODO
-    # region Mech
+    # region Mech (3)
 
     # TODO verify values
     'UP_MCLAS': {
@@ -1543,7 +1543,7 @@ DATA = {
     # endregion
 
     # TODO
-    # region AlienShip
+    # region AlienShip (6)
 
     # TODO verify values
     'UA_PULSE': {
@@ -1745,7 +1745,7 @@ DATA = {
     # endregion
 
     # TODO
-    # region Freighter
+    # region Freighter (7)
 
     # TODO verify values
     'UP_FRHYP': {
