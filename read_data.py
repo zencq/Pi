@@ -110,6 +110,9 @@ TRANSLATION = {
     'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
     'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
 
+    'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
+
     # endregion
 
     # region Ship
@@ -200,8 +203,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
-    # 'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
     # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
     # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
     # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
@@ -1320,33 +1321,32 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_BOOST': {
         '1': {
             'meta': [
-                ('Vehicle_BoostSpeed', 10, 20),
-                ('Vehicle_BoostTanks', 10, 20),
+                ('Vehicle_BoostSpeed', 10, 19),
+                ('Vehicle_BoostTanks', 10, 19),
             ],
             'number': 1,  # 1
         },
         '2': {
             'meta': [
-                ('Vehicle_BoostSpeed', 20, 35),
-                ('Vehicle_BoostTanks', 15, 30),
+                ('Vehicle_BoostSpeed', 20, 34),
+                ('Vehicle_BoostTanks', 15, 29),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_BoostSpeed', 35, 55),
-                ('Vehicle_BoostTanks', 30, 50),
+                ('Vehicle_BoostSpeed', 35, 54),
+                ('Vehicle_BoostTanks', 30, 49),
             ],
             'number': 2,  # 1
         },
         '4': {
             'meta': [
-                ('Vehicle_BoostSpeed', 55, 70),
-                ('Vehicle_BoostTanks', 50, 60),
+                ('Vehicle_BoostSpeed', 55, 69),
+                ('Vehicle_BoostTanks', 50, 59),
             ],
             'number': 2,  # 2
         },
@@ -1354,6 +1354,7 @@ DATA = {
 
     # TODO verify values
     'UP_EXENG': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 1, 5),
@@ -1361,6 +1362,7 @@ DATA = {
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 5, 10),
@@ -1368,6 +1370,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 10, 15),
@@ -1375,6 +1378,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
