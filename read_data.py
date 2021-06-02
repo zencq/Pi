@@ -101,20 +101,6 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 # X4 affects <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
-    # region Exocraft
-
-    'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
-    'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
-    'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
-    'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
-
-    # endregion
-
     # region Ship
 
     'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
@@ -175,6 +161,24 @@ TRANSLATION = {
 
     # endregion
 
+    # region Vehicle
+
+    'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
+    'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
+
+    'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
+    'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
+    'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
     # region Weapon
 
     'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
@@ -203,9 +207,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
-    # 'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
-    # 'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
     # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
@@ -1252,7 +1253,6 @@ DATA = {
 
     # endregion
 
-    # TODO
     # region Exocraft (4x1)
 
     'UP_EXGUN': {
@@ -1352,9 +1352,7 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_EXENG': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 1, 5),
@@ -1362,27 +1360,24 @@ DATA = {
             ],
             'number': 1,  # 1
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 5, 10),
+                ('Vehicle_EngineFuelUse', 6, 10),
                 ('Vehicle_EngineTopSpeed', 3, 8),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 10, 15),
-                ('Vehicle_EngineTopSpeed', 8, 15),
+                ('Vehicle_EngineFuelUse', 11, 15),
+                ('Vehicle_EngineTopSpeed', 9, 15),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
-                ('Vehicle_EngineTopSpeed', 10, 15),
+                ('Vehicle_EngineTopSpeed', 11, 15),
             ],
             'number': 2,  # 2
         },

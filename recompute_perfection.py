@@ -42,6 +42,11 @@ if __name__ == '__main__':
         # 'Exocraft\\UP_BOOST3.csv',
         # 'Exocraft\\UP_BOOST4.csv',
 
+        # 'Exocraft\\UP_EXENG1.csv',
+        # 'Exocraft\\UP_EXENG2.csv',
+        # 'Exocraft\\UP_EXENG3.csv',
+        # 'Exocraft\\UP_EXENG4.csv',
+
         # endregion
 
         # region Ship
