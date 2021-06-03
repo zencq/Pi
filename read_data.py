@@ -1386,39 +1386,38 @@ DATA = {
     # endregion
 
     # TODO
-    # region Submarine (2)
+    # region Submarine (2x1)
 
-    # TODO verify values
     'UP_EXSUB': {
         '1': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 1, 5),
                 ('Vehicle_EngineTopSpeed', 1, 3),
-                ('Vehicle_SubBoostSpeed', 10, 20),
+                ('Vehicle_SubBoostSpeed', 10, 19),
             ],
             'number': 1,  # 1
         },
         '2': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 5, 10),
+                ('Vehicle_EngineFuelUse', 6, 10),
                 ('Vehicle_EngineTopSpeed', 3, 8),
-                ('Vehicle_SubBoostSpeed', 20, 35),
+                ('Vehicle_SubBoostSpeed', 20, 34),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 10, 15),
-                ('Vehicle_EngineTopSpeed', 8, 15),
-                ('Vehicle_SubBoostSpeed', 35, 55),
+                ('Vehicle_EngineFuelUse', 11, 15),
+                ('Vehicle_EngineTopSpeed', 9, 15),
+                ('Vehicle_SubBoostSpeed', 35, 54),
             ],
             'number': 3,  # 2
         },
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
-                ('Vehicle_EngineTopSpeed', 10, 15),
-                ('Vehicle_SubBoostSpeed', 55, 70),
+                ('Vehicle_EngineTopSpeed', 11, 15),
+                ('Vehicle_SubBoostSpeed', 55, 69),
             ],
             'number': 3,  # 3
         },

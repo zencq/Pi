@@ -107,6 +107,15 @@ if __name__ == '__main__':
 
         # endregion
 
+        # region Submarine
+
+        # 'Submarine\\UP_EXSUB1.csv',
+        # 'Submarine\\UP_EXSUB2.csv',
+        # 'Submarine\\UP_EXSUB3.csv',
+        # 'Submarine\\UP_EXSUB4.csv',
+
+        # endregion
+
         # region Suit
 
         # 'Suit\\UP_ENGY1.csv',

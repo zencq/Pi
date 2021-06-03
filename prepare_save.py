@@ -95,8 +95,8 @@ ITEMS = [
     ITEMS_SHIP_LIVING,
     ITEMS_SUIT,
     ITEMS_VEHICLE,
-    ITEMS_VEHICLE_MECH,
     ITEMS_VEHICLE_SUBMARINE,
+    ITEMS_VEHICLE_MECH,
     ITEMS_WEAPON,
 ]
 MAX_SEED = 99999
@@ -107,7 +107,7 @@ TYPES = OrderedDict([
     ('ship', 'Starship 0 (Normal)'),
     ('living', 'Starship 1 (Living)'),
     ('suit', 'Exosuit'),
-    ('vehicle', 'Exocraft 2 (Colossus)'),
+    ('vehicle', 'Exocraft 4 (Pilgrim)'),
     ('submarine', 'Exocraft 5 (Nautilon)'),
     ('mech', 'Exocraft 6 (Minotaur)'),
     ('weapon', 'Weapon 0'),
@@ -195,37 +195,35 @@ if __name__ == '__main__':
 
     # region algorithm
 
-with open(f_name, 'r') as f:
-    print('Read')
-    save = json.loads(f.read()[:-1])
+    with open(f_name, 'r') as f:
+        print('Read')
+        save = json.loads(f.read()[:-1])
 
-counting_seed = int(TOTAL_SEEDS / intruction['iteration_necessary'])
+    counting_seed = int(TOTAL_SEEDS / intruction['iteration_necessary'])
 
-starting_seed = (intruction['iteration'] - 1) * counting_seed
+    starting_seed = (intruction['iteration'] - 1) * counting_seed
 
+    def call_iter(inventory):
+        iter_slot(inventory, intruction['item'], starting_seed, intruction['iteration_necessary'])
 
-def call_iter(inventory):
-    iter_slot(inventory, intruction['item'], starting_seed, intruction['iteration_necessary'])
+    print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed - 1})')
 
+    inventory = {
+        'freighter': save['6f=']['8ZP'],
+        'product': save['6f='][';l5'],
+        'ship': save['6f=']['@Cs'][0][';l5'],
+        'living': save['6f=']['@Cs'][1][';l5'],
+        'suit': save['6f='][';l5'],
+        'vehicle': save['6f=']['P;m'][4][';l5'],
+        'submarine': save['6f=']['P;m'][5][';l5'],
+        'mech': save['6f=']['P;m'][6][';l5'],
+        'weapon': save['6f=']['SuJ'][0]['OsQ'],
+    }
+    call_iter(inventory[type_identifier])
 
-print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed - 1})')
+    with open(f_name, 'w') as f:
+        print('Write')
+        json.dump(save, f, separators=(',', ':'))
+        f.write('\x00')
 
-inventory = {
-    'freighter': save['6f=']['8ZP'],
-    'product': save['6f='][';l5'],
-    'ship': save['6f=']['@Cs'][0][';l5'],
-    'living': save['6f=']['@Cs'][1][';l5'],
-    'suit': save['6f='][';l5'],
-    'vehicle': save['6f=']['P;m'][2][';l5'],
-    'submarine': save['6f=']['P;m'][5][';l5'],
-    'mech': save['6f=']['P;m'][6][';l5'],
-    'weapon': save['6f=']['SuJ'][0]['OsQ'],
-}
-call_iter(inventory[type_identifier])
-
-with open(f_name, 'w') as f:
-    print('Write')
-    json.dump(save, f, separators=(',', ':'))
-    f.write('\x00')
-
-# endregion
+    # endregion
