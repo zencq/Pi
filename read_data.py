@@ -1385,7 +1385,6 @@ DATA = {
 
     # endregion
 
-    # TODO
     # region Submarine (2x1)
 
     'UP_EXSUB': {
@@ -1423,32 +1422,31 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_SUGUN': {
         '1': {
             'meta': [
-                ('Vehicle_GunDamage', 5, 10),
+                ('Vehicle_GunDamage', 1, 3),
                 ('Vehicle_GunRate', 1, 5),
             ],
             'number': 1,  # 1
         },
         '2': {
             'meta': [
-                ('Vehicle_GunDamage', 10, 20),
+                ('Vehicle_GunDamage', 3, 7),
                 ('Vehicle_GunRate', 5, 10),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_GunDamage', 20, 30),
-                ('Vehicle_GunRate', 10, 15),
+                ('Vehicle_GunDamage', 7, 10),
+                ('Vehicle_GunRate', 11, 15),
             ],
             'number': 2,  # 1
         },
         '4': {
             'meta': [
-                ('Vehicle_GunDamage', 30, 40),
+                ('Vehicle_GunDamage', 10, 14),
                 ('Vehicle_GunRate', 15, 20),
             ],
             'number': 2,  # 2
