@@ -49,6 +49,14 @@ if __name__ == '__main__':
 
         # endregion
 
+        # region Mech
+
+        # 'Mech\\UP_MCLAS2.csv',
+        # 'Mech\\UP_MCLAS3.csv',
+        # 'Mech\\UP_MCLAS4.csv',
+
+        # endregion
+
         # region Ship
 
         # 'Ship\\UP_HYP1.csv',

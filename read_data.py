@@ -1456,27 +1456,26 @@ DATA = {
     # endregion
 
     # TODO
-    # region Mech (3)
+    # region Mech (3x1)
 
-    # TODO verify values
     'UP_MCLAS': {
         '2': {
             'meta': [
-                ('Vehicle_LaserDamage', 10, 20),
-                ('Vehicle_LaserHeatTime', 5, 10),
+                ('Vehicle_LaserDamage', 12, 24),
+                ('Vehicle_LaserHeatTime', 6, 10),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_LaserDamage', 20, 30),
-                ('Vehicle_LaserHeatTime', 10, 15),
+                ('Vehicle_LaserDamage', 25, 37),
+                ('Vehicle_LaserHeatTime', 11, 15),
             ],
             'number': 2,  # 1
         },
         '4': {
             'meta': [
-                ('Vehicle_LaserDamage', 30, 40),
+                ('Vehicle_LaserDamage', 37, 49),
                 ('Vehicle_LaserHeatTime', 15, 20),
             ],
             'number': 2,  # 2
