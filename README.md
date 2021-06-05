@@ -19,7 +19,7 @@ shows `+2%`).
 This repository also contains Python scripts that can be used to gather the data. They
 base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Seed Central](https://discord.gg/AEXcap6) Discord**.
 
-To run them, I suggest [**Python 3.7**](https://www.python.org) or newer.
+To run them, I suggest [Python 3.7](https://www.python.org) or newer.
 
 The first script **prepare**s your **save** by adding the seeds to it. If you need to,
 you can easily split this step into multiple parts by appending the current iteration
@@ -49,7 +49,7 @@ The third script **recompute**s the **perfection** of all entries in a file. Thi
 be necessary if you want to changed the digits or the values range is different than you
 thought when you run the second script to gather the data.
 
-Just uncomment the items you want to recompute and run the script.
+Just uncomment the items you want to recompute insdie the script and and run it.
 
 ```
 python recompute_perfection.py
