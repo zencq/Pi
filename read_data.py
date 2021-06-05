@@ -1482,27 +1482,26 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_MCGUN': {
         '2': {
             'meta': [
-                ('Vehicle_GunDamage', 10, 20),
-                ('Vehicle_GunHeatTime', 5, 10),
+                ('Vehicle_GunDamage', 3, 7),
+                ('Vehicle_GunHeatTime', 6, 10),
                 ('Vehicle_GunRate', 5, 10),
             ],
             'number': 3,  # 2
         },
         '3': {
             'meta': [
-                ('Vehicle_GunDamage', 20, 30),
-                ('Vehicle_GunHeatTime', 10, 15),
-                ('Vehicle_GunRate', 10, 15),
+                ('Vehicle_GunDamage', 7, 10),
+                ('Vehicle_GunHeatTime', 11, 15),
+                ('Vehicle_GunRate', 11, 15),
             ],
             'number': 3,  # 3
         },
         '4': {
             'meta': [
-                ('Vehicle_GunDamage', 30, 40),
+                ('Vehicle_GunDamage', 10, 14),
                 ('Vehicle_GunHeatTime', 15, 20),
                 ('Vehicle_GunRate', 15, 20),
             ],
@@ -1512,6 +1511,7 @@ DATA = {
 
     # TODO verify values
     'UP_MCENG': {
+        # TODO verify values
         '2': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 5, 10),
@@ -1519,6 +1519,7 @@ DATA = {
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 10, 15),
@@ -1526,6 +1527,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Vehicle_EngineFuelUse', 15, 20),
@@ -1600,7 +1602,7 @@ DATA = {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 15, 20),
             ],
-            'number': 1,  # 2
+            'number': 1,  # 1
         },
         '4': {
             'meta': [
