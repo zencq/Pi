@@ -229,7 +229,7 @@ DATA = {
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 6, 10),
                 ('Weapon_Laser_HeatTime', 5, 15),
-                ('Weapon_Laser_Drain', 1, 10),
+                ('Weapon_Laser_Drain', 0, 10),
                 ('Weapon_Laser_ReloadTime', 6, 10),
             ],
             'number': 2,  # 0 (Weapon_Laser_Drain with 0)
@@ -265,7 +265,7 @@ DATA = {
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 6, 20),
                 ('Weapon_Laser_HeatTime', 5, 55),
-                ('Weapon_Laser_Drain', 1, 25),
+                ('Weapon_Laser_Drain', 0, 25),
                 ('Weapon_Laser_ReloadTime', 6, 25),
             ],
             'number': 3,  # 0 (Weapon_Laser_Drain with 0)
@@ -321,9 +321,9 @@ DATA = {
                 ('Weapon_Projectile_Damage', 1, 1),
                 ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 2, 2),
-                ('Weapon_Projectile_Rate', 1, 10),
+                ('Weapon_Projectile_Rate', 0, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 1, 5),
+                ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
             'number': 3,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
@@ -365,9 +365,9 @@ DATA = {
                 ('Weapon_Projectile_Damage', 1, 2),
                 ('Weapon_Projectile_ReloadTime', 6, 25),
                 ('Weapon_Projectile_ClipSize', 2, 10),
-                ('Weapon_Projectile_Rate', 1, 20),
+                ('Weapon_Projectile_Rate', 0, 20),
                 ('Weapon_Projectile_BurstCap', 1, 2),
-                ('Weapon_Projectile_BurstCooldown', 1, 20),
+                ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
             'number': 4,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
         },
@@ -613,14 +613,14 @@ DATA = {
         '1': {
             'meta': [
                 ('Suit_Energy', 5, 19),
-                ('Suit_Energy_Regen', 1, 10),
+                ('Suit_Energy_Regen', 0, 10),
             ],
             'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
         '2': {
             'meta': [
                 ('Suit_Energy', 20, 49),
-                ('Suit_Energy_Regen', 1, 25),
+                ('Suit_Energy_Regen', 0, 25),
             ],
             'number': 2,  # 1 (Suit_Energy_Regen with 0)
         },
@@ -634,7 +634,7 @@ DATA = {
         'X': {
             'meta': [
                 ('Suit_Energy', 5, 109),
-                ('Suit_Energy_Regen', 1, 75),
+                ('Suit_Energy_Regen', 0, 75),
             ],
             'number': 2,  # 0 (Suit_Energy_Regen with 0)
         },
@@ -657,9 +657,9 @@ DATA = {
             'meta': [
                 ('Suit_Jetpack_Tank', 100, 149),
                 ('Suit_Stamina_Strength', 10, 19),
-                ('Suit_Stamina_Recovery', 1, 10),
+                ('Suit_Stamina_Recovery', 0, 10),
                 ('Suit_Jetpack_Drain', 6, 10),
-                ('Suit_Jetpack_Refill', 1, 5),
+                ('Suit_Jetpack_Refill', 0, 5),
             ],
             'number': 4,  # 1 (AlwaysChoose x1 but Suit_Stamina_Recovery and Suit_Jetpack_Refill with 0)
         },
@@ -669,7 +669,7 @@ DATA = {
                 ('Suit_Stamina_Strength', 10, 29),
                 ('Suit_Stamina_Recovery', 11, 20),
                 ('Suit_Jetpack_Drain', 11, 15),
-                ('Suit_Jetpack_Ignition', 1, 5),
+                ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 5, 10),
             ],
             'number': 4,  # 2 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
@@ -680,7 +680,7 @@ DATA = {
                 ('Suit_Stamina_Strength', 20, 49),
                 ('Suit_Stamina_Recovery', 21, 30),
                 ('Suit_Jetpack_Drain', 11, 20),
-                ('Suit_Jetpack_Ignition', 1, 5),
+                ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 11, 15),
             ],
             'number': 4,  # 3 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
@@ -702,7 +702,7 @@ DATA = {
                 ('Suit_Stamina_Strength', 10, 59),
                 ('Suit_Stamina_Recovery', 1, 60),
                 ('Suit_Jetpack_Drain', 6, 25),
-                ('Suit_Jetpack_Ignition', 1, 15),
+                ('Suit_Jetpack_Ignition', 0, 15),
                 ('Suit_Jetpack_Refill', 5, 30),
             ],
             'number': 4,  # 3 (AlwaysChoose x2 but Suit_Jetpack_Ignition with 0)
@@ -924,7 +924,7 @@ DATA = {
         '1': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 6, 10),
-                ('Ship_Boost', 1, 1),
+                ('Ship_Boost', 0, 1),
             ],
             'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
@@ -955,7 +955,7 @@ DATA = {
         'X': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 6, 25),
-                ('Ship_Boost', 1, 10),
+                ('Ship_Boost', 0, 10),
             ],
             'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
         },
@@ -1534,70 +1534,73 @@ DATA = {
     # endregion
 
     # TODO
-    # region AlienShip (6)
+    # region AlienShip (6x2)
 
     # TODO verify values
     'UA_PULSE': {
+        # TODO verify values
         '1': {
-            # TODO verify values
-            # UA_PULSE1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 3,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 0 (Ship_Boost and Ship_BoostManeuverability with 0)
         },
         '2': {
             'meta': [
-                ('Ship_PulseDrive_MiniJumpFuelSpending', 10, 15),
+                ('Ship_PulseDrive_MiniJumpFuelSpending', 11, 15),
                 ('Ship_Boost', 5, 10),
                 ('Ship_BoostManeuverability', 0, 10),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 3,  # 3 (AlwaysChoose x1)
+            'number': 2,  # 1 (Ship_BoostManeuverability with 0)
         },
         '3': {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 15, 20),
                 ('Ship_Boost', 5, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 3,  # 2
         },
         '4': {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 20, 20),
-                ('Ship_Boost', 10, 15),
+                ('Ship_Boost', 11, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                ('Ship_Maneuverability', 0.5, 0.5),
+                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 3,  # 3
         },
     },
 
     # TODO verify values
     'UA_LAUN': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 5, 10),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 10, 15),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 15, 20),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 20, 20),
@@ -1609,18 +1612,21 @@ DATA = {
 
     # TODO verify values
     'UA_HYP': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 150, 200),
@@ -1628,6 +1634,7 @@ DATA = {
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Hyperdrive_JumpDistance', 200, 250),
@@ -1639,24 +1646,28 @@ DATA = {
 
     # TODO verify values
     'UA_S_SHL': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 5, 10),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 10, 20),
             ],
             'number': 1,  # 1
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Armour_Shield_Strength', 20, 20),
@@ -1667,6 +1678,7 @@ DATA = {
 
     # TODO verify values
     'UA_SGUN': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 8, 16),
@@ -1675,6 +1687,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 12, 20),
@@ -1683,6 +1696,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 16, 24),
@@ -1691,6 +1705,7 @@ DATA = {
             ],
             'number': 3,  # 2
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Weapons_Guns_Damage', 20, 28),
@@ -1703,6 +1718,7 @@ DATA = {
 
     # TODO verify values
     'UA_SLASR': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 10, 35),
@@ -1710,6 +1726,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 35, 55),
@@ -1717,6 +1734,7 @@ DATA = {
             ],
             'number': 2,  # 1
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
@@ -1724,6 +1742,7 @@ DATA = {
             ],
             'number': 2,  # 2
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
