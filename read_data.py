@@ -1536,12 +1536,10 @@ DATA = {
     # TODO
     # region AlienShip (6x2)
 
-    # TODO verify values
     'UA_PULSE': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_PulseDrive_MiniJumpFuelSpending', 5, 10),
+                ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
                 # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
@@ -2047,7 +2045,7 @@ if __name__ == '__main__':
 
                 # First check that description and title are loaded.
                 if (
-                    (description.startswith('UPGRADE_0') or '<STELLAR>' in description and description.endswith('.'))
+                    (description.startswith('UPGRADE_0') or description.startswith('BIO_UPGRADE_0') or '<STELLAR>' in description and description.endswith('.'))
                     and title != ''
                 ):
                     # Then extract stat names from the description and make sure it's fully loaded

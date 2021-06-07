@@ -25,6 +25,40 @@ def init_meta(data):
 
 if __name__ == '__main__':
     f_list = [
+        # region AlienShip
+
+        # 'AlienShip\\UA_PULSE1.csv',
+        # 'AlienShip\\UA_PULSE2.csv',
+        # 'AlienShip\\UA_PULSE3.csv',
+        # 'AlienShip\\UA_PULSE4.csv',
+
+        # 'AlienShip\\UA_LAUN1.csv',
+        # 'AlienShip\\UA_LAUN2.csv',
+        # 'AlienShip\\UA_LAUN3.csv',
+        # 'AlienShip\\UA_LAUN4.csv',
+
+        # 'AlienShip\\UA_HYP1.csv',
+        # 'AlienShip\\UA_HYP2.csv',
+        # 'AlienShip\\UA_HYP3.csv',
+        # 'AlienShip\\UA_HYP4.csv',
+
+        # 'AlienShip\\UA_S_SHL1.csv',
+        # 'AlienShip\\UA_S_SHL2.csv',
+        # 'AlienShip\\UA_S_SHL3.csv',
+        # 'AlienShip\\UA_S_SHL4.csv',
+
+        # 'AlienShip\\UA_SGUN1.csv',
+        # 'AlienShip\\UA_SGUN2.csv',
+        # 'AlienShip\\UA_SGUN3.csv',
+        # 'AlienShip\\UA_SGUN4.csv',
+
+        # 'AlienShip\\UA_SLASR1.csv',
+        # 'AlienShip\\UA_SLASR2.csv',
+        # 'AlienShip\\UA_SLASR3.csv',
+        # 'AlienShip\\UA_SLASR4.csv',
+
+        # endregion
+
         # region Exocraft
 
         # 'Exocraft\\UP_EXGUN1.csv',
