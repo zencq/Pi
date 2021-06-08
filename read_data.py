@@ -38,6 +38,13 @@ def init_meta(data):
     }
 
 
+def extract_bool(data):
+    """
+    Convert string value to bool.
+    """
+    return data == 'Enabled'
+
+
 def extract_float(data):
     """
     Convert string value to float.
@@ -70,10 +77,11 @@ def extract_int_percent_thousand(data):
 # region stats
 
 
+pattern_bool = re.compile("^Enabled$")
+pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 pattern_int_lightyear = re.compile("^[0-9]{2,3} ly$")
 pattern_int_percent = re.compile("^[-+][0-9]{1,3}%$")
 pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
-pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 
 # C1 improving <STELLAR><>.
 # C2 improving <STELLAR><> and <STELLAR><>.
@@ -103,6 +111,7 @@ pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
 TRANSLATION = {
     # region Ship
 
+    'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
     'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
     'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
     'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
@@ -206,7 +215,6 @@ TRANSLATION = {
     # endregion
 
     # region TODO
-    # 'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
     # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, pattern_int_percent),
@@ -1575,36 +1583,36 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UA_LAUN': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 5, 10),
+                ('Ship_Launcher_TakeOffCost', 6, 10),
             ],
             'number': 1,  # 1
+            'description': 'This growth improves <STELLAR>Launch Cost<>.',
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 10, 15),
+                ('Ship_Launcher_TakeOffCost', 11, 15),
             ],
             'number': 1,  # 1
+            'description': 'A substantial ceullar expansion, improving <STELLAR>Launch Cost<>.',
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 15, 20),
+                ('Ship_Launcher_TakeOffCost', 16, 20),
             ],
             'number': 1,  # 1
+            'description': 'Emeshes itself with the Neural Assembly, drastically improving <STELLAR>Launch Cost<>.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 20, 20),
                 ('Ship_Launcher_AutoCharge', 1, 1),
             ],
             'number': 2,  # 2
+            'description': 'A sprawling, pulsating extension of the Neural Assembly, this new growth brings unparalleled improvements to <STELLAR>Launch Cost<> and <STELLAR>Automatic Recharging<>.',
+            'value': ['-20%', 'Enabled'],
         },
     },
 
@@ -1616,6 +1624,7 @@ DATA = {
                 ('Ship_Hyperdrive_JumpDistance', 50, 100),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         # TODO verify values
         '2': {
@@ -1623,6 +1632,7 @@ DATA = {
                 ('Ship_Hyperdrive_JumpDistance', 100, 150),
             ],
             'number': 1,  # 1
+            'description': '',
         },
         # TODO verify values
         '3': {
