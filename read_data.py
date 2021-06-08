@@ -1647,40 +1647,35 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UA_S_SHL': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_Armour_Shield_Strength', 5, 10),
+                ('Ship_Armour_Shield_Strength', 7, 15),
             ],
             'number': 1,  # 1
             'description': 'This growth improves <STELLAR>Shield Strength<>.',
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Ship_Armour_Shield_Strength', 5, 10),
+                ('Ship_Armour_Shield_Strength', 7, 15),
             ],
             'number': 1,  # 1
             'description': 'A substantial ceullar expansion, improving <STELLAR>Shield Strength<>.',
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Ship_Armour_Shield_Strength', 10, 20),
+                ('Ship_Armour_Shield_Strength', 15, 30),
             ],
             'number': 1,  # 1
             'description': 'Emeshes itself with the Neural Assembly, drastically improving <STELLAR>Shield Strength<>.',
         },
-        # TODO verify values
         '4': {
             'meta': [
-                ('Ship_Armour_Shield_Strength', 20, 20),
+                ('Ship_Armour_Shield_Strength', 30, 30),
             ],
             'number': 1,  # 1
-            # 'description': 'A sprawling, pulsating extension of the Neural Assembly, this new growth brings unparalleled improvements to <STELLAR>Shield Strength<>.',
-            # 'value': ['+20%'],
+            'description': 'A sprawling, pulsating extension of the Scream Suppressor, this new growth brings unparalleled improvements to <STELLAR>Shield Strength<>.',
+            'value': ['+30%'],
         },
     },
 
