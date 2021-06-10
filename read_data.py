@@ -1679,41 +1679,36 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UA_SGUN': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 8, 16),
-                ('Ship_Weapons_Guns_Rate', 0.1, 1.1),
-                ('Ship_Weapons_Guns_HeatTime', 0.1, 1.0),
+                ('Ship_Weapons_Guns_Damage', 2, 4),
+                ('Ship_Weapons_Guns_Rate', 1, 2),
+                ('Ship_Weapons_Guns_HeatTime', 1, 1),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 12, 20),
-                ('Ship_Weapons_Guns_Rate', 0.6, 1.6),
-                ('Ship_Weapons_Guns_HeatTime', 1.0, 2.0),
+                ('Ship_Weapons_Guns_Damage', 3, 6),
+                ('Ship_Weapons_Guns_Rate', 1, 2),
+                ('Ship_Weapons_Guns_HeatTime', 1, 2),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 16, 24),
-                ('Ship_Weapons_Guns_Rate', 1.6, 2.1),
-                ('Ship_Weapons_Guns_HeatTime', 2.0, 3.0),
+                ('Ship_Weapons_Guns_Damage', 5, 7),
+                ('Ship_Weapons_Guns_Rate', 2, 3),
+                ('Ship_Weapons_Guns_HeatTime', 2, 3),
             ],
             'number': 3,  # 2
         },
-        # TODO verify values
         '4': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 20, 28),
-                ('Ship_Weapons_Guns_Rate', 2.1, 2.1),
-                ('Ship_Weapons_Guns_HeatTime', 3.0, 3.0),
+                ('Ship_Weapons_Guns_Damage', 6, 8),
+                ('Ship_Weapons_Guns_Rate', 3, 3),
+                ('Ship_Weapons_Guns_HeatTime', 3, 3),
             ],
             'number': 3,  # 3
         },
