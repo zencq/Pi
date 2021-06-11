@@ -1541,7 +1541,6 @@ DATA = {
 
     # endregion
 
-    # TODO
     # region AlienShip (6x2)
 
     'UA_PULSE': {
@@ -1714,37 +1713,32 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UA_SLASR': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Ship_Weapons_Lasers_HeatTime', 10, 35),
-                ('Ship_Weapons_Lasers_Damage', 30, 40),
+                ('Ship_Weapons_Lasers_HeatTime', 11, 35),
+                ('Ship_Weapons_Lasers_Damage', 12, 15),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Ship_Weapons_Lasers_HeatTime', 35, 55),
-                ('Ship_Weapons_Lasers_Damage', 40, 50),
+                ('Ship_Weapons_Lasers_HeatTime', 36, 55),
+                ('Ship_Weapons_Lasers_Damage', 16, 19),
             ],
             'number': 2,  # 1
         },
-        # TODO verify values
         '3': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
-                ('Ship_Weapons_Lasers_Damage', 50, 60),
+                ('Ship_Weapons_Lasers_Damage', 20, 23),
             ],
             'number': 2,  # 2
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
-                ('Ship_Weapons_Lasers_Damage', 60, 70),
+                ('Ship_Weapons_Lasers_Damage', 24, 27),
             ],
             'number': 2,  # 2
         },
