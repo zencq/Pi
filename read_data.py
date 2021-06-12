@@ -109,6 +109,20 @@ pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
 # X4 affects <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
+    # region Freighter
+
+    'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
+    'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
+
+    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
+    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
     # region Ship
 
     'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
@@ -212,17 +226,6 @@ TRANSLATION = {
     'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
     'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
 
-    # endregion
-
-    # region TODO
-    # 'Freighter_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
-    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
     # endregion
 }
 
@@ -1747,23 +1750,22 @@ DATA = {
     # endregion
 
     # TODO
-    # region Freighter (7)
+    # region Freighter (7x2)
 
-    # TODO verify values
     'UP_FRHYP': {
         '1': {
-            # TODO verify values
-            # UP_FRHYP1#0 // # # // XXXX ABC, XXXX
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 50, 100),
             ],
             'number': 1,  # 1
+            'description': 'The unit offers improvements to <STELLAR>hyperdrive range<> and efficiency.',
         },
         '2': {
             'meta': [
                 ('Freighter_Hyperdrive_JumpDistance', 100, 150),
             ],
             'number': 1,  # 1
+            'description': 'The unit offers improvements to <STELLAR>hyperdrive range<> and efficiency.',
         },
         '3': {
             'meta': [
@@ -1771,6 +1773,7 @@ DATA = {
                 ('Freighter_Hyperdrive_JumpsPerCell', 1, 1),
             ],
             'number': 2,  # 2
+            'description': 'The unit offers improvements to <STELLAR>hyperdrive range<> and <STELLAR>efficiency<>.',
         },
         '4': {
             'meta': [
@@ -1778,174 +1781,227 @@ DATA = {
                 ('Freighter_Hyperdrive_JumpsPerCell', 1, 1),
             ],
             'number': 2,  # 2
+            'description': 'The unit offers improvements to <STELLAR>hyperdrive range<> and <STELLAR>efficiency<>.',
         },
     },
 
     # TODO verify values
     'UP_FRSPE': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Speed', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Speed', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Speed', 10, 14),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Speed', 15, 15),
             ],
             'number': 1,  # 1
+            'description': '',
+            'value': [],
         },
     },
 
     # TODO verify values
     'UP_FRFUE': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 10, 15),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Fuel', 15, 20),
             ],
             'number': 1,  # 1
+            'description': '',
         },
     },
 
     # TODO verify values
     'UP_FRCOM': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Combat', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Combat', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Combat', 10, 14),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Combat', 15, 15),
             ],
             'number': 1,  # 1
+            'description': '',
+            'value': [],
         },
     },
 
     # TODO verify values
     'UP_FRTRA': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Trade', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Trade', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Trade', 10, 14),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Trade', 15, 15),
             ],
             'number': 1,  # 1
+            'description': '',
         },
     },
 
     # TODO verify values
     'UP_FREXP': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Explore', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Explore', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Explore', 10, 14),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Explore', 15, 15),
             ],
             'number': 1,  # 1
+            'description': '',
+            'value': [],
         },
     },
 
     # TODO verify values
     'UP_FRMIN': {
+        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Mine', 1, 5),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Mine', 5, 10),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Mine', 10, 14),
             ],
             'number': 1,  # 1
+            'description': '',
         },
+        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Mine', 15, 15),
             ],
             'number': 1,  # 1
+            'description': '',
+            'value': [],
         },
     },
 
@@ -2046,6 +2102,9 @@ if __name__ == '__main__':
                     # with the complete name of a possible stat and its value.
                     # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
                     keys = pattern.findall(description)[:high_number]
+                    # UP_FRHYP is a special snowflake with a not machting description.
+                    if tech_name == 'UP_FRHYP' and 'ly' not in values[0]:
+                        values.reverse()
                     if (
                         all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
                         or description.startswith('UPGRADE_0')
