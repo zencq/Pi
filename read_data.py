@@ -114,7 +114,8 @@ TRANSLATION = {
     'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
     'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
 
-    # 'Freighter_Fleet_Speed': ('Expedition Speed', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
+
     # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
@@ -1785,40 +1786,35 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FRSPE': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Speed', 1, 5),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition speed<>.',
         },
-        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Speed', 5, 10),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition speed<>.',
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Speed', 10, 14),
+                ('Freighter_Fleet_Speed', 11, 14),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition speed<>.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Speed', 15, 15),
             ],
             'number': 1,  # 1
-            'description': '',
-            'value': [],
+            'description': 'The unit offers improvements to <STELLAR>expedition speed<>.',
+            'value': ['+15%'],
         },
     },
 

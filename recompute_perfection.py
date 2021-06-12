@@ -83,6 +83,20 @@ if __name__ == '__main__':
 
         # endregion
 
+        # region Freighter
+
+        # 'Freighter\\UP_FRHYP1.csv',
+        # 'Freighter\\UP_FRHYP2.csv',
+        # 'Freighter\\UP_FRHYP3.csv',
+        # 'Freighter\\UP_FRHYP4.csv',
+
+        # 'Freighter\\UP_FRSPE1.csv',
+        # 'Freighter\\UP_FRSPE2.csv',
+        # 'Freighter\\UP_FRSPE3.csv',
+        # 'Freighter\\UP_FRSPE4.csv',
+
+        # endregion
+
         # region Mech
 
         # 'Mech\\UP_MCLAS2.csv',
