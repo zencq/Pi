@@ -95,6 +95,31 @@ if __name__ == '__main__':
         # 'Freighter\\UP_FRSPE3.csv',
         # 'Freighter\\UP_FRSPE4.csv',
 
+        # 'Freighter\\UP_FRFUE1.csv',
+        # 'Freighter\\UP_FRFUE2.csv',
+        # 'Freighter\\UP_FRFUE3.csv',
+        # 'Freighter\\UP_FRFUE4.csv',
+
+        # 'Freighter\\UP_FRCOM1.csv',
+        # 'Freighter\\UP_FRCOM2.csv',
+        # 'Freighter\\UP_FRCOM3.csv',
+        # 'Freighter\\UP_FRCOM4.csv',
+
+        # 'Freighter\\UP_FRTRA1.csv',
+        # 'Freighter\\UP_FRTRA2.csv',
+        # 'Freighter\\UP_FRTRA3.csv',
+        # 'Freighter\\UP_FRTRA4.csv',
+
+        # 'Freighter\\UP_FREXP1.csv',
+        # 'Freighter\\UP_FREXP2.csv',
+        # 'Freighter\\UP_FREXP3.csv',
+        # 'Freighter\\UP_FREXP4.csv',
+
+        # 'Freighter\\UP_FRMIN1.csv',
+        # 'Freighter\\UP_FRMIN2.csv',
+        # 'Freighter\\UP_FRMIN3.csv',
+        # 'Freighter\\UP_FRMIN4.csv',
+
         # endregion
 
         # region Mech

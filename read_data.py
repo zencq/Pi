@@ -116,7 +116,8 @@ TRANSLATION = {
 
     'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
 
-    # 'Freighter_Fleet_Fuel': ('Expedition Efficiency', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
+
     # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
@@ -1818,39 +1819,34 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FRFUE': {
-        # TODO verify values
         '1': {
             'meta': [
-                ('Freighter_Fleet_Fuel', 1, 5),
+                ('Freighter_Fleet_Fuel', 2, 6),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition fuel efficiency<>.',
         },
-        # TODO verify values
         '2': {
             'meta': [
-                ('Freighter_Fleet_Fuel', 5, 10),
+                ('Freighter_Fleet_Fuel', 6, 11),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition fuel efficiency<>.',
         },
-        # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Fuel', 10, 15),
+                ('Freighter_Fleet_Fuel', 11, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition fuel efficiency<>.',
         },
-        # TODO verify values
         '4': {
             'meta': [
-                ('Freighter_Fleet_Fuel', 15, 20),
+                ('Freighter_Fleet_Fuel', 16, 20),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to <STELLAR>expedition fuel efficiency<>.',
         },
     },
 
@@ -1875,7 +1871,7 @@ DATA = {
         # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Combat', 10, 14),
+                ('Freighter_Fleet_Combat', 11, 14),
             ],
             'number': 1,  # 1
             'description': '',
@@ -1912,7 +1908,7 @@ DATA = {
         # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Trade', 10, 14),
+                ('Freighter_Fleet_Trade', 11, 14),
             ],
             'number': 1,  # 1
             'description': '',
@@ -1948,7 +1944,7 @@ DATA = {
         # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Explore', 10, 14),
+                ('Freighter_Fleet_Explore', 11, 14),
             ],
             'number': 1,  # 1
             'description': '',
@@ -1985,7 +1981,7 @@ DATA = {
         # TODO verify values
         '3': {
             'meta': [
-                ('Freighter_Fleet_Mine', 10, 14),
+                ('Freighter_Fleet_Mine', 11, 14),
             ],
             'number': 1,  # 1
             'description': '',
