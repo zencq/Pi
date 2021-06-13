@@ -122,7 +122,8 @@ TRANSLATION = {
 
     'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
 
-    # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
+
     # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
 
     # endregion
@@ -1916,39 +1917,34 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FREXP': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Explore', 1, 5),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>exploration and scientific abilities<> of all expeditions.',
         },
-        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Explore', 5, 10),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>exploration and scientific abilities<> of all expeditions.',
         },
-        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Explore', 11, 14),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>exploration and scientific abilities<> of all expeditions.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Explore', 15, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>exploration and scientific abilities<> of all expeditions.',
             'value': ['+15%'],
         },
     },
