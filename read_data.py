@@ -120,7 +120,8 @@ TRANSLATION = {
 
     'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
 
-    # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
+
     # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
 
@@ -1883,39 +1884,35 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FRTRA': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Trade', 1, 5),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>trade abilities<> of all expeditions.',
         },
-        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Trade', 5, 10),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>trade abilities<> of all expeditions.',
         },
-        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Trade', 11, 14),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>trade abilities<> of all expeditions.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Trade', 15, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>trade abilities<> of all expeditions.',
+            'value': ['+15%'],
         },
     },
 
@@ -1952,7 +1949,7 @@ DATA = {
             ],
             'number': 1,  # 1
             'description': '',
-            'value': [],
+            'value': ['+15%'],
         },
     },
 
@@ -1989,7 +1986,7 @@ DATA = {
             ],
             'number': 1,  # 1
             'description': '',
-            'value': [],
+            'value': ['+15%'],
         },
     },
 
