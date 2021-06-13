@@ -124,7 +124,7 @@ TRANSLATION = {
 
     'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
 
-    # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
 
     # endregion
 
@@ -1754,7 +1754,6 @@ DATA = {
 
     # endregion
 
-    # TODO
     # region Freighter (7x2)
 
     'UP_FRHYP': {
@@ -1949,39 +1948,34 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FRMIN': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Mine', 1, 5),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>industrial abilities<> of all expeditions.',
         },
-        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Mine', 5, 10),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>industrial abilities<> of all expeditions.',
         },
-        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Mine', 11, 14),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>industrial abilities<> of all expeditions.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Mine', 15, 15),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>industrial abilities<> of all expeditions.',
             'value': ['+15%'],
         },
     },
