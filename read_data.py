@@ -118,7 +118,8 @@ TRANSLATION = {
 
     'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
 
-    # 'Freighter_Fleet_Combat': ('Expedition Defenses', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
+
     # 'Freighter_Fleet_Trade': ('Expedition Trade Ability', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Explore': ('Expedition Scientific Ability', extract_int_percent, pattern_int_percent),
     # 'Freighter_Fleet_Mine': ('Expedition Mining Ability', extract_int_percent, pattern_int_percent),
@@ -1850,40 +1851,35 @@ DATA = {
         },
     },
 
-    # TODO verify values
     'UP_FRCOM': {
-        # TODO verify values
         '1': {
             'meta': [
                 ('Freighter_Fleet_Combat', 1, 5),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>combat and defense abilities<> of all expeditions.',
         },
-        # TODO verify values
         '2': {
             'meta': [
                 ('Freighter_Fleet_Combat', 5, 10),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>combat and defense abilities<> of all expeditions.',
         },
-        # TODO verify values
         '3': {
             'meta': [
                 ('Freighter_Fleet_Combat', 11, 14),
             ],
             'number': 1,  # 1
-            'description': '',
+            'description': 'The unit offers improvements to the <STELLAR>combat and defense abilities<> of all expeditions.',
         },
-        # TODO verify values
         '4': {
             'meta': [
                 ('Freighter_Fleet_Combat', 15, 15),
             ],
             'number': 1,  # 1
-            'description': '',
-            'value': [],
+            'description': 'The unit offers improvements to the <STELLAR>combat and defense abilities<> of all expeditions.',
+            'value': ['+15%'],
         },
     },
 
