@@ -7,6 +7,10 @@ import re
 import sys
 from datetime import datetime
 
+pattern_product_age = re.compile("^([0-9]+)")
+pattern_product_value = re.compile(".*(?<=<STAT>)([0-9,]+) Units(?=<>)")
+
+
 # region const
 
 STEPS = 10000
@@ -33,7 +37,7 @@ def init_meta(data):
     Convert and enrich list of stats to dictionary.
     """
     return {
-        TRANSLATION[line[0]][0]: line + (TRANSLATION[line[0]][1], TRANSLATION[line[0]][2])
+        TRANSLATION[line[0]][0]: line + TRANSLATION[line[0]][1:]
         for line in data
     }
 
@@ -71,6 +75,30 @@ def extract_int_percent_thousand(data):
     Convert string percent value with thousand separator to integer.
     """
     return extract_int_percent(data.replace(',', ''))
+
+
+def extract_int_product_age(data):
+    """
+    Convert string ... to integer.
+    """
+    result = pattern_product_age.findall(data)
+    if result:
+        result = result[0]
+    else:
+        result = data
+    return int(result)
+
+
+def extract_int_product_value(data):
+    """
+    Convert string ... to integer.
+    """
+    result = pattern_product_value.findall(data)
+    if result:
+        result = result[0].replace(',', '')
+    else:
+        result = data
+    return int(result)
 
 # endregion
 
@@ -125,6 +153,13 @@ TRANSLATION = {
     'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
 
     'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
+
+    # endregion
+
+    # region Product
+
+    'Product_Age': ('Age', extract_int_product_age, pattern_product_age, True),
+    'Product_Basevalue': ('Value', extract_int_product_value, pattern_product_value),
 
     # endregion
 
@@ -622,7 +657,6 @@ DATA = {
 
     # endregion
 
-    # ! TODO
     # region Suit (9x1)
 
     'UP_ENGY': {
@@ -1981,6 +2015,157 @@ DATA = {
     },
 
     # endregion
+
+    # TODO
+    # region Product (13x1)
+
+    'PROC': {
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'LOOT': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'HIST': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'BIO': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'FOSS': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'PLNT': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 4 - 2
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/2000000
+        # 0442-A
+        'TOOL': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2299932),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 10 - 6 - 1
+        # 2  /5   100000/200000 - 6  /11   400000/700000 - 14  /30    800000/1200000
+        # 1061-A
+        'FARM': {
+            'meta': [
+                ('Product_Age', 2, 30),
+                ('Product_Basevalue', 115000, 1379978),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 10 - 6 - 1
+        # 200/500 100000/200000 - 600/1100 400000/700000 - 1400/3000  800000/1200000
+        # 1061-A
+        'SEA': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 1379978),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 10 - 6 - 1
+        # 20 /50  100000/250000 - 60 /110  300000/600000 - 140 /300   900000/1200000
+        # 1061-B
+        'FEAR': {
+            'meta': [
+                ('Product_Age', 20, 300),
+                ('Product_Basevalue', 115000, 1379983),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 4 - 2 - 1
+        # 200/500 100000/300000 - 600/1100 400000/850000 - 1400/3000 1100000/2400000
+        # 0421-A
+        'SALV': {
+            'meta': [
+                ('Product_Age', 200, 3000),
+                ('Product_Basevalue', 115000, 2759926),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 20 - 5 - 1
+        # 250/500  50000/110000 - 600/1100 200000/600000 - 1400/3000  700000/1700000
+        # 2051-A
+        'BONE': {
+            'meta': [
+                ('Product_Age', 250, 3000),
+                ('Product_Basevalue', 57500, 1954943),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 10 - 6 - 1
+        # 20 /50  100000/250000 - 60 /110  300000/600000 - 140 /300   900000/1200000
+        # 1061-B
+        'DARK': {
+            'meta': [
+                ('Product_Age', 20, 300),
+                ('Product_Basevalue', 115000, 1379983),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+        # 20 - 5 - 1
+        # 250/500  50000/110000 - 600/1100 200000/600000 - 1400/3000  700000/1200000
+        # 2051-B
+        'STAR': {
+            'meta': [
+                ('Product_Age', 25000, 300000),
+                ('Product_Basevalue', 57500, 1379972),
+            ],
+            'number': 2,
+            'description': '<STELLAR>Age<> and <STELLAR>Value<>.',
+        },
+    },
+
+    # endregion
 }
 
 # endregion
@@ -2013,8 +2198,13 @@ if __name__ == '__main__':
 
     hashtag_index = module.index('#')
 
-    tech_name = module[:hashtag_index - 1]  # 'UP_HAZ'
-    tech_class = module[hashtag_index - 1:hashtag_index]  # 'X'
+    if module.startswith('PROC'):
+        tech_name, tech_class = module[:hashtag_index].split('_')
+        round_digits = 5
+    else:
+        tech_name = module[:hashtag_index - 1]  # 'UP_HAZ'
+        tech_class = module[hashtag_index - 1:hashtag_index]  # 'X'
+        round_digits = 3
 
     if tech_name not in DATA or tech_class not in DATA[tech_name]:
         print(f'ERROR: Your procedural item ({tech_name}{tech_class}) is not configured')
@@ -2037,12 +2227,12 @@ if __name__ == '__main__':
     key_possibilities = tech_stats['meta'].keys()
     middle = start
     pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
-    round_digits = 3
     static_description = tech_stats['description'] if 'description' in tech_stats else ''
     static_value = tech_stats['value'] if 'value' in tech_stats else []
 
     begin = int(pm.read_string(addr_off, byte=16))
     count = int(TOTAL_SEEDS / iteration_necessary)
+    high_number_perfection = high_number - len([key for key in key_possibilities if len(tech_stats['meta'][key]) < 6 or not tech_stats['meta'][key][5]])
 
     iteration_stop = TOTAL_SEEDS
     for i in range(1, iteration_necessary + 1):
@@ -2052,7 +2242,7 @@ if __name__ == '__main__':
 
     stop = max(0, min(begin + count, iteration_stop))
 
-    f_name = fr'{tech_name}{tech_class}_{begin}_{stop - 1}.csv'
+    f_name = fr'{module[:hashtag_index]}_{begin}_{stop - 1}.csv'
     with open(f_name, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
         writer.writeheader()
@@ -2083,6 +2273,7 @@ if __name__ == '__main__':
                     if (
                         all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
                         or description.startswith('UPGRADE_0')
+                        or description.startswith('BIO_UPGRADE_0')
                     ):
                         break
 
@@ -2109,13 +2300,18 @@ if __name__ == '__main__':
                 extract_method = meta[3]
 
                 value = extract_method(values[index])
+                if tech_name == 'PROC':
+                    row.update({meta[0]: value})
+
+                if len(meta) >= 6 and meta[5]:
+                    continue
 
                 p = 1.0
                 if meta[2] - meta[1] > 0:
                     p -= (meta[2] - value) / (meta[2] - meta[1])
                 perfection.append(p)
 
-            perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
+            perfection = round(sum(perfection) / high_number_perfection, round_digits) if perfection else 0
 
             row.update({
                 'Name': title,
@@ -2130,11 +2326,11 @@ if __name__ == '__main__':
                 middle = middle_next
                 f.flush()
         else:
-            # 7 = tech_class (1) + # (1) + 99999 (5)
-            pm.write_string(addr_id_seed, f'{tech_name}{tech_class}#{begin}'.ljust(len(tech_name) + 7, '\0'))
+            # 6 = # (1) + 99999 (5)
+            pm.write_string(addr_id_seed, f'{module[:hashtag_index]}#{begin}'.ljust(len(module[:hashtag_index]) + 6, '\0'))
 
     end = datetime.now()
 
-    print(f'{stop - begin:>6} module(s) added to {f_name} in {end - start}')
+    print(f'{stop - begin:>6} item(s) added to {f_name} in {end - start}')
 
     # endregion

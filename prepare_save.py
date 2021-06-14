@@ -107,7 +107,7 @@ TYPES = OrderedDict([
     ('ship', 'Starship 0 (Normal)'),
     ('living', 'Starship 1 (Living)'),
     ('suit', 'Exosuit'),
-    ('vehicle', 'Exocraft 4 (Pilgrim)'),
+    ('vehicle', 'Exocraft 3 (Pilgrim)'),
     ('submarine', 'Exocraft 5 (Nautilon)'),
     ('mech', 'Exocraft 6 (Minotaur)'),
     ('weapon', 'Weapon 0'),
@@ -179,7 +179,9 @@ if __name__ == '__main__':
         'iteration_necessary': int(sys.argv[4]) if len(sys.argv) >= 5 else 1,
     }
 
-    item = intruction['item'][:-1]
+    item = intruction['item']
+    if not item.startswith('PROC_'):
+        item = item[:-1]
     type_identifier = None
 
     # determine where to put the item
@@ -210,11 +212,11 @@ if __name__ == '__main__':
 
     inventory = {
         'freighter': save['6f=']['8ZP'],
-        'product': save['6f='][';l5'],
+        'product': save['6f=']['P;m'][1][';l5'],
         'ship': save['6f=']['@Cs'][0][';l5'],
         'living': save['6f=']['@Cs'][1][';l5'],
         'suit': save['6f='][';l5'],
-        'vehicle': save['6f=']['P;m'][4][';l5'],
+        'vehicle': save['6f=']['P;m'][3][';l5'],
         'submarine': save['6f=']['P;m'][5][';l5'],
         'mech': save['6f=']['P;m'][6][';l5'],
         'weapon': save['6f=']['SuJ'][0]['OsQ'],

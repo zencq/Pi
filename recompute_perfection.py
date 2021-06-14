@@ -16,7 +16,7 @@ def init_meta(data):
     Convert and enrich list of stats to dictionary.
     """
     return {
-        line[0]: line + (TRANSLATION[line[0]][1], TRANSLATION[line[0]][2])
+        line[0]: line + TRANSLATION[line[0]][1:]
         for line in data
     }
 
@@ -135,6 +135,24 @@ if __name__ == '__main__':
         # 'Mech\\UP_MCENG2.csv',
         # 'Mech\\UP_MCENG3.csv',
         # 'Mech\\UP_MCENG4.csv',
+
+        # endregion
+
+        # region Product
+
+        # 'Product\\PROC_LOOT.csv',
+        # 'Product\\PROC_HIST.csv',
+        # 'Product\\PROC_BIO.csv',
+        # 'Product\\PROC_FOSS.csv',
+        # 'Product\\PROC_PLNT.csv',
+        # 'Product\\PROC_TOOL.csv',
+        # 'Product\\PROC_FARM.csv',
+        # 'Product\\PROC_SEA.csv',
+        # 'Product\\PROC_FEAR.csv',
+        # 'Product\\PROC_SALV.csv',
+        # 'Product\\PROC_BONE.csv',
+        # 'Product\\PROC_DARK.csv',
+        # 'Product\\PROC_STAR.csv',
 
         # endregion
 
@@ -285,7 +303,6 @@ if __name__ == '__main__':
 
         # endregion
     ]
-    round_digits = 3
 
     # region algorithm
 
@@ -297,8 +314,13 @@ if __name__ == '__main__':
         shutil.copyfile(f_original, f_backup)
 
         item = f_original.split('\\')[1][:-4]
-        item_name = item[:-1]  # 'UP_HAZ'
-        item_class = item[-1]  # 'X'
+        if item.startswith('PROC'):
+            item_name, item_class = item.split('_')
+            round_digits = 5
+        else:
+            item_name = item[:-1]  # 'UP_HAZ'
+            item_class = item[-1]  # 'X'
+            round_digits = 3
 
         if item_name not in DATA or item_class not in DATA[item_name]:
             print(f'ERROR: Your procedural item ({item_name}{item_class}) is not configured')
@@ -309,8 +331,9 @@ if __name__ == '__main__':
         item_stats['meta'] = init_meta(item_stats['meta'])
 
         count = 0
-        high_number = item_stats['number']
         keys = item_stats['meta'].keys()
+
+        high_number_perfection = item_stats['number'] - len([key for key in keys if len(item_stats['meta'][key]) < 6 or not item_stats['meta'][key][5]])
 
         with open(f_backup, 'r', newline='') as backup:
             reader = csv.DictReader(backup, dialect='excel-tab')
@@ -329,6 +352,9 @@ if __name__ == '__main__':
                         extract_method = meta[3]
                         value = row[key]
 
+                        if len(meta) >= 6 and meta[5]:
+                            continue
+
                         if value:
                             value = extract_method(value)
 
@@ -337,7 +363,7 @@ if __name__ == '__main__':
                                 p -= (meta[2] - value) / (meta[2] - meta[1])
                             perfection.append(p)
 
-                    perfection = round(sum(perfection) / high_number, round_digits) if perfection else 0
+                    perfection = round(sum(perfection) / high_number_perfection, round_digits) if perfection else 0
 
                     row.update({
                         'Perfection': perfection,
