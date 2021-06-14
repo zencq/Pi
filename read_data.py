@@ -206,7 +206,7 @@ TRANSLATION = {
     'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
     'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
 
-    # TODO: values of stats below not displayed
+    # ! TODO: values below not displayed (as of 3.52)
 
     'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
     'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
@@ -797,7 +797,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.4)
+    # ! TODO values not displayed (as of 3.52)
     'UP_UNW': {
         '1': {
             'meta': [
@@ -819,7 +819,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.4)
+    # ! TODO values not displayed (as of 3.52)
     'UP_RAD': {
         '1': {
             'meta': [
@@ -844,7 +844,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.4)
+    # ! TODO values not displayed (as of 3.52)
     'UP_TOX': {
         '1': {
             'meta': [
@@ -868,7 +868,7 @@ DATA = {
             'number': 2,  # 2
         }, },
 
-    # ! TODO values not displayed (as of 3.4)
+    # ! TODO values not displayed (as of 3.52)
     'UP_COLD': {
         '1': {
             'meta': [
@@ -893,7 +893,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.4)
+    # ! TODO values not displayed (as of 3.52)
     'UP_HOT': {
         '1': {
             'meta': [
@@ -2016,7 +2016,6 @@ DATA = {
 
     # endregion
 
-    # TODO
     # region Product (13x1)
 
     'PROC': {
