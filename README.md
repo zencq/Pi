@@ -6,18 +6,21 @@ includes mainly technology upgrades but also the products (artifacts in game).
 
 ## Preamble
 
-Each file includes the seed, procedural name, its perfection in percent and the
+Each file includes the seed, procedural name, its perfection in percent, and the
 actual values of the stats.
 
-There might be an ultra-low percentage of values that are not 100% accurate but
-there are also cases where the value of a stat cannot be determined exactly due to
-how it's displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but always
+There might be an ultra-low percentage of values that are not 100% accurate. There
+are also cases where the value of a stat cannot be determined exactly due to
+how it is displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but always
 shows `+2%`).
+
+Upgrades for specific environmental shielding (Toxic, Radiation, Heat, Cold, Underwater)
+are not include as their stats are not visible in game.
 
 ## Usage
 
-This repository also contains Python scripts that can be used to gather the data. They
-base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Seed Central](https://discord.gg/AEXcap6) Discord**.
+This repository also contains some Python scripts that can be used to gather the data.
+They base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Seed Central](https://discord.gg/AEXcap6) Discord**.
 
 To run them properly, you need [Python 3.7](https://www.python.org) or newer.
 
@@ -34,11 +37,11 @@ python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_ITERATIONS]
 The second script **read**s the procedural **data** directly from memory. To do so,
 you need to hover the cursor over the first item to reveal its stats. Then you can use
 [Cheat Engine](https://cheatengine.org/downloads.php) to find the coresponding
-addresses of the item/seed itself, the name, the description, and each of the up to
+addresses of the item itself, the name, the description, and each of the up to
 four stats.
 
-The `TOTAL_ITERATIONS` here must match those from the preparation script (defaults to
-`1` if not set). You can directly enter the addresses as they are displayed in
+The `TOTAL_ITERATIONS` here must match those from the preparation script (that defaults
+to `1` if not set). You can directly enter the addresses as they are displayed in
 Cheat Engine and don't need to prepend a `0x`.
 
 ```
@@ -49,7 +52,7 @@ The third script **recompute**s the **perfection** of all entries in a file. Thi
 be necessary if you want to changed the digits or the values range is different than you
 thought when you run the second script to gather the data.
 
-Just uncomment the items you want to recompute insdie the script and and run it.
+Just uncomment the items inside the script and run it to recompute them.
 
 ```
 python recompute_perfection.py
