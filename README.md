@@ -2,7 +2,7 @@
 
 This repository contains a collection of CSV files with values of stats for
 every procedural item in [**No Man's Sky**](https://www.nomanssky.com/). This
-includes mainly technology upgrades but also the products (artifacts in game).
+includes mainly technology upgrades but also the products (artifacts in-game).
 
 ## Preamble
 
@@ -15,12 +15,12 @@ how it is displayed (e.g. `UP_RAIL1` has a damage range from `30` to `40` but al
 shows `+2%`).
 
 Upgrades for specific environmental shielding (Toxic, Radiation, Heat, Cold, Underwater)
-are not include as their stats are not visible in game.
+are not include as their stats are not visible in-game.
 
 ## Usage
 
 This repository also contains some Python scripts that can be used to gather the data.
-They base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Seed Central](https://discord.gg/AEXcap6) Discord**.
+They base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Creative & Sharing Hub](https://discord.gg/AEXcap6)**.
 
 To run them properly, you need [Python 3.7](https://www.python.org) or newer.
 
