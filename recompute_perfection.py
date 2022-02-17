@@ -336,9 +336,9 @@ if __name__ == '__main__':
         high_number_perfection = item_stats['number'] - len([key for key in keys if len(item_stats['meta'][key]) < 6 or not item_stats['meta'][key][5]])
 
         with open(f_backup, 'r', newline='') as backup:
-            reader = csv.DictReader(backup, dialect='excel-tab')
+            reader = csv.DictReader(backup, dialect='excel')
             with open(f_original, 'w', newline='') as original:
-                writer = csv.DictWriter(original, fieldnames=reader.fieldnames, dialect='excel-tab')
+                writer = csv.DictWriter(original, fieldnames=reader.fieldnames, dialect='excel')
                 writer.writeheader()
 
                 for row in reader:

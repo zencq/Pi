@@ -2243,7 +2243,7 @@ if __name__ == '__main__':
 
     f_name = fr'{module[:hashtag_index]}_{begin}_{stop - 1}.csv'
     with open(f_name, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel-tab')
+        writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel')
         writer.writeheader()
         print('Item  ', tech_name, tech_class)
         print('Range ', begin, '-', stop - 1)

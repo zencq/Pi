@@ -4,7 +4,6 @@
 import sys
 import json
 import copy
-from collections import OrderedDict
 
 # region const
 
@@ -101,17 +100,17 @@ ITEMS = [
 ]
 MAX_SEED = 99999
 TOTAL_SEEDS = 100000
-TYPES = OrderedDict([
-    ('freighter', 'Freighter'),
-    ('product', 'Product'),
-    ('ship', 'Starship 0 (Normal)'),
-    ('living', 'Starship 1 (Living)'),
-    ('suit', 'Exosuit'),
-    ('vehicle', 'Exocraft 3 (Pilgrim)'),
-    ('submarine', 'Exocraft 5 (Nautilon)'),
-    ('mech', 'Exocraft 6 (Minotaur)'),
-    ('weapon', 'Weapon 0'),
-])
+TYPES = {
+    'freighter': 'Freighter',
+    'product': 'Product',
+    'ship': 'Starship 0 (Normal)',
+    'living': 'Starship 1 (Living)',
+    'suit': 'Exosuit',
+    'vehicle': 'Exocraft 3 (Pilgrim)',
+    'submarine': 'Exocraft 5 (Nautilon)',
+    'mech': 'Exocraft 6 (Minotaur)',
+    'weapon': 'Weapon 0',
+}
 
 # endregion
 
