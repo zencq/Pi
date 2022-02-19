@@ -408,45 +408,45 @@ DATA = {
         '1': {
             'meta': [
                 ('Weapon_Projectile_Damage', 2, 5),
-                ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Grenade_Damage', 5, 10),
-                ('Weapon_Burst', 5, 10),
+                ('Weapon_Projectile_MaximumCharge', 1, 1),
+                ('Weapon_ChargedProjectile_Charge', 5, 10),
+                ('Weapon_ChargedProjectile_Extras', 5, 10),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Weapon_Projectile_Damage', 5, 7),
-                ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Grenade_Damage', 10, 15),
-                ('Weapon_Burst', 10, 15),
+                ('Weapon_Projectile_MaximumCharge', 1, 1),
+                ('Weapon_ChargedProjectile_Charge', 10, 15),
+                ('Weapon_ChargedProjectile_Extras', 10, 15),
             ],
             'number': 3,  # 2
         },
         '3': {
             'meta': [
                 ('Weapon_Projectile_Damage', 7, 10),
-                ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Grenade_Damage', 15, 20),
-                ('Weapon_Burst', 10, 20),
+                ('Weapon_Projectile_MaximumCharge', 1, 1),
+                ('Weapon_ChargedProjectile_Charge', 15, 20),
+                ('Weapon_ChargedProjectile_Extras', 10, 20),
             ],
             'number': 4,  # 3
         },
         '4': {
             'meta': [
                 ('Weapon_Projectile_Damage', 10, 10),
-                ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Grenade_Damage', 20, 25),
-                ('Weapon_Burst', 10, 20),
+                ('Weapon_Projectile_MaximumCharge', 1, 1),
+                ('Weapon_ChargedProjectile_Charge', 20, 25),
+                ('Weapon_ChargedProjectile_Extras', 10, 20),
             ],
             'number': 4,  # 4
         },
         'X': {
             'meta': [
-                ('Weapon_Projectile_Damage', 5, 15),
-                ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Grenade_Damage', 5, 25),
-                ('Weapon_Burst', 2, 25),
+                ('Weapon_Projectile_Damage', 5, 14),
+                ('Weapon_Projectile_MaximumCharge', 1, 1),
+                ('Weapon_ChargedProjectile_Charge', 6, 25),
+                ('Weapon_ChargedProjectile_Extras', 2, 13),
             ],
             'number': 4,  # 1
         },
@@ -2248,7 +2248,8 @@ TRANSLATION = {
 
     # region Weapon
 
-    # 'Weapon_Burst': ('???', extract_int_percent, pattern_int_percent),
+    'Weapon_ChargedProjectile_Charge': ('Charging Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_ChargedProjectile_Extras': ('Ion Sphere Speed', extract_int_percent, pattern_int_percent),
 
     'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
@@ -2265,6 +2266,7 @@ TRANSLATION = {
     'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
     'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
     'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_MaximumCharge': ('Ion Spheres Created', extract_float, pattern_float),
     'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
     'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
     'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),

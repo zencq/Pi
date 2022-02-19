@@ -58,12 +58,12 @@ ITEMS_SUIT = [
     'UP_HAZ',
     'UP_JET',
     'UP_SHLD',
+    'UP_SNSUIT',
     'UP_UNW',
     'UP_RAD',
     'UP_TOX',
     'UP_COLD',
     'UP_HOT',
-    'UP_SNSUIT',
 ]
 ITEMS_VEHICLE = [
     'UP_EXGUN',
@@ -89,6 +89,7 @@ ITEMS_WEAPON = [
     'UP_RAIL',
     'UP_SHOT',
     'UP_SMG',
+    'UP_CANN',
     'UP_SENGUN',
 ]
 
