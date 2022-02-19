@@ -436,8 +436,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 10, 10),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 20, 25),
-                ('Weapon_ChargedProjectile_Extras', 10, 20),
+                ('Weapon_ChargedProjectile_Charge', 11, 20),
+                ('Weapon_ChargedProjectile_Extras', 11, 13),
             ],
             'number': 4,  # 4
         },
