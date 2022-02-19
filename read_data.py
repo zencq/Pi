@@ -11,270 +11,12 @@ pattern_product_age = re.compile("^([0-9]+)")
 pattern_product_value = re.compile(".*(?<=<STAT>)([0-9,]+) Units(?=<>)")
 
 
+# region preamble
+
 # region const
 
 STEPS = 10000
 TOTAL_SEEDS = 100000
-
-# endregion
-
-
-# region methods
-
-
-def init_cheatengine_address(address):
-    """
-    Convert a single or list of address strings to integer.
-    """
-    if isinstance(address, list):
-        return [init_cheatengine_address(addr) for addr in address]
-
-    return int(f'0x{address}', 16)
-
-
-def init_meta(data):
-    """
-    Convert and enrich list of stats to dictionary.
-    """
-    return {
-        TRANSLATION[line[0]][0]: line + TRANSLATION[line[0]][1:]
-        for line in data
-    }
-
-
-def extract_bool(data):
-    """
-    Convert string value to bool.
-    """
-    return data == 'Enabled'
-
-
-def extract_float(data):
-    """
-    Convert string value to float.
-    """
-    return float(data[1:])
-
-
-def extract_int_lightyear(data):
-    """
-    Convert string with lightyear (ly) to integer.
-    """
-    return int(data[:-3])
-
-
-def extract_int_percent(data):
-    """
-    Convert string percent value to integer.
-    """
-    return int(data[1:-1])
-
-
-def extract_int_percent_thousand(data):
-    """
-    Convert string percent value with thousand separator to integer.
-    """
-    return extract_int_percent(data.replace(',', ''))
-
-
-def extract_int_product_age(data):
-    """
-    Convert string ... to integer.
-    """
-    result = pattern_product_age.findall(data)
-    if result:
-        result = result[0]
-    else:
-        result = data
-    return int(result)
-
-
-def extract_int_product_value(data):
-    """
-    Convert string ... to integer.
-    """
-    result = pattern_product_value.findall(data)
-    if result:
-        result = result[0].replace(',', '')
-    else:
-        result = data
-    return int(result)
-
-# endregion
-
-# region stats
-
-
-pattern_bool = re.compile("^Enabled$")
-pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
-pattern_int_lightyear = re.compile("^[0-9]{2,3} ly$")
-pattern_int_percent = re.compile("^[-+][0-9]{1,3}%$")
-pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
-
-# C1 improving <STELLAR><>.
-# C2 improving <STELLAR><> and <STELLAR><>.
-# C3 improving <STELLAR><>, <STELLAR><> and
-# C4 improving <STELLAR><>, <STELLAR><>,
-
-# B1 to <STELLAR><>.
-# B2 to <STELLAR><> and <STELLAR><>.
-# B3 to <STELLAR><>, <STELLAR><> and
-# B4 to <STELLAR><>, <STELLAR><>,
-
-# A1 improving <STELLAR><>.
-# A2 improve <STELLAR><> and <STELLAR><>.
-# A3 improve <STELLAR><>, <STELLAR><> and
-# A4 improve <STELLAR><>, <STELLAR><>,
-
-# S1 to <STELLAR><>.
-# S2 to <STELLAR><> and <STELLAR><>.
-# S3 to <STELLAR><>, <STELLAR><> and
-# S4 to <STELLAR><>, <STELLAR><>,
-
-# X1 affects <STELLAR><>.
-# X2 targets <STELLAR><> and <STELLAR><>.
-# X3 targets <STELLAR><>, <STELLAR><> and
-# X4 affects <STELLAR><>, <STELLAR><>,
-
-# Q1 targeting <STELLAR><>.
-# Q2 targeting <STELLAR><> and <STELLAR><>.
-# Q3 targeting <STELLAR><>, <STELLAR><> and
-# Q4 targeting <STELLAR><>, <STELLAR><>,
-
-TRANSLATION = {
-    # region Freighter
-
-    'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
-    'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
-
-    'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
-
-    'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
-
-    'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
-
-    'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
-
-    'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
-
-    'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
-
-    # endregion
-
-    # region Product
-
-    'Product_Age': ('Age', extract_int_product_age, pattern_product_age, True),
-    'Product_Basevalue': ('Value', extract_int_product_value, pattern_product_value),
-
-    # endregion
-
-    # region Ship
-
-    'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
-    'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
-    'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
-    'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
-    'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
-    'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
-    'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
-
-    'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-
-    'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-
-    # endregion
-
-    # region Suit
-
-    'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
-    'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
-
-    'Suit_Energy': ('Life Support Tanks', extract_int_percent, pattern_int_percent),
-    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, pattern_int_percent),
-
-    'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
-    'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent, pattern_int_percent),
-    'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent, pattern_int_percent),
-    'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent, pattern_int_percent),
-    'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent, pattern_int_percent),
-    'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent, pattern_int_percent),
-
-    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
-
-    # ! TODO: values below not displayed (as of 3.81)
-
-    'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
-
-    'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, pattern_int_percent),
-
-    'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, pattern_int_percent),
-
-    'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, pattern_int_percent),
-    'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
-
-    'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
-
-    # endregion
-
-    # region Vehicle
-
-    'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
-    'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
-    'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
-    'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
-    'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
-    'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
-    'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
-
-    # endregion
-
-    # region Weapon
-
-    # 'Weapon_Burst': ('???', extract_int_percent, pattern_int_percent),
-
-    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, pattern_int_percent),
-
-    'Weapon_Laser_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, pattern_int_percent),
-
-    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
-    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),
-
-    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
-    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
-    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
-
-    # endregion
-}
 
 # In the mapping below, the values are composed as follows:
 # * meta: type used by the game, min value, max value
@@ -712,9 +454,9 @@ DATA = {
 
     'UP_SENGUN': {
         'meta': [
-            ('Weapon_Projectile_Damage', 1, 4),
-            ('Weapon_Projectile_ReloadTime', 0, 15),
-            ('Weapon_Projectile_Rate', 0, 20),
+            ('Weapon_Projectile_Damage', 1, 2),
+            ('Weapon_Projectile_ReloadTime', 1, 15),
+            ('Weapon_Projectile_Rate', 1, 20),
         ],
         'number': 3,  # 1
     },
@@ -936,22 +678,22 @@ DATA = {
     'UP_COLD': {
         '1': {
             'meta': [
-                ('Suit_Protection_Cold', (180, 265, extract_int_percent)),
-                ('Suit_DamageReduce_Cold', (0, 5, extract_int_percent)),
+                ('Suit_Protection_Cold', 180, 265),
+                ('Suit_DamageReduce_Cold', 0, 5),
             ],
             'number': 2,  # 2
         },
         '2': {
             'meta': [
-                ('Suit_Protection_Cold', (200, 265, extract_int_percent)),
-                ('Suit_DamageReduce_Cold', (5, 15, extract_int_percent)),
+                ('Suit_Protection_Cold', 200, 265),
+                ('Suit_DamageReduce_Cold', 5, 15),
             ],
             'number': 2,  # 2
         },
         '3': {
             'meta': [
-                ('Suit_Protection_Cold', (220, 265, extract_int_percent)),
-                ('Suit_DamageReduce_Cold', (10, 20, extract_int_percent)),
+                ('Suit_Protection_Cold', 220, 265),
+                ('Suit_DamageReduce_Cold', 10, 20),
             ],
             'number': 2,  # 2
         },
@@ -2242,11 +1984,299 @@ DATA = {
 
     # endregion
 }
-
-TECH_WITHOUT_CLASS = [
+# List of items without a subclass:
+ITEMS_WITHOUT_CLASS = [
     'UP_SENGUN',
     'UP_SNSUIT',
 ]
+
+# endregion
+
+# region methods
+
+
+def init_cheatengine_address(address):
+    """
+    Convert a single or list of address strings to integer.
+    """
+    if isinstance(address, list):
+        return [init_cheatengine_address(addr) for addr in address]
+
+    return int(f'0x{address}', 16)
+
+
+def init_meta(data):
+    """
+    Convert and enrich list of stats to dictionary.
+    """
+    return {
+        TRANSLATION[line[0]][0]: line + TRANSLATION[line[0]][1:]
+        for line in data
+    }
+
+
+def extract_bool(data):
+    """
+    Convert string value to bool.
+    """
+    return data == 'Enabled'
+
+
+def extract_float(data):
+    """
+    Convert string value to float.
+    """
+    return float(data[1:])
+
+
+def extract_int_lightyear(data):
+    """
+    Convert string with lightyear (ly) to integer.
+    """
+    return int(data[:-3])
+
+
+def extract_int_percent(data):
+    """
+    Convert string percent value to integer.
+    """
+    return int(data[1:-1])
+
+
+def extract_int_percent_thousand(data):
+    """
+    Convert string percent value with thousand separator to integer.
+    """
+    return extract_int_percent(data.replace(',', ''))
+
+
+def extract_int_product_age(data):
+    """
+    Convert string ... to integer.
+    """
+    result = pattern_product_age.findall(data)
+    if result:
+        result = result[0]
+    else:
+        result = data
+    return int(result)
+
+
+def extract_int_product_value(data):
+    """
+    Convert string ... to integer.
+    """
+    result = pattern_product_value.findall(data)
+    if result:
+        result = result[0].replace(',', '')
+    else:
+        result = data
+    return int(result)
+
+
+def get_has_class(module):
+    return not any(module.startswith(item) for item in ITEMS_WITHOUT_CLASS)
+
+
+def get_high_number(item_stats):
+    return item_stats['number']
+
+
+def get_high_number_perfection(high_number, key_possibilities, item_stats):
+    return high_number - len([key for key in key_possibilities if len(item_stats['meta'][key]) >= 6 and item_stats['meta'][key][5]])
+
+
+def get_key_possibilities(item_stats):
+    return item_stats['meta'].keys()
+
+
+def get_is_configured(item_name, item_class):
+    return item_name not in DATA or (item_class and item_class not in DATA[item_name])
+
+
+def get_item_stats(item_name, item_class):
+    return DATA[item_name][item_class] if item_class else DATA[item_name]
+
+
+def get_perfection(perfection, high_number_perfection, round_digits):
+    return round(sum(perfection) / high_number_perfection, round_digits) if perfection else 0
+
+# endregion
+
+# region translation composition
+
+pattern_bool = re.compile("^Enabled$")
+pattern_float = re.compile("^\+[0-9]{1,2}\.[0-9]$")
+pattern_int_lightyear = re.compile("^[0-9]{2,3} ly$")
+pattern_int_percent = re.compile("^[-+][0-9]{1,3}%$")
+pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
+
+# C1 improving <STELLAR><>.
+# C2 improving <STELLAR><> and <STELLAR><>.
+# C3 improving <STELLAR><>, <STELLAR><> and
+# C4 improving <STELLAR><>, <STELLAR><>,
+
+# B1 to <STELLAR><>.
+# B2 to <STELLAR><> and <STELLAR><>.
+# B3 to <STELLAR><>, <STELLAR><> and
+# B4 to <STELLAR><>, <STELLAR><>,
+
+# A1 improving <STELLAR><>.
+# A2 improve <STELLAR><> and <STELLAR><>.
+# A3 improve <STELLAR><>, <STELLAR><> and
+# A4 improve <STELLAR><>, <STELLAR><>,
+
+# S1 to <STELLAR><>.
+# S2 to <STELLAR><> and <STELLAR><>.
+# S3 to <STELLAR><>, <STELLAR><> and
+# S4 to <STELLAR><>, <STELLAR><>,
+
+# X1 affects <STELLAR><>.
+# X2 targets <STELLAR><> and <STELLAR><>.
+# X3 targets <STELLAR><>, <STELLAR><> and
+# X4 affects <STELLAR><>, <STELLAR><>,
+
+# Q1 targeting <STELLAR><>.
+# Q2 targeting <STELLAR><> and <STELLAR><>.
+# Q3 targeting <STELLAR><>, <STELLAR><> and
+# Q4 targeting <STELLAR><>, <STELLAR><>,
+
+TRANSLATION = {
+    # region Freighter
+
+    'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
+    'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
+
+    'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
+
+    'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
+
+    'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
+
+    'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
+
+    'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
+
+    'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
+
+    # endregion
+
+    # region Product
+
+    'Product_Age': ('Age', extract_int_product_age, pattern_product_age, True),
+    'Product_Basevalue': ('Value', extract_int_product_value, pattern_product_value),
+
+    # endregion
+
+    # region Ship
+
+    'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
+    'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
+    'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
+    'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
+    'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
+    'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
+    'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
+    # region Suit
+
+    'Suit_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+    'Suit_Armour_Health': ('Core Health', extract_int_percent, pattern_int_percent),
+
+    'Suit_Energy': ('Life Support Tanks', extract_int_percent, pattern_int_percent),
+    'Suit_Energy_Regen': ('Solar Panel Power', extract_int_percent, pattern_int_percent),
+
+    'Suit_Jetpack_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Ignition': ('Initial Boost Power', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Tank': ('Jetpack Tanks', extract_int_percent, pattern_int_percent),
+    'Suit_Jetpack_Refill': ('Recharge Rate', extract_int_percent, pattern_int_percent),
+    'Suit_Stamina_Strength': ('Sprint Distance', extract_int_percent, pattern_int_percent),
+    'Suit_Stamina_Recovery': ('Sprint Recovery Time', extract_int_percent, pattern_int_percent),
+
+    'Suit_Protection_ColdDrain': ('Cold Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_HeatDrain': ('Heat Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
+
+    # ! TODO: values below not displayed (as of 3.81)
+
+    'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Heat': ('Heat Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Heat': ('Heat Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Radiation': ('Radiation Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Radiation': ('Radiation Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_DamageReduce_Toxic': ('Toxic Damage Shielding', extract_int_percent, pattern_int_percent),
+    'Suit_Protection_Toxic': ('Toxic Protection', extract_int_percent, pattern_int_percent),
+
+    'Suit_Underwater': ('Oxygen Tank', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
+    # region Vehicle
+
+    'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Vehicle_GunRate': ('Rate of Fire', extract_int_percent, pattern_int_percent),
+    'Vehicle_GunHeatTime': ('Weapon Power Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Vehicle_LaserDamage': ('Mining Laser Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_LaserHeatTime': ('Mining Laser Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Vehicle_SubBoostSpeed': ('Acceleration', extract_int_percent, pattern_int_percent),
+    'Vehicle_BoostSpeed': ('Boost Power', extract_int_percent, pattern_int_percent),
+    'Vehicle_BoostTanks': ('Boost Tank Size', extract_int_percent, pattern_int_percent),
+    'Vehicle_EngineFuelUse': ('Fuel Usage', extract_int_percent, pattern_int_percent),
+    'Vehicle_EngineTopSpeed': ('Top Speed', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
+    # region Weapon
+
+    # 'Weapon_Burst': ('???', extract_int_percent, pattern_int_percent),
+
+    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, pattern_int_percent),
+
+    'Weapon_Laser_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, pattern_int_percent),
+
+    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
+    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),
+
+    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
+
+    # endregion
+}
+
+# endregion
 
 # endregion
 
@@ -2279,42 +2309,42 @@ if __name__ == '__main__':
     hashtag_index = module.index('#')
 
     if module.startswith('PROC'):
-        tech_name, tech_class = module[:hashtag_index].split('_')
+        item_name, item_class = module[:hashtag_index].split('_')
         round_digits = 5
     else:
-        has_class = not any(module.startswith(tech) for tech in TECH_WITHOUT_CLASS)
+        has_class = get_has_class(module)
 
-        tech_name = module[:hashtag_index - 1] if has_class else module[:hashtag_index]  # 'UP_HAZ'
-        tech_class = module[hashtag_index - 1:hashtag_index] if has_class else ''  # 'X'
+        item_name = module[:hashtag_index - 1] if has_class else module[:hashtag_index]  # 'UP_HAZ'
+        item_class = module[hashtag_index - 1:hashtag_index] if has_class else ''  # 'X'
         round_digits = 3
 
-    if tech_name not in DATA or (tech_class and tech_class not in DATA[tech_name]):
-        print(f'ERROR: Your procedural item ({tech_name}{tech_class}) is not configured')
+    if get_is_configured(item_name, item_class):
+        print(f'ERROR: Your procedural item ({item_name}{item_class}) is not configured')
         exit()
 
-    tech_stats = DATA[tech_name][tech_class] if tech_class else DATA[tech_name]
+    item_stats = get_item_stats(item_name, item_class)
 
-    high_number = tech_stats['number']
+    high_number = get_high_number(item_stats)
 
     addr_stats = addr_stats[:high_number]
 
     if len(addr_stats) != high_number:
-        print(f'ERROR: Your number of memory addresses ({len(addr_stats)}) does not match the max number of stats ({len(tech_stats)})')
+        print(f'ERROR: Your number of memory addresses ({len(addr_stats)}) does not match the max number of stats ({len(item_stats)})')
         exit()
 
-    tech_stats['meta'] = init_meta(tech_stats['meta'])
+    item_stats['meta'] = init_meta(item_stats['meta'])
 
     addr_off = addr_id_seed + hashtag_index + 1
-    fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in tech_stats['meta'].values()]
-    key_possibilities = tech_stats['meta'].keys()
+    fieldnames = ['Seed', 'Name', 'Perfection'] + [value[0] for value in item_stats['meta'].values()]
+    key_possibilities = get_key_possibilities(item_stats)
     middle = start
     pattern = re.compile('(?<=<STELLAR>)[A-Z a-z]+(?=<>)')
-    static_description = tech_stats['description'] if 'description' in tech_stats else ''
-    static_value = tech_stats['value'] if 'value' in tech_stats else []
+    static_description = item_stats['description'] if 'description' in item_stats else ''
+    static_value = item_stats['value'] if 'value' in item_stats else []
 
     begin = int(pm.read_string(addr_off, byte=16))
     count = int(TOTAL_SEEDS / iteration_necessary)
-    high_number_perfection = high_number - len([key for key in key_possibilities if len(tech_stats['meta'][key]) >= 6 and tech_stats['meta'][key][5]])
+    high_number_perfection = get_high_number_perfection(high_number, key_possibilities, item_stats)
 
     iteration_stop = TOTAL_SEEDS
     for i in range(1, iteration_necessary + 1):
@@ -2328,7 +2358,7 @@ if __name__ == '__main__':
     with open(f_name, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel')
         writer.writeheader()
-        print('Item  ', tech_name, tech_class)
+        print('Item  ', item_name, item_class)
         print('Range ', begin, '-', stop - 1)
         for i in range(begin, stop):
             i_next = i + 1
@@ -2350,10 +2380,10 @@ if __name__ == '__main__':
                     # Some seeds produce an empty description starting with UPGRADE_0 and have no stats (displayed).
                     keys = pattern.findall(description)[:high_number]
                     # UP_FRHYP is a special snowflake with a not machting description.
-                    if tech_name == 'UP_FRHYP' and 'ly' not in values[0]:
+                    if item_name == 'UP_FRHYP' and 'ly' not in values[0]:
                         values.reverse()
                     if (
-                        all(key in key_possibilities and tech_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
+                        all(key in key_possibilities and item_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
                         or description.startswith('UPGRADE_0')
                         or description.startswith('BIO_UPGRADE_0')
                     ):
@@ -2375,14 +2405,14 @@ if __name__ == '__main__':
 
             # Get actual values of the current item.
             for index, key in enumerate(keys):
-                meta = tech_stats['meta'][key]
+                meta = item_stats['meta'][key]
 
                 row.update({meta[0]: values[index]})
 
                 extract_method = meta[3]
 
                 value = extract_method(values[index])
-                if tech_name == 'PROC':
+                if item_name == 'PROC':
                     row.update({meta[0]: value})
 
                 if len(meta) >= 6 and meta[5]:
@@ -2393,11 +2423,9 @@ if __name__ == '__main__':
                     p -= (meta[2] - value) / (meta[2] - meta[1])
                 perfection.append(p)
 
-            perfection = round(sum(perfection) / high_number_perfection, round_digits) if perfection else 0
-
             row.update({
                 'Name': title,
-                'Perfection': perfection,
+                'Perfection': get_perfection(perfection, high_number_perfection, round_digits),
                 'Seed': i,
             })
 

@@ -5,7 +5,8 @@ import sys
 import json
 import copy
 
-from read_data import TECH_WITHOUT_CLASS
+from read_data import get_has_class
+from read_data import TOTAL_SEEDS
 
 # region const
 
@@ -102,8 +103,7 @@ ITEMS = [
     ITEMS_VEHICLE_MECH,
     ITEMS_WEAPON,
 ]
-MAX_SEED = 99999
-TOTAL_SEEDS = MAX_SEED + 1
+MAX_SEED = TOTAL_SEEDS - 1  # starts at 0
 TYPES = {
     'freighter': 'Freighter',
     'product': 'Product',
@@ -182,14 +182,14 @@ if __name__ == '__main__':
         'iteration_necessary': int(sys.argv[4]) if len(sys.argv) >= 5 else 1,
     }
 
-    item = intruction['item']
-    if not item.startswith('PROC_') and not any(item.startswith(tech) for tech in TECH_WITHOUT_CLASS):
-        item = item[:-1]
+    module = intruction['item']
+    if not module.startswith('PROC_') and get_has_class(module):
+        module = module[:-1]
     type_identifier = None
 
     # determine where to put the item
     for t, l in zip(TYPES.keys(), ITEMS):
-        if item in l:
+        if module in l:
             type_identifier = t
 
     if not type_identifier:
@@ -208,9 +208,6 @@ if __name__ == '__main__':
 
     starting_seed = (intruction['iteration'] - 1) * counting_seed
 
-    def call_iter(inventory):
-        iter_slot(inventory, intruction['item'], starting_seed, intruction['iteration_necessary'])
-
     print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed - 1})')
 
     inventory = {
@@ -224,7 +221,7 @@ if __name__ == '__main__':
         'mech': save['6f=']['P;m'][6][';l5'],
         'weapon': save['6f=']['SuJ'][0]['OsQ'],
     }
-    call_iter(inventory[type_identifier])
+    iter_slot(inventory[type_identifier], intruction['item'], starting_seed, intruction['iteration_necessary'])
 
     with open(f_name, 'w') as f:
         print('Write')
