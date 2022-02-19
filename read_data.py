@@ -136,6 +136,11 @@ pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
 # X3 targets <STELLAR><>, <STELLAR><> and
 # X4 affects <STELLAR><>, <STELLAR><>,
 
+# Q1 targeting <STELLAR><>.
+# Q2 targeting <STELLAR><> and <STELLAR><>.
+# Q3 targeting <STELLAR><>, <STELLAR><> and
+# Q4 targeting <STELLAR><>, <STELLAR><>,
+
 TRANSLATION = {
     # region Freighter
 
@@ -206,7 +211,7 @@ TRANSLATION = {
     'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
     'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
 
-    # ! TODO: values below not displayed (as of 3.52)
+    # ! TODO: values below not displayed (as of 3.81)
 
     'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
     'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
@@ -243,6 +248,8 @@ TRANSLATION = {
 
     # region Weapon
 
+    # 'Weapon_Burst': ('???', extract_int_percent, pattern_int_percent),
+
     'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
@@ -273,7 +280,7 @@ TRANSLATION = {
 # * meta: type used by the game, min value, max value
 # * number: max possible stats
 DATA = {
-    # region Weapon (8x2)
+    # region Weapon (10x2)
 
     'UP_LASER': {
         '1': {
@@ -655,9 +662,66 @@ DATA = {
         },
     },
 
+    'UP_CANN': {
+        '1': {
+            'meta': [
+                ('Weapon_Projectile_Damage', 2, 5),
+                ('Weapon_Projectile_BurstCap', 1, 1),
+                ('Weapon_Grenade_Damage', 5, 10),
+                ('Weapon_Burst', 5, 10),
+            ],
+            'number': 2,  # 1
+        },
+        '2': {
+            'meta': [
+                ('Weapon_Projectile_Damage', 5, 7),
+                ('Weapon_Projectile_BurstCap', 1, 1),
+                ('Weapon_Grenade_Damage', 10, 15),
+                ('Weapon_Burst', 10, 15),
+            ],
+            'number': 3,  # 2
+        },
+        '3': {
+            'meta': [
+                ('Weapon_Projectile_Damage', 7, 10),
+                ('Weapon_Projectile_BurstCap', 1, 1),
+                ('Weapon_Grenade_Damage', 15, 20),
+                ('Weapon_Burst', 10, 20),
+            ],
+            'number': 4,  # 3
+        },
+        '4': {
+            'meta': [
+                ('Weapon_Projectile_Damage', 10, 10),
+                ('Weapon_Projectile_BurstCap', 1, 1),
+                ('Weapon_Grenade_Damage', 20, 25),
+                ('Weapon_Burst', 10, 20),
+            ],
+            'number': 4,  # 4
+        },
+        'X': {
+            'meta': [
+                ('Weapon_Projectile_Damage', 5, 15),
+                ('Weapon_Projectile_BurstCap', 1, 1),
+                ('Weapon_Grenade_Damage', 5, 25),
+                ('Weapon_Burst', 2, 25),
+            ],
+            'number': 4,  # 1
+        },
+    },
+
+    'UP_SENGUN': {
+        'meta': [
+            ('Weapon_Projectile_Damage', 1, 4),
+            ('Weapon_Projectile_ReloadTime', 0, 15),
+            ('Weapon_Projectile_Rate', 0, 20),
+        ],
+        'number': 3,  # 1
+    },
+
     # endregion
 
-    # region Suit (9x1)
+    # region Suit (10x1)
 
     'UP_ENGY': {
         '1': {
@@ -797,7 +861,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.52)
+    # ! TODO values not displayed (as of 3.81)
     'UP_UNW': {
         '1': {
             'meta': [
@@ -819,7 +883,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.52)
+    # ! TODO values not displayed (as of 3.81)
     'UP_RAD': {
         '1': {
             'meta': [
@@ -844,7 +908,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.52)
+    # ! TODO values not displayed (as of 3.81)
     'UP_TOX': {
         '1': {
             'meta': [
@@ -868,7 +932,7 @@ DATA = {
             'number': 2,  # 2
         }, },
 
-    # ! TODO values not displayed (as of 3.52)
+    # ! TODO values not displayed (as of 3.81)
     'UP_COLD': {
         '1': {
             'meta': [
@@ -893,7 +957,7 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.52)
+    # ! TODO values not displayed (as of 3.81)
     'UP_HOT': {
         '1': {
             'meta': [
@@ -916,6 +980,18 @@ DATA = {
             ],
             'number': 2,  # 2
         },
+    },
+
+    'UP_SNSUIT': {
+        'meta': [
+            ('Suit_Armour_Shield_Strength', 10, 35),
+            ('Suit_Armour_Health', 33, 33),
+            ('Suit_Energy', 5, 109),
+            ('Suit_Energy_Regen', 1, 75),
+            ('Suit_Jetpack_Drain', 6, 25),
+            ('Suit_Stamina_Strength', 10, 59),
+        ],
+        'number': 4,  # 1
     },
 
     # endregion
@@ -2167,6 +2243,11 @@ DATA = {
     # endregion
 }
 
+TECH_WITHOUT_CLASS = [
+    'UP_SENGUN',
+    'UP_SNSUIT',
+]
+
 # endregion
 
 if __name__ == '__main__':
@@ -2201,15 +2282,17 @@ if __name__ == '__main__':
         tech_name, tech_class = module[:hashtag_index].split('_')
         round_digits = 5
     else:
-        tech_name = module[:hashtag_index - 1]  # 'UP_HAZ'
-        tech_class = module[hashtag_index - 1:hashtag_index]  # 'X'
+        has_class = not any(module.startswith(tech) for tech in TECH_WITHOUT_CLASS)
+
+        tech_name = module[:hashtag_index - 1] if has_class else module[:hashtag_index]  # 'UP_HAZ'
+        tech_class = module[hashtag_index - 1:hashtag_index] if has_class else ''  # 'X'
         round_digits = 3
 
-    if tech_name not in DATA or tech_class not in DATA[tech_name]:
+    if tech_name not in DATA or (tech_class and tech_class not in DATA[tech_name]):
         print(f'ERROR: Your procedural item ({tech_name}{tech_class}) is not configured')
         exit()
 
-    tech_stats = DATA[tech_name][tech_class]
+    tech_stats = DATA[tech_name][tech_class] if tech_class else DATA[tech_name]
 
     high_number = tech_stats['number']
 
@@ -2231,7 +2314,7 @@ if __name__ == '__main__':
 
     begin = int(pm.read_string(addr_off, byte=16))
     count = int(TOTAL_SEEDS / iteration_necessary)
-    high_number_perfection = high_number - len([key for key in key_possibilities if len(tech_stats['meta'][key]) < 6 or not tech_stats['meta'][key][5]])
+    high_number_perfection = high_number - len([key for key in key_possibilities if len(tech_stats['meta'][key]) >= 6 and tech_stats['meta'][key][5]])
 
     iteration_stop = TOTAL_SEEDS
     for i in range(1, iteration_necessary + 1):
@@ -2279,7 +2362,7 @@ if __name__ == '__main__':
             if i_next < stop:
                 pm.write_string(addr_off, str(i_next))
 
-            # Set to \0 to avoid duplicates in next while True
+            # Set to \0 to avoid duplicates in next iteration
             pm.write_uchar(addr_title, 0)
             if not static_description:
                 pm.write_uchar(addr_description, 0)

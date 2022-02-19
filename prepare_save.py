@@ -5,6 +5,8 @@ import sys
 import json
 import copy
 
+from read_data import TECH_WITHOUT_CLASS
+
 # region const
 
 ITEMS_FREIGHTER = [
@@ -60,6 +62,7 @@ ITEMS_SUIT = [
     'UP_TOX',
     'UP_COLD',
     'UP_HOT',
+    'UP_SNSUIT',
 ]
 ITEMS_VEHICLE = [
     'UP_EXGUN',
@@ -85,6 +88,7 @@ ITEMS_WEAPON = [
     'UP_RAIL',
     'UP_SHOT',
     'UP_SMG',
+    'UP_SENGUN',
 ]
 
 ITEMS = [
@@ -99,7 +103,7 @@ ITEMS = [
     ITEMS_WEAPON,
 ]
 MAX_SEED = 99999
-TOTAL_SEEDS = 100000
+TOTAL_SEEDS = MAX_SEED + 1
 TYPES = {
     'freighter': 'Freighter',
     'product': 'Product',
@@ -179,7 +183,7 @@ if __name__ == '__main__':
     }
 
     item = intruction['item']
-    if not item.startswith('PROC_'):
+    if not item.startswith('PROC_') and not any(item.startswith(tech) for tech in TECH_WITHOUT_CLASS):
         item = item[:-1]
     type_identifier = None
 
