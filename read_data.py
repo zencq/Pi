@@ -407,10 +407,10 @@ DATA = {
     'UP_CANN': {
         '1': {
             'meta': [
-                ('Weapon_Projectile_Damage', 2, 5),
+                ('Weapon_Projectile_Damage', 2, 4),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 5, 10),
-                ('Weapon_ChargedProjectile_Extras', 5, 10),
+                ('Weapon_ChargedProjectile_Charge', 6, 10),
+                ('Weapon_ChargedProjectile_Extras', 2, 5),
             ],
             'number': 2,  # 1
         },
