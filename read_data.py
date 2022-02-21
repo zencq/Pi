@@ -589,7 +589,7 @@ DATA = {
         },
         '4': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 30, 35),
+                ('Suit_Armour_Shield_Strength', 30, 34),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
