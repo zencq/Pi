@@ -568,42 +568,55 @@ DATA = {
     'UP_SHLD': {
         '1': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 90, 95),
+                ('Suit_Armour_Shield_Strength', 10, 15),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 85, 90),
+                ('Suit_Armour_Shield_Strength', 15, 20),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 80, 89),
+                ('Suit_Armour_Shield_Strength', 20, 30),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
         },
         '4': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 80, 90),
+                ('Suit_Armour_Shield_Strength', 30, 35),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
         },
         'X': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 75, 95),
+                ('Suit_Armour_Shield_Strength', 10, 34),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
     },
 
-    # ! TODO values not displayed (as of 3.81)
+    'UP_SNSUIT': {
+        'meta': [
+            ('Suit_Armour_Shield_Strength', 10, 35),
+            ('Suit_Armour_Health', 33, 33),
+            ('Suit_Energy', 5, 109),
+            ('Suit_Energy_Regen', 1, 75),
+            ('Suit_Jetpack_Drain', 6, 25),
+            ('Suit_Stamina_Strength', 10, 59),
+        ],
+        'number': 4,  # 1
+    },
+
+    # ! TODO: values below not displayed (as of 3.81)
+
     'UP_UNW': {
         '1': {
             'meta': [
@@ -625,12 +638,11 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.81)
     'UP_RAD': {
         '1': {
             'meta': [
                 ('Suit_Protection_Radiation', 180, 265),
-                ('Suit_DamageReduce_Radiation', 0, 5),
+                ('Suit_DamageReduce_Radiation', 1, 5),
             ],
             'number': 2,  # 2
         },
@@ -650,12 +662,11 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.81)
     'UP_TOX': {
         '1': {
             'meta': [
                 ('Suit_Protection_Toxic', 180, 265),
-                ('Suit_DamageReduce_Toxic', 0, 5),
+                ('Suit_DamageReduce_Toxic', 1, 5),
             ],
             'number': 2,  # 2
         },
@@ -674,12 +685,11 @@ DATA = {
             'number': 2,  # 2
         }, },
 
-    # ! TODO values not displayed (as of 3.81)
     'UP_COLD': {
         '1': {
             'meta': [
                 ('Suit_Protection_Cold', 180, 265),
-                ('Suit_DamageReduce_Cold', 0, 5),
+                ('Suit_DamageReduce_Cold', 1, 5),
             ],
             'number': 2,  # 2
         },
@@ -699,12 +709,11 @@ DATA = {
         },
     },
 
-    # ! TODO values not displayed (as of 3.81)
     'UP_HOT': {
         '1': {
             'meta': [
                 ('Suit_Protection_Heat', 180, 265),
-                ('Suit_DamageReduce_Heat', 0, 5),
+                ('Suit_DamageReduce_Heat', 1, 5),
             ],
             'number': 2,  # 2
         },
@@ -722,18 +731,6 @@ DATA = {
             ],
             'number': 2,  # 2
         },
-    },
-
-    'UP_SNSUIT': {
-        'meta': [
-            ('Suit_Armour_Shield_Strength', 10, 35),
-            ('Suit_Armour_Health', 33, 33),
-            ('Suit_Energy', 5, 109),
-            ('Suit_Energy_Regen', 1, 75),
-            ('Suit_Jetpack_Drain', 6, 25),
-            ('Suit_Stamina_Strength', 10, 59),
-        ],
-        'number': 4,  # 1
     },
 
     # endregion
