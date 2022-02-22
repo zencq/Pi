@@ -536,7 +536,7 @@ DATA = {
                 ('Suit_Stamina_Strength', 20, 49),
                 ('Suit_Stamina_Recovery', 21, 30),
                 ('Suit_Jetpack_Drain', 11, 20),
-                ('Suit_Jetpack_Ignition', 0, 5),
+                ('Suit_Jetpack_Ignition', 1, 5),
                 ('Suit_Jetpack_Refill', 11, 15),
             ],
             'number': 4,  # 4 (AlwaysChoose + NumStatsMin 3)
