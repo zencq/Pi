@@ -513,9 +513,9 @@ DATA = {
             'meta': [
                 ('Suit_Jetpack_Tank', 100, 149),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 10, 19),
-                ('Suit_Stamina_Recovery', 0, 10),
+                ('Suit_Stamina_Recovery', 1, 10),
                 ('Suit_Jetpack_Drain', 6, 10),
-                ('Suit_Jetpack_Refill', 0, 5),
+                ('Suit_Jetpack_Refill', 1, 5),
             ],
             'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
@@ -525,7 +525,7 @@ DATA = {
                 ('Suit_Stamina_Strength', 10, 29),
                 ('Suit_Stamina_Recovery', 11, 20),
                 ('Suit_Jetpack_Drain', 11, 15),
-                ('Suit_Jetpack_Ignition', 0, 5),
+                ('Suit_Jetpack_Ignition', 1, 5),
                 ('Suit_Jetpack_Refill', 5, 10),
             ],
             'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
