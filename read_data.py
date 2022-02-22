@@ -118,58 +118,58 @@ DATA = {
     'UP_BOLT': {
         '1': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 2, 2),
                 ('Weapon_Projectile_Rate', 0, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 0, 5),
             ],
-            'number': 3,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
+            'number': 3,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
         '2': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 11, 15),
                 ('Weapon_Projectile_ClipSize', 4, 4),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 6, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
         '3': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 11, 20),
                 ('Weapon_Projectile_ClipSize', 6, 6),
                 ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 11, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 3)
         },
         '4': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 2),
+                ('Weapon_Projectile_Damage', 1, 2),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 11, 20),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 15, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 4)
         },
         'X': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 2),
+                ('Weapon_Projectile_Damage', 1, 2),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 25),
                 ('Weapon_Projectile_ClipSize', 2, 10),
                 ('Weapon_Projectile_Rate', 0, 20),
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 0, 20),
             ],
-            'number': 4,  # 1 (AlwaysChoose x1 but Weapon_Projectile_Rate and Weapon_Projectile_BurstCooldown with 0)
+            'number': 4,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
     },
 
@@ -305,55 +305,55 @@ DATA = {
     'UP_SHOT': {
         '1': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
             ],
-            'number': 3,  # 2 (AlwaysChoose x1)
+            'number': 3,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
         '2': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 11, 15),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 1, 5),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 6, 10),
             ],
-            'number': 4,  # 3 (AlwaysChoose x1)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
         '3': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 2),
+                ('Weapon_Projectile_Damage', 1, 2),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 15, 20),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 5, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 11, 15),
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 3)
         },
         '4': {
             'meta': [
-                ('Weapon_Projectile_Damage', 2, 3),
+                ('Weapon_Projectile_Damage', 2, 3),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 20, 25),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 16, 20),
             ],
-            'number': 4,  # 4 (AlwaysChoose x1)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 4)
         },
         'X': {
             'meta': [
-                ('Weapon_Projectile_Damage', 1, 3),
+                ('Weapon_Projectile_Damage', 1, 3),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 30),
                 ('Weapon_Projectile_ClipSize', 8, 8),
                 ('Weapon_Projectile_Rate', 1, 20),
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 6, 25),
             ],
-            'number': 4,  # 2 (AlwaysChoose x1)
+            'number': 4,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
     },
 
@@ -511,57 +511,57 @@ DATA = {
     'UP_JET': {
         '1': {
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 149),
+                ('Suit_Jetpack_Tank', 100, 149),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 10, 19),
                 ('Suit_Stamina_Recovery', 0, 10),
                 ('Suit_Jetpack_Drain', 6, 10),
                 ('Suit_Jetpack_Refill', 0, 5),
             ],
-            'number': 4,  # 1 (AlwaysChoose x1 but Suit_Stamina_Recovery and Suit_Jetpack_Refill with 0)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
         '2': {
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 149),
+                ('Suit_Jetpack_Tank', 100, 149),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 10, 29),
                 ('Suit_Stamina_Recovery', 11, 20),
                 ('Suit_Jetpack_Drain', 11, 15),
                 ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 5, 10),
             ],
-            'number': 4,  # 2 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
         '3': {
             'meta': [
-                ('Suit_Jetpack_Tank', 150, 199),
+                ('Suit_Jetpack_Tank', 150, 199),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 20, 49),
                 ('Suit_Stamina_Recovery', 21, 30),
                 ('Suit_Jetpack_Drain', 11, 20),
                 ('Suit_Jetpack_Ignition', 0, 5),
                 ('Suit_Jetpack_Refill', 11, 15),
             ],
-            'number': 4,  # 3 (AlwaysChoose x1 but Suit_Jetpack_Ignition with 0)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 3)
         },
         '4': {
             'meta': [
-                ('Suit_Jetpack_Tank', 200, 224),
+                ('Suit_Jetpack_Tank', 200, 224),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 40, 49),
                 ('Suit_Stamina_Recovery', 30, 50),
                 ('Suit_Jetpack_Drain', 11, 20),
-                ('Suit_Jetpack_Ignition', 5, 10),
+                ('Suit_Jetpack_Ignition', 5, 10),  # AlwaysChoose
                 ('Suit_Jetpack_Refill', 15, 25),
             ],
-            'number': 4,  # 4 (AlwaysChoose x2)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 4)
         },
         'X': {
             'meta': [
-                ('Suit_Jetpack_Tank', 100, 229),
+                ('Suit_Jetpack_Tank', 100, 229),  # AlwaysChoose
                 ('Suit_Stamina_Strength', 10, 59),
                 ('Suit_Stamina_Recovery', 1, 60),
                 ('Suit_Jetpack_Drain', 6, 25),
-                ('Suit_Jetpack_Ignition', 0, 15),
+                ('Suit_Jetpack_Ignition', 1, 15),  # AlwaysChoose
                 ('Suit_Jetpack_Refill', 5, 30),
             ],
-            'number': 4,  # 3 (AlwaysChoose x2 but Suit_Jetpack_Ignition with 0)
+            'number': 4,  # 4 (AlwaysChoose + NumStatsMin 2)
         },
     },
 
@@ -743,7 +743,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 10),
                 ('Ship_Boost', 1, 5),
                 ('Ship_BoostManeuverability', 1, 5),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 2,  # 1
         },
@@ -752,7 +752,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 11, 15),
                 ('Ship_Boost', 5, 10),
                 ('Ship_BoostManeuverability', 1, 10),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 2,  # 2
         },
@@ -761,7 +761,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 15, 20),
                 ('Ship_Boost', 5, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 3,  # 2
         },
@@ -770,7 +770,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 20, 20),
                 ('Ship_Boost', 11, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 3,  # 3
         },
@@ -779,7 +779,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 25),
                 ('Ship_Boost', 1, 20),
                 ('Ship_BoostManeuverability', 1, 14),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 3,  # 1
         },
@@ -788,41 +788,41 @@ DATA = {
     'UP_LAUN': {
         '1': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 6, 10),
+                ('Ship_Launcher_TakeOffCost', 6, 10),  # AlwaysChoose
                 ('Ship_Boost', 0, 1),
             ],
-            'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
+            'number': 2,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
         '2': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 11, 15),
+                ('Ship_Launcher_TakeOffCost', 11, 15),  # AlwaysChoose
                 ('Ship_Boost', 2, 5),
             ],
-            'number': 2,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 2 (AlwaysChoose + NumStatsMin 1)
             'description': 'A substantial upgrade to the Launch Thruster, offering significant improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '3': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 15, 20),
+                ('Ship_Launcher_TakeOffCost', 15, 20),  # AlwaysChoose
                 ('Ship_Boost', 5, 8),
             ],
-            'number': 2,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 2 (AlwaysChoose + NumStatsMin 1)
             'description': 'A powerful upgrade module for the Launch Thruster, with the potential to drastically improve <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '4': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 20, 20),
+                ('Ship_Launcher_TakeOffCost', 20, 20),  # AlwaysChoose
                 ('Ship_Boost', 9, 10),
             ],
-            'number': 2,  # 2 (AlwaysChoose x1)
+            'number': 2,  # 2 (AlwaysChoose + NumStatsMin 2)
             'description': 'An almost total rework of the Launch Thruster, this upgrade module brings unparalleled improvements to <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         'X': {
             'meta': [
-                ('Ship_Launcher_TakeOffCost', 6, 25),
+                ('Ship_Launcher_TakeOffCost', 6, 25),  # AlwaysChoose
                 ('Ship_Boost', 0, 10),
             ],
-            'number': 2,  # 1 (AlwaysChoose x1 but Ship_Boost with 0)
+            'number': 2,  # 2 (AlwaysChoose + NumStatsMin 2)
         },
     },
 
@@ -1406,25 +1406,25 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 10),
                 ('Ship_Boost', 0, 5),
                 ('Ship_BoostManeuverability', 0, 5),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
-            'number': 2,  # 0 (Ship_Boost and Ship_BoostManeuverability with 0)
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 11, 15),
                 ('Ship_Boost', 5, 10),
                 ('Ship_BoostManeuverability', 0, 10),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
-            'number': 2,  # 1 (Ship_BoostManeuverability with 0)
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 15, 20),
                 ('Ship_Boost', 5, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 3,  # 2
         },
@@ -1433,7 +1433,7 @@ DATA = {
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 20, 20),
                 ('Ship_Boost', 11, 15),
                 ('Ship_BoostManeuverability', 5, 12),
-                # ('Ship_Maneuverability'),  # AlwaysChoose x1 but hidden and ALWAYS the same
+                # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 3,  # 3
         },
