@@ -568,21 +568,21 @@ DATA = {
     'UP_SHLD': {
         '1': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 10, 15),
+                ('Suit_Armour_Shield_Strength', 10, 14),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 15, 20),
+                ('Suit_Armour_Shield_Strength', 15, 19),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Suit_Armour_Shield_Strength', 20, 30),
+                ('Suit_Armour_Shield_Strength', 20, 29),
                 ('Suit_Armour_Health', 33, 33),
             ],
             'number': 2,  # 2
