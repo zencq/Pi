@@ -1404,8 +1404,8 @@ DATA = {
         '1': {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 6, 10),
-                ('Ship_Boost', 0, 5),
-                ('Ship_BoostManeuverability', 0, 5),
+                ('Ship_Boost', 1, 5),
+                ('Ship_BoostManeuverability', 1, 5),
                 # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 2,  # 1
@@ -1414,7 +1414,7 @@ DATA = {
             'meta': [
                 ('Ship_PulseDrive_MiniJumpFuelSpending', 11, 15),
                 ('Ship_Boost', 5, 10),
-                ('Ship_BoostManeuverability', 0, 10),
+                ('Ship_BoostManeuverability', 1, 10),
                 # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
             'number': 2,  # 2

@@ -224,6 +224,18 @@ if __name__ == '__main__':
     }
     iter_slot(inventory[type_identifier], intruction['item'], starting_seed, intruction['iteration_necessary'])
 
+    # automatically set the updated ship/vehicle as active
+    if type_identifier == 'ship':
+        save['6f=']['aBE'] = 0
+    elif type_identifier == 'living':
+        save['6f=']['aBE'] = 1
+    elif type_identifier == 'vehicle':
+        save['6f=']['5sx'] = 3
+    elif type_identifier == 'submarine':
+        save['6f=']['5sx'] = 5
+    elif type_identifier == 'mech':
+        save['6f=']['5sx'] = 6
+
     with open(f_name, 'w') as f:
         print('Write')
         json.dump(save, f, separators=(',', ':'))
