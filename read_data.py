@@ -469,16 +469,16 @@ DATA = {
         '1': {
             'meta': [
                 ('Suit_Energy', 5, 19),
-                ('Suit_Energy_Regen', 0, 10),
+                ('Suit_Energy_Regen', 1, 10),
             ],
-            'number': 2,  # 0 (Suit_Energy_Regen with 0)
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
                 ('Suit_Energy', 20, 49),
-                ('Suit_Energy_Regen', 0, 25),
+                ('Suit_Energy_Regen', 1, 25),
             ],
-            'number': 2,  # 1 (Suit_Energy_Regen with 0)
+            'number': 2,  # 2
         },
         '3': {
             'meta': [
@@ -490,9 +490,9 @@ DATA = {
         'X': {
             'meta': [
                 ('Suit_Energy', 5, 109),
-                ('Suit_Energy_Regen', 0, 75),
+                ('Suit_Energy_Regen', 1, 75),
             ],
-            'number': 2,  # 0 (Suit_Energy_Regen with 0)
+            'number': 2,  # 1
         },
     },
 
