@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Ship_Weapons_Guns_Damage,Ship_Weapons_Guns_Rate,Ship_Weapons_Guns_HeatTime
 0,Turgid Cavity,0.0,+3%,,
 1,Turgid Cavity,1.0,,+2%,+2%

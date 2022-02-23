@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Ship_Weapons_Guns_Damage,Ship_Weapons_Guns_Rate,Ship_Weapons_Guns_HeatTime
 0,Intumescent Cavity,0.0,+5%,+2%,
 1,Intumescent Cavity,0.333,+5%,+2%,+3%

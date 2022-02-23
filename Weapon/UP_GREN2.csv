@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Weapon_Grenade_Damage,Weapon_Grenade_Bounce,Weapon_Grenade_Radius,Weapon_Grenade_Speed
 0,Unstable Gas Expander,0.02,,+35%,,
 1,Unstable Gas Expander,0.174,,,+6%,+204%

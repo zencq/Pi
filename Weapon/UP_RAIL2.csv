@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Weapon_Laser_Damage,Weapon_Laser_ChargeTime
 0,Living Glass Recycler,0.5,+3%,
 1,Living Glass Recycler,0.625,+3%,-12%

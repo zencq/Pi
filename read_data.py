@@ -2355,6 +2355,7 @@ if __name__ == '__main__':
 
     f_name = fr'{module[:hashtag_index]}_{begin}_{stop - 1}.csv'
     with open(f_name, 'w', newline='') as f:
+        f.write('sep=,\r\n')
         writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='excel')
         writer.writeheader()
         print('Item  ', item_name, item_class)

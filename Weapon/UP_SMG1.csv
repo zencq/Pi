@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Weapon_Projectile_Damage,Weapon_Projectile_Rate,Weapon_Projectile_ClipSize
 0,Infrared Solidifier,0.5,+3%,,
 1,Infrared Solidifier,0.167,,+4%,

@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Suit_Energy,Suit_Energy_Regen
 0,Gas Purifier,0.357,+15%,
 1,Gas Purifier,0.056,,+2%

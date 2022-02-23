@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Ship_Hyperdrive_JumpDistance,Ship_Hyperdrive_JumpsPerCell
 0,Tremendous Stellar Processor,0.68,184 ly,
 1,Tremendous Stellar Processor,1.0,,+100%

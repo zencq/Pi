@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Ship_PulseDrive_MiniJumpFuelSpending,Ship_Boost,Ship_BoostManeuverability
 0,Alternate Magnetic Fan,0.25,+8%,,
 1,Alternate Magnetic Fan,0.375,,+4%,

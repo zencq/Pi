@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Vehicle_LaserDamage,Vehicle_LaserHeatTime
 0,Enhanced Photon Mirror,0.667,+10%,
 1,Enhanced Photon Mirror,0.5,,+3%

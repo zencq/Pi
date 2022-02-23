@@ -1,3 +1,4 @@
+sep=,
 Seed,Name,Perfection,Vehicle_EngineFuelUse,Vehicle_EngineTopSpeed
 0,Heated Magnetic Fan,0.0,-6%,
 1,Heated Magnetic Fan,0.2,,+5%

@@ -350,8 +350,10 @@ if __name__ == '__main__':
         high_number_perfection = get_high_number_perfection(get_high_number(item_stats), key_possibilities, item_stats)
 
         with open(f_backup, 'r', newline='') as backup:
+            backup.readline()  # skip first line with delimiter indicator
             reader = csv.DictReader(backup, dialect='excel')
             with open(f_original, 'w', newline='') as original:
+                original.write('sep=,\r\n')
                 writer = csv.DictWriter(original, fieldnames=reader.fieldnames, dialect='excel')
                 writer.writeheader()
 
