@@ -409,8 +409,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 2, 4),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 6, 10),
-                ('Weapon_ChargedProjectile_Extras', 2, 5),
+                ('Weapon_ChargedProjectile_ChargeTime', 6, 10),
+                ('Weapon_ChargedProjectile_ExtraSpeed', 2, 5),
             ],
             'number': 2,  # 1
         },
@@ -418,8 +418,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 5, 6),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 11, 15),
-                ('Weapon_ChargedProjectile_Extras', 5, 8),
+                ('Weapon_ChargedProjectile_ChargeTime', 11, 15),
+                ('Weapon_ChargedProjectile_ExtraSpeed', 5, 8),
             ],
             'number': 3,  # 2
         },
@@ -427,8 +427,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 7, 9),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 11, 20),
-                ('Weapon_ChargedProjectile_Extras', 8, 11),
+                ('Weapon_ChargedProjectile_ChargeTime', 11, 20),
+                ('Weapon_ChargedProjectile_ExtraSpeed', 8, 11),
             ],
             'number': 4,  # 3
         },
@@ -436,8 +436,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 10, 10),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 11, 20),
-                ('Weapon_ChargedProjectile_Extras', 11, 13),
+                ('Weapon_ChargedProjectile_ChargeTime', 11, 20),
+                ('Weapon_ChargedProjectile_ExtraSpeed', 11, 13),
             ],
             'number': 4,  # 4
         },
@@ -445,8 +445,8 @@ DATA = {
             'meta': [
                 ('Weapon_Projectile_Damage', 5, 14),
                 ('Weapon_Projectile_MaximumCharge', 1, 1),
-                ('Weapon_ChargedProjectile_Charge', 6, 25),
-                ('Weapon_ChargedProjectile_Extras', 2, 13),
+                ('Weapon_ChargedProjectile_ChargeTime', 6, 25),
+                ('Weapon_ChargedProjectile_ExtraSpeed', 2, 13),
             ],
             'number': 4,  # 1
         },
@@ -2245,8 +2245,8 @@ TRANSLATION = {
 
     # region Weapon
 
-    'Weapon_ChargedProjectile_Charge': ('Charging Speed', extract_int_percent, pattern_int_percent),
-    'Weapon_ChargedProjectile_Extras': ('Ion Sphere Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_ChargedProjectile_ChargeTime': ('Charging Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_ChargedProjectile_ExtraSpeed': ('Ion Sphere Speed', extract_int_percent, pattern_int_percent),
 
     'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
     'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
