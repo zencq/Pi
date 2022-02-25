@@ -789,9 +789,10 @@ DATA = {
         '1': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 6, 10),  # AlwaysChoose
-                ('Ship_Boost', 0, 1),
+                ('Ship_Boost', 1, 1),
             ],
             'number': 2,  # 2 (AlwaysChoose + NumStatsMin 1)
+            'description': 'Upgrades the Launch Thruster, improving <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
         '2': {
             'meta': [
@@ -820,9 +821,10 @@ DATA = {
         'X': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 6, 25),  # AlwaysChoose
-                ('Ship_Boost', 0, 10),
+                ('Ship_Boost', 1, 10),
             ],
             'number': 2,  # 2 (AlwaysChoose + NumStatsMin 2)
+            'description': 'Bypassing nearly every galactic standard for workmanship and safety, this upgrade module targets <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
         },
     },
 
