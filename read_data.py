@@ -29,10 +29,10 @@ DATA = {
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 6, 10),
                 ('Weapon_Laser_HeatTime', 5, 15),
-                ('Weapon_Laser_Drain', 0, 10),
+                ('Weapon_Laser_Drain', 1, 10),
                 ('Weapon_Laser_ReloadTime', 6, 10),
             ],
-            'number': 2,  # 0 (Weapon_Laser_Drain with 0)
+            'number': 2,  # 1
         },
         '2': {
             'meta': [
@@ -65,10 +65,10 @@ DATA = {
             'meta': [
                 ('Weapon_Laser_Mining_Speed', 6, 20),
                 ('Weapon_Laser_HeatTime', 5, 55),
-                ('Weapon_Laser_Drain', 0, 25),
+                ('Weapon_Laser_Drain', 1, 25),
                 ('Weapon_Laser_ReloadTime', 6, 25),
             ],
-            'number': 3,  # 0 (Weapon_Laser_Drain with 0)
+            'number': 3,  # 1
         },
     },
 
