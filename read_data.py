@@ -185,7 +185,7 @@ DATA = {
         },
         '2': {
             'meta': [
-                ('Weapon_Grenade_Damage', 20, 29),
+                ('Weapon_Grenade_Damage', 40, 59),
                 ('Weapon_Grenade_Bounce', 33, 66),
                 ('Weapon_Grenade_Radius', 6, 10),
                 ('Weapon_Grenade_Speed', 100, 299),
