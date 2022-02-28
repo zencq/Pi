@@ -121,9 +121,9 @@ DATA = {
                 ('Weapon_Projectile_Damage', 1, 1),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 2, 2),
-                ('Weapon_Projectile_Rate', 0, 10),
+                ('Weapon_Projectile_Rate', 1, 10),
                 ('Weapon_Projectile_BurstCap', 1, 1),
-                ('Weapon_Projectile_BurstCooldown', 0, 5),
+                ('Weapon_Projectile_BurstCooldown', 1, 5),
             ],
             'number': 3,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
@@ -165,9 +165,9 @@ DATA = {
                 ('Weapon_Projectile_Damage', 1, 2),  # AlwaysChoose
                 ('Weapon_Projectile_ReloadTime', 6, 25),
                 ('Weapon_Projectile_ClipSize', 2, 10),
-                ('Weapon_Projectile_Rate', 0, 20),
+                ('Weapon_Projectile_Rate', 1, 20),
                 ('Weapon_Projectile_BurstCap', 1, 2),
-                ('Weapon_Projectile_BurstCooldown', 0, 20),
+                ('Weapon_Projectile_BurstCooldown', 1, 20),
             ],
             'number': 4,  # 2 (AlwaysChoose + NumStatsMin 1)
         },
