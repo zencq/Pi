@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
     f_name = sys.argv[1]
     intruction = {
-        'item': sys.argv[2],
+        'item': sys.argv[2].upper(),
         'iteration': int(sys.argv[3]) if len(sys.argv) >= 5 else 1,
         'iteration_necessary': int(sys.argv[4]) if len(sys.argv) >= 5 else 1,
     }
