@@ -176,7 +176,7 @@ DATA = {
     'UP_GREN': {
         '1': {
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 19),
+                ('Weapon_Grenade_Damage', 20, 39),
                 ('Weapon_Grenade_Bounce', 33, 33),
                 ('Weapon_Grenade_Radius', 1, 5),
                 ('Weapon_Grenade_Speed', 100, 199),
