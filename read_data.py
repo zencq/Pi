@@ -212,9 +212,9 @@ DATA = {
         },
         'X': {
             'meta': [
-                ('Weapon_Grenade_Damage', 10, 44),
+                ('Weapon_Grenade_Damage', 20, 89),
                 ('Weapon_Grenade_Bounce', 33, 133),
-                ('Weapon_Grenade_Radius', 1, 20),
+                ('Weapon_Grenade_Radius', 2, 20),
                 ('Weapon_Grenade_Speed', 100, 399),
             ],
             'number': 3,  # 1
