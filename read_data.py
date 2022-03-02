@@ -360,8 +360,8 @@ DATA = {
     'UP_SMG': {
         '1': {
             'meta': [
-                ('Weapon_Projectile_Damage', 3, 3),
-                ('Weapon_Projectile_Rate', 1, 10),
+                ('Weapon_Projectile_Damage', 1, 1),
+                ('Weapon_Projectile_Rate', 2, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
             'number': 2,  # 1
