@@ -386,7 +386,7 @@ DATA = {
         },
         '4': {
             'meta': [
-                ('Weapon_Projectile_Damage', 6, 9),
+                ('Weapon_Projectile_Damage', 2, 3),
                 ('Weapon_Projectile_Rate', 11, 15),
                 ('Weapon_Projectile_ReloadTime', 6, 10),
                 ('Weapon_Projectile_ClipSize', 12, 12),
