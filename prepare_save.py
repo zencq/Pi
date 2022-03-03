@@ -111,7 +111,7 @@ TYPES = {
     'ship': 'Starship 0 (Normal)',
     'living': 'Starship 1 (Living)',
     'suit': 'Exosuit',
-    'vehicle': 'Exocraft 3 (Pilgrim)',
+    'vehicle': 'Exocraft 2 (Colossus)',
     'submarine': 'Exocraft 5 (Nautilon)',
     'mech': 'Exocraft 6 (Minotaur)',
     'weapon': 'Weapon 0',
@@ -217,7 +217,7 @@ if __name__ == '__main__':
         'ship': save['6f=']['@Cs'][0][';l5'],
         'living': save['6f=']['@Cs'][1][';l5'],
         'suit': save['6f='][';l5'],
-        'vehicle': save['6f=']['P;m'][3][';l5'],
+        'vehicle': save['6f=']['P;m'][2][';l5'],
         'submarine': save['6f=']['P;m'][5][';l5'],
         'mech': save['6f=']['P;m'][6][';l5'],
         'weapon': save['6f=']['SuJ'][0]['OsQ'],
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     elif type_identifier == 'living':
         save['6f=']['aBE'] = 1
     elif type_identifier == 'vehicle':
-        save['6f=']['5sx'] = 3
+        save['6f=']['5sx'] = 2
     elif type_identifier == 'submarine':
         save['6f=']['5sx'] = 5
     elif type_identifier == 'mech':

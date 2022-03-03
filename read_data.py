@@ -1126,7 +1126,7 @@ DATA = {
             'meta': [
                 ('Vehicle_GunDamage', 1, 3),
                 ('Vehicle_GunHeatTime', 1, 5),
-                ('Vehicle_GunRate', 1, 5),
+                ('Vehicle_GunRate', 1, 3),
             ],
             'number': 2,  # 1
         },
