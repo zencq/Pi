@@ -1312,8 +1312,8 @@ DATA = {
         },
         '4': {
             'meta': [
-                ('Vehicle_GunDamage', 10, 14),
-                ('Vehicle_GunRate', 15, 20),
+                ('Vehicle_GunDamage', 9, 12),
+                ('Vehicle_GunRate', 7, 10),
             ],
             'number': 2,  # 2
         },
