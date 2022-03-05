@@ -2008,9 +2008,14 @@ def init_meta(data):
     """
     Convert and enrich list of stats to dictionary.
     """
+    is_used = lambda name: not (len(TRANSLATION[name]) >= 4 and TRANSLATION[name][3])
+
+    weighting = [(stat[2] - stat[1] + 1 if is_used(stat[0]) else 0) for stat in data]
+    weighting_min = min(weight for weight in weighting if weight)
+
     return {
-        TRANSLATION[line[0]][0]: line + TRANSLATION[line[0]][1:]
-        for line in data
+        TRANSLATION[stat[0]][0]: stat + ((weighting[i] / weighting_min,) if weighting[i] else (0,)) + TRANSLATION[stat[0]][1:]
+        for i, stat in enumerate(data)
     }
 
 
@@ -2082,7 +2087,7 @@ def get_high_number(item_stats):
 
 
 def get_high_number_perfection(high_number, key_possibilities, item_stats):
-    return high_number - len([key for key in key_possibilities if len(item_stats['meta'][key]) >= 6 and item_stats['meta'][key][5]])
+    return high_number - len([key for key in key_possibilities if len(item_stats['meta'][key]) >= 7 and item_stats['meta'][key][6]])
 
 
 def get_key_possibilities(item_stats):
@@ -2097,8 +2102,8 @@ def get_item_stats(item_name, item_class):
     return DATA[item_name][item_class] if item_class else DATA[item_name]
 
 
-def get_perfection(perfection, high_number_perfection, round_digits):
-    return round(sum(perfection) / high_number_perfection, round_digits) if perfection else 0
+def get_perfection(perfection, weighting_total, high_number_perfection, round_digits):
+    return round(sum(perfection) / weighting_total * (len(perfection) / high_number_perfection), round_digits) if perfection else 0
 
 # endregion
 
@@ -2141,52 +2146,34 @@ pattern_int_percent_thousand = re.compile("^\+[0-9]{1,2},[0-9]{3}%$")
 # Q4 targeting <STELLAR><>, <STELLAR><>,
 
 TRANSLATION = {
-    # region Freighter
+    # region Weapon
 
-    'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
-    'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
+    'Weapon_ChargedProjectile_ChargeTime': ('Charging Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_ChargedProjectile_ExtraSpeed': ('Ion Sphere Speed', extract_int_percent, pattern_int_percent),
 
-    'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
+    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
+    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, pattern_int_percent),
 
-    'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
+    'Weapon_Laser_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, pattern_int_percent),
+    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, pattern_int_percent),
 
-    'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
+    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
+    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_MaximumCharge': ('Ion Spheres Created', extract_float, pattern_float),
+    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
+    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),
 
-    'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
-
-    'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
-
-    'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
-
-    # endregion
-
-    # region Product
-
-    'Product_Age': ('Age', extract_int_product_age, pattern_product_age, True),
-    'Product_Basevalue': ('Value', extract_int_product_value, pattern_product_value),
-
-    # endregion
-
-    # region Ship
-
-    'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
-    'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
-    'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
-    'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
-    'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
-    'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
-    'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
-
-    'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
-
-    'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-
-    'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
 
     # endregion
 
@@ -2228,6 +2215,29 @@ TRANSLATION = {
 
     # endregion
 
+    # region Ship
+
+    'Ship_Launcher_AutoCharge': ('Automatic Recharging', extract_bool, pattern_bool),
+    'Ship_Boost': ('Boost', extract_int_percent, pattern_int_percent),
+    'Ship_Launcher_TakeOffCost': ('Launch Cost', extract_int_percent, pattern_int_percent),
+    'Ship_BoostManeuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),
+    'Ship_Maneuverability': ('Maneuverability', extract_int_percent, pattern_int_percent),  # hidden but ALWAYS the same
+    'Ship_PulseDrive_MiniJumpFuelSpending': ('Pulse Drive Fuel Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Hyperdrive_JumpDistance': ('Hyperdrive Range', extract_int_lightyear, pattern_int_lightyear),
+    'Ship_Hyperdrive_JumpsPerCell': ('Warp Cell Efficiency', extract_int_percent, pattern_int_percent),
+
+    'Ship_Armour_Shield_Strength': ('Shield Strength', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Guns_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Guns_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
+    'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+
+    # endregion
+
     # region Vehicle
 
     'Vehicle_GunDamage': ('Damage', extract_int_percent, pattern_int_percent),
@@ -2245,34 +2255,29 @@ TRANSLATION = {
 
     # endregion
 
-    # region Weapon
+    # region Freighter
 
-    'Weapon_ChargedProjectile_ChargeTime': ('Charging Speed', extract_int_percent, pattern_int_percent),
-    'Weapon_ChargedProjectile_ExtraSpeed': ('Ion Sphere Speed', extract_int_percent, pattern_int_percent),
+    'Freighter_Hyperdrive_JumpDistance': ('hyperdrive range', extract_int_lightyear, pattern_int_lightyear),  # Hyperdrive Range
+    'Freighter_Hyperdrive_JumpsPerCell': ('efficiency', extract_int_percent, pattern_int_percent),  # Warp Cell Efficiency
 
-    'Weapon_Grenade_Bounce': ('Bounce Potential', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Radius': ('Explosion Radius', extract_int_percent, pattern_int_percent),
-    'Weapon_Grenade_Speed': ('Projectile Velocity', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Speed': ('expedition speed', extract_int_percent, pattern_int_percent),  # Expedition Speed
 
-    'Weapon_Laser_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_Drain': ('Fuel Efficiency', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_Mining_Speed': ('Mining Speed', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_ReloadTime': ('Overheat Downtime', extract_int_percent, pattern_int_percent),
-    'Weapon_Laser_ChargeTime': ('Time to Full Power', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Fuel': ('expedition fuel efficiency', extract_int_percent, pattern_int_percent),  # Expedition Efficiency
 
-    'Weapon_Projectile_BurstCooldown': ('Burst Cooldown', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_ClipSize': ('Clip Size', extract_float, pattern_float),
-    'Weapon_Projectile_Damage': ('Damage', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_MaximumCharge': ('Ion Spheres Created', extract_float, pattern_float),
-    'Weapon_Projectile_Rate': ('Fire Rate', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_ReloadTime': ('Reload Time', extract_int_percent, pattern_int_percent),
-    'Weapon_Projectile_BurstCap': ('Shots Per Burst', extract_float, pattern_float),
+    'Freighter_Fleet_Combat': ('combat and defense abilities', extract_int_percent, pattern_int_percent),  # Expedition Defenses
 
-    'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
-    'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
-    'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
+    'Freighter_Fleet_Trade': ('trade abilities', extract_int_percent, pattern_int_percent),  # Expedition Trade Ability
+
+    'Freighter_Fleet_Explore': ('exploration and scientific abilities', extract_int_percent, pattern_int_percent),  # Expedition Scientific Ability
+
+    'Freighter_Fleet_Mine': ('industrial abilities', extract_int_percent, pattern_int_percent),  # Expedition Mining Ability
+
+    # endregion
+
+    # region Product
+
+    'Product_Age': ('Age', extract_int_product_age, pattern_product_age, True),
+    'Product_Basevalue': ('Value', extract_int_product_value, pattern_product_value),
 
     # endregion
 }
@@ -2385,7 +2390,7 @@ if __name__ == '__main__':
                     if item_name == 'UP_FRHYP' and 'ly' not in values[0]:
                         values.reverse()
                     if (
-                        all(key in key_possibilities and item_stats['meta'][key][4].match(values[index]) for index, key in enumerate(keys))
+                        all(key in key_possibilities and item_stats['meta'][key][5].match(values[index]) for index, key in enumerate(keys))
                         or description.startswith('UPGRADE_0')
                         or description.startswith('BIO_UPGRADE_0')
                     ):
@@ -2404,6 +2409,7 @@ if __name__ == '__main__':
 
             perfection = []
             row = {}
+            weighting_total = sum(item_stats['meta'][key][3] for key in keys)
 
             # Get actual values of the current item.
             for index, key in enumerate(keys):
@@ -2411,23 +2417,25 @@ if __name__ == '__main__':
 
                 row.update({meta[0]: values[index]})
 
-                extract_method = meta[3]
-
+                extract_method = meta[4]
                 value = extract_method(values[index])
+                weighting = meta[3]
+
                 if item_name == 'PROC':
                     row.update({meta[0]: value})
 
-                if len(meta) >= 6 and meta[5]:
+                if len(meta) >= 7 and meta[6]:
                     continue
 
                 p = 1.0
                 if meta[2] - meta[1] > 0:
                     p -= (meta[2] - value) / (meta[2] - meta[1])
+                p *= weighting
                 perfection.append(p)
 
             row.update({
                 'Name': title,
-                'Perfection': get_perfection(perfection, high_number_perfection, round_digits),
+                'Perfection': get_perfection(perfection, weighting_total, high_number_perfection, round_digits),
                 'Seed': i,
             })
 
