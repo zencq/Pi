@@ -1,9 +1,10 @@
 # The first script prepares your save by adding up to 100,000 seeds to it.
 # Usage: python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]
 
-import sys
-import json
 import copy
+import json
+import os
+import sys
 
 from read_data import get_has_class
 from read_data import TOTAL_SEEDS
@@ -106,15 +107,15 @@ ITEMS = [
 ]
 MAX_SEED = TOTAL_SEEDS - 1  # starts at 0
 TYPES = {
-    'freighter': 'Freighter',
-    'product': 'Product',
-    'ship': 'Starship 0 (Normal)',
-    'living': 'Starship 1 (Living)',
-    'suit': 'Exosuit',
-    'vehicle': 'Exocraft 2 (Colossus)',
-    'submarine': 'Exocraft 5 (Nautilon)',
-    'mech': 'Exocraft 6 (Minotaur)',
-    'weapon': 'Weapon 0',
+    'Freighter': 'Freighter',
+    'Product': 'Product',
+    'Ship': 'Starship 0 (Normal)',
+    'AlienShip': 'Starship 1 (Living)',
+    'Suit': 'Exosuit',
+    'Exocraft': 'Exocraft 2 (Colossus)',
+    'Submarine': 'Exocraft 5 (Nautilon)',
+    'Mech': 'Exocraft 6 (Minotaur)',
+    'Weapon': 'Weapon 0',
 }
 
 # endregion
@@ -176,7 +177,7 @@ if __name__ == '__main__':
         print('ERROR: Not enough arguments! Usage: python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_SEEDS_ITERATIONS]')
         exit()
 
-    f_name = sys.argv[1]
+    f_filepath = sys.argv[1]
     intruction = {
         'item': sys.argv[2].upper(),
         'iteration': int(sys.argv[3]) if len(sys.argv) >= 5 else 1,
@@ -201,7 +202,7 @@ if __name__ == '__main__':
 
     # region algorithm
 
-    with open(f_name, 'r') as f:
+    with open(f_filepath, 'r') as f:
         print('Read')
         save = json.loads(f.read()[:-1])
 
@@ -212,31 +213,40 @@ if __name__ == '__main__':
     print(f'Update {TYPES[type_identifier]} with {intruction["item"]} ({starting_seed} - {starting_seed + counting_seed - 1})')
 
     inventory = {
-        'freighter': save['6f=']['8ZP'],
-        'product': save['6f=']['P;m'][1][';l5'],
-        'ship': save['6f=']['@Cs'][0][';l5'],
-        'living': save['6f=']['@Cs'][1][';l5'],
-        'suit': save['6f='][';l5'],
-        'vehicle': save['6f=']['P;m'][2][';l5'],
-        'submarine': save['6f=']['P;m'][5][';l5'],
-        'mech': save['6f=']['P;m'][6][';l5'],
-        'weapon': save['6f=']['SuJ'][0]['OsQ'],
+        'Freighter': save['6f=']['8ZP'],
+        'Product': save['6f=']['P;m'][1][';l5'],
+        'Ship': save['6f=']['@Cs'][0][';l5'],
+        'AlienShip': save['6f=']['@Cs'][1][';l5'],
+        'Suit': save['6f='][';l5'],
+        'Exocraft': save['6f=']['P;m'][2][';l5'],
+        'Submarine': save['6f=']['P;m'][5][';l5'],
+        'Mech': save['6f=']['P;m'][6][';l5'],
+        'Weapon': save['6f=']['SuJ'][0]['OsQ'],
     }
     iter_slot(inventory[type_identifier], intruction['item'], starting_seed, intruction['iteration_necessary'])
 
     # automatically set the updated ship/vehicle as active
-    if type_identifier == 'ship':
+    if type_identifier == 'Ship':
         save['6f=']['aBE'] = 0
-    elif type_identifier == 'living':
+    elif type_identifier == 'AlienShip':
         save['6f=']['aBE'] = 1
-    elif type_identifier == 'vehicle':
+    elif type_identifier == 'Exocraft':
         save['6f=']['5sx'] = 2
-    elif type_identifier == 'submarine':
+    elif type_identifier == 'Submarine':
         save['6f=']['5sx'] = 5
-    elif type_identifier == 'mech':
+    elif type_identifier == 'Mech':
         save['6f=']['5sx'] = 6
 
-    with open(f_name, 'w') as f:
+    f_path = os.path.dirname(f_filepath)
+    f_name = os.path.basename(f_filepath)
+    f_filepath = os.path.join(
+        f_path,
+        type_identifier,
+        f'{intruction["item"].replace("_", "")}_{(starting_seed):05}_{(starting_seed + counting_seed - 1):05}_{f_name}'
+    )
+
+    os.makedirs(os.path.dirname(f_filepath), exist_ok=True)
+    with open(f_filepath, 'w') as f:
         print('Write')
         json.dump(save, f, separators=(',', ':'))
         f.write('\x00')

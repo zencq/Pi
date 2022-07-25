@@ -821,7 +821,7 @@ DATA = {
         'X': {
             'meta': [
                 ('Ship_Launcher_TakeOffCost', 6, 25),  # AlwaysChoose
-                ('Ship_Boost', 1, 10),
+                ('Ship_Boost', 1, 11),
             ],
             'number': 2,  # 2 (AlwaysChoose + NumStatsMin 2)
             'description': 'Bypassing nearly every galactic standard for workmanship and safety, this upgrade module targets <STELLAR>Launch Cost<> and <STELLAR>Boost<>.',
@@ -1066,7 +1066,7 @@ DATA = {
         },
         'X': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 1, 8),
+                ('Ship_Weapons_Guns_Damage', 1, 6),
                 ('Ship_Weapons_Guns_Rate', 1, 15),
                 ('Ship_Weapons_Guns_HeatTime', 1, 13),
             ],
@@ -2440,7 +2440,7 @@ if __name__ == '__main__':
             })
 
             writer.writerow(row)
-            if (i - (STEPS - 1)) % STEPS == 0:
+            if i in [0, 50000] or (i - (STEPS - 1)) % STEPS == 0:
                 middle_next = datetime.now()
                 print(f'{i:>6} ({middle_next - middle}) ({middle_next})')
                 middle = middle_next
