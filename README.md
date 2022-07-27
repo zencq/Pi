@@ -36,7 +36,7 @@ python prepare_save.py PATH_TO_SAVE ITEM_ID [ITERATION TOTAL_ITERATIONS]
 
 The second script **read**s the procedural **data** directly from memory. To do so,
 you need to hover the cursor over the first item to reveal its stats. Then you can use
-[Cheat Engine](https://cheatengine.org/downloads.php) to find the coresponding
+[Cheat Engine](https://cheatengine.org/downloads.php) to find the corresponding
 addresses of the item itself, the name, the description, and each of the up to
 four stats.
 

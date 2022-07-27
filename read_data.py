@@ -78,6 +78,7 @@ DATA = {
                 ('Weapon_Scan_Radius', 5, 10),
                 ('Weapon_Scan_Discovery_Creature', 1000, 1999),
                 ('Weapon_Scan_Discovery_Flora', 1000, 1999),
+                ('Weapon_Scan_Discovery_Mineral', 1000, 1999),
             ],
             'number': 2,  # 1
         },
@@ -86,32 +87,36 @@ DATA = {
                 ('Weapon_Scan_Radius', 11, 20),
                 ('Weapon_Scan_Discovery_Creature', 2500, 4999),
                 ('Weapon_Scan_Discovery_Flora', 2500, 4999),
+                ('Weapon_Scan_Discovery_Mineral', 2500, 4999),
             ],
-            'number': 2,  # 2
+            'number': 3,  # 2
         },
         '3': {
             'meta': [
                 ('Weapon_Scan_Radius', 21, 30),
                 ('Weapon_Scan_Discovery_Creature', 5004, 9999),
                 ('Weapon_Scan_Discovery_Flora', 5004, 9999),
+                ('Weapon_Scan_Discovery_Mineral', 5004, 9999),
             ],
-            'number': 3,  # 2
+            'number': 4,  # 2
         },
         '4': {
             'meta': [
                 ('Weapon_Scan_Radius', 30, 40),
                 ('Weapon_Scan_Discovery_Creature', 6500, 9999),
                 ('Weapon_Scan_Discovery_Flora', 6500, 9999),
+                ('Weapon_Scan_Discovery_Mineral', 6500, 9999),
             ],
-            'number': 3,  # 3
+            'number': 4,  # 3
         },
         'X': {
             'meta': [
                 ('Weapon_Scan_Radius', 5, 50),
                 ('Weapon_Scan_Discovery_Creature', 1000, 10999),
                 ('Weapon_Scan_Discovery_Flora', 1000, 10999),
+                ('Weapon_Scan_Discovery_Mineral', 1000, 10999),
             ],
-            'number': 3,  # 1
+            'number': 4,  # 2
         },
     },
 
@@ -169,7 +174,7 @@ DATA = {
                 ('Weapon_Projectile_BurstCap', 1, 2),
                 ('Weapon_Projectile_BurstCooldown', 1, 20),
             ],
-            'number': 4,  # 2 (AlwaysChoose + NumStatsMin 1)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
     },
 
@@ -217,7 +222,7 @@ DATA = {
                 ('Weapon_Grenade_Radius', 2, 20),
                 ('Weapon_Grenade_Speed', 100, 399),
             ],
-            'number': 3,  # 1
+            'number': 3,  # 2
         },
     },
 
@@ -448,7 +453,7 @@ DATA = {
                 ('Weapon_ChargedProjectile_ChargeTime', 6, 25),
                 ('Weapon_ChargedProjectile_ExtraSpeed', 2, 13),
             ],
-            'number': 4,  # 1
+            'number': 4,  # 2
         },
     },
 
@@ -2173,6 +2178,7 @@ TRANSLATION = {
 
     'Weapon_Scan_Discovery_Creature': ('Fauna Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
     'Weapon_Scan_Discovery_Flora': ('Flora Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
+    'Weapon_Scan_Discovery_Mineral': ('Mineral Analysis Rewards', extract_int_percent_thousand, pattern_int_percent_thousand),
     'Weapon_Scan_Radius': ('Scan Radius', extract_int_percent, pattern_int_percent),
 
     # endregion
