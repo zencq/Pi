@@ -358,7 +358,7 @@ DATA = {
                 ('Weapon_Projectile_BurstCap', 1, 1),
                 ('Weapon_Projectile_BurstCooldown', 6, 25),
             ],
-            'number': 4,  # 2 (AlwaysChoose + NumStatsMin 1)
+            'number': 4,  # 3 (AlwaysChoose + NumStatsMin 2)
         },
     },
 
@@ -405,7 +405,7 @@ DATA = {
                 ('Weapon_Projectile_ReloadTime', 1, 15),
                 ('Weapon_Projectile_ClipSize', 12, 12),
             ],
-            'number': 4,  # 1
+            'number': 4,  # 2
         },
     },
 
@@ -463,7 +463,7 @@ DATA = {
             ('Weapon_Projectile_ReloadTime', 1, 15),
             ('Weapon_Projectile_Rate', 1, 20),
         ],
-        'number': 3,  # 1
+        'number': 3,  # 2 (NumStatsMax 4 but only 3)
     },
 
     # endregion
