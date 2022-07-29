@@ -497,7 +497,7 @@ DATA = {
                 ('Suit_Energy', 5, 109),
                 ('Suit_Energy_Regen', 1, 75),
             ],
-            'number': 2,  # 1
+            'number': 2,  # 2
         },
     },
 
@@ -604,7 +604,7 @@ DATA = {
                 ('Suit_Armour_Shield_Strength', 10, 34),
                 ('Suit_Armour_Health', 33, 33),
             ],
-            'number': 2,  # 1
+            'number': 2,  # 2
         },
     },
 
@@ -617,10 +617,10 @@ DATA = {
             ('Suit_Jetpack_Drain', 6, 25),
             ('Suit_Stamina_Strength', 10, 59),
         ],
-        'number': 4,  # 1
+        'number': 4,  # 2
     },
 
-    # ! TODO: values below not displayed (as of 3.81)
+    # ! TODO: values below not displayed (as of 3.97)
 
     'UP_UNW': {
         '1': {
@@ -2203,7 +2203,7 @@ TRANSLATION = {
     'Suit_Protection_RadDrain': ('Radiation Resistance', extract_int_percent, pattern_int_percent),
     'Suit_Protection_ToxDrain': ('Toxic Resistance', extract_int_percent, pattern_int_percent),
 
-    # ! TODO: values below not displayed (as of 3.81)
+    # ! TODO: values below not displayed (as of 3.97)
 
     'Suit_DamageReduce_Cold': ('Cold Damage Shielding', extract_int_percent, pattern_int_percent),
     'Suit_Protection_Cold': ('Cold Protection', extract_int_percent, pattern_int_percent),
