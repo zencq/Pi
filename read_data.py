@@ -786,7 +786,7 @@ DATA = {
                 ('Ship_BoostManeuverability', 1, 14),
                 # ('Ship_Maneuverability'),  # AlwaysChoose but hidden and ALWAYS the same
             ],
-            'number': 3,  # 1
+            'number': 3,  # 2
         },
     },
 
@@ -1010,29 +1010,27 @@ DATA = {
         },
         '3': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 2, 3),
-                ('Ship_Weapons_Guns_Rate', 14, 15),
-                ('Ship_Weapons_Guns_HeatTime', 11, 15),
+                ('Ship_Weapons_Guns_Damage', 1, 2),
+                ('Ship_Weapons_Guns_Rate', 7, 10),
+                ('Ship_Weapons_Guns_HeatTime', 7, 10),
             ],
             'number': 3,  # 3
         },
         '4': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 3, 3),
-                ('Ship_Weapons_Guns_Rate', 15, 15),
-                ('Ship_Weapons_Guns_HeatTime', 15, 15),
+                ('Ship_Weapons_Guns_Damage', 2, 2),
+                ('Ship_Weapons_Guns_Rate', 6, 10),
+                ('Ship_Weapons_Guns_HeatTime', 6, 10),
             ],
             'number': 3,  # 3
-            'description': 'An almost total rework of the Positron Ejector, this upgrade module brings unparalleled improvements to <STELLAR>Damage<>, <STELLAR>Fire Rate<> and <STELLAR>Heat Dispersion<>.',
-            'value': ['+3%', '+15%', '+15%'],
         },
         'X': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 1, 4),
-                ('Ship_Weapons_Guns_Rate', 5, 20),
-                ('Ship_Weapons_Guns_HeatTime', 1, 20),
+                ('Ship_Weapons_Guns_Damage', 1, 2),
+                ('Ship_Weapons_Guns_Rate', 5, 11),
+                ('Ship_Weapons_Guns_HeatTime', 1, 11),
             ],
-            'number': 3,  # 1
+            'number': 3,  # 2
         },
     },
 
@@ -1075,7 +1073,7 @@ DATA = {
                 ('Ship_Weapons_Guns_Rate', 1, 15),
                 ('Ship_Weapons_Guns_HeatTime', 1, 13),
             ],
-            'number': 3,  # 1
+            'number': 3,  # 2
         },
     },
 
@@ -1118,7 +1116,7 @@ DATA = {
                 ('Ship_Weapons_Guns_Rate', 1, 20),
                 ('Ship_Weapons_Guns_HeatTime', 11, 40),
             ],
-            'number': 3,  # 1
+            'number': 3,  # 2
         },
     },
 

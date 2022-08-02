@@ -20,7 +20,7 @@ are not include as their stats are not visible in-game.
 ## Usage
 
 This repository also contains some Python scripts that can be used to gather the data.
-They base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Creative & Sharing Hub](https://discord.gg/AEXcap6)**.
+They base on those shared by **ICE** and **DarkWalker** in the **No Man's Sky [Creative & Sharing Hub](https://discord.gg/RSGQFQv2pP)**.
 
 To run them properly, you need [Python 3.7](https://www.python.org) or newer.
 
