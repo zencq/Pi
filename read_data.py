@@ -994,17 +994,17 @@ DATA = {
     'UP_SSHOT': {
         '1': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 1, 2),
-                ('Ship_Weapons_Guns_Rate', 5, 10),
-                ('Ship_Weapons_Guns_HeatTime', 1, 5),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
+                ('Ship_Weapons_Guns_Rate', 1, 4),
+                ('Ship_Weapons_Guns_HeatTime', 1, 4),
             ],
             'number': 2,  # 1
         },
         '2': {
             'meta': [
-                ('Ship_Weapons_Guns_Damage', 1, 3),
-                ('Ship_Weapons_Guns_Rate', 11, 14),
-                ('Ship_Weapons_Guns_HeatTime', 5, 10),
+                ('Ship_Weapons_Guns_Damage', 1, 1),
+                ('Ship_Weapons_Guns_Rate', 4, 6),
+                ('Ship_Weapons_Guns_HeatTime', 4, 6),
             ],
             'number': 3,  # 2
         },
@@ -1259,33 +1259,33 @@ DATA = {
     'UP_EXSUB': {
         '1': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 1, 5),
-                ('Vehicle_EngineTopSpeed', 1, 3),
-                ('Vehicle_SubBoostSpeed', 10, 19),
+                ('Vehicle_EngineFuelUse', 1, 10),
+                ('Vehicle_EngineTopSpeed', 3, 5),
+                ('Vehicle_SubBoostSpeed', 10, 14),
             ],
             'number': 1,  # 1
         },
         '2': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 6, 10),
-                ('Vehicle_EngineTopSpeed', 3, 8),
-                ('Vehicle_SubBoostSpeed', 20, 34),
+                ('Vehicle_EngineFuelUse', 11, 15),
+                ('Vehicle_EngineTopSpeed', 5, 8),
+                ('Vehicle_SubBoostSpeed', 15, 19),
             ],
             'number': 2,  # 1
         },
         '3': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 11, 15),
-                ('Vehicle_EngineTopSpeed', 9, 15),
-                ('Vehicle_SubBoostSpeed', 35, 54),
+                ('Vehicle_EngineFuelUse', 15, 25),
+                ('Vehicle_EngineTopSpeed', 9, 10),
+                ('Vehicle_SubBoostSpeed', 20, 24),
             ],
             'number': 3,  # 2
         },
         '4': {
             'meta': [
-                ('Vehicle_EngineFuelUse', 15, 20),
-                ('Vehicle_EngineTopSpeed', 11, 15),
-                ('Vehicle_SubBoostSpeed', 55, 69),
+                ('Vehicle_EngineFuelUse', 15, 30),
+                ('Vehicle_EngineTopSpeed', 11, 11),
+                ('Vehicle_SubBoostSpeed', 25, 29),
             ],
             'number': 3,  # 3
         },
