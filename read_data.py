@@ -1580,6 +1580,7 @@ DATA = {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 11, 35),
                 ('Ship_Weapons_Lasers_Damage', 12, 15),
+                ('Ship_Weapons_ShieldLeech', 12, 49),
             ],
             'number': 2,  # 1
         },
@@ -1587,6 +1588,7 @@ DATA = {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 36, 55),
                 ('Ship_Weapons_Lasers_Damage', 16, 19),
+                ('Ship_Weapons_ShieldLeech', 50, 74),
             ],
             'number': 2,  # 1
         },
@@ -1594,6 +1596,7 @@ DATA = {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 55, 75),
                 ('Ship_Weapons_Lasers_Damage', 20, 23),
+                ('Ship_Weapons_ShieldLeech', 75, 99),
             ],
             'number': 2,  # 2
         },
@@ -1601,6 +1604,7 @@ DATA = {
             'meta': [
                 ('Ship_Weapons_Lasers_HeatTime', 75, 95),
                 ('Ship_Weapons_Lasers_Damage', 24, 27),
+                ('Ship_Weapons_ShieldLeech', 100, 149),
             ],
             'number': 2,  # 2
         },
@@ -2239,6 +2243,7 @@ TRANSLATION = {
 
     'Ship_Weapons_Lasers_Damage': ('Damage', extract_int_percent, pattern_int_percent),
     'Ship_Weapons_Lasers_HeatTime': ('Heat Dispersion', extract_int_percent, pattern_int_percent),
+    'Ship_Weapons_ShieldLeech': ('Shield recharge on impact', extract_int_percent, pattern_int_percent),
 
     # endregion
 
