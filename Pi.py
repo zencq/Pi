@@ -3,21 +3,26 @@ import ctypes
 import logging
 import os
 import re
+import threading
+
+import nmspy.common as nms
 
 from datetime import datetime
 
 from nmspy.data import (
-    common,
+    common as nms_common_structs,
     enums as nms_enums,
     function_hooks as hooks,
+    structs as nms_structs,
 )
-from nmspy.hooking import disable, one_shot
-from nmspy.memutils import map_struct
+from nmspy.hooking import disable, on_fully_booted
+from nmspy.memutils import map_struct, map_struct_temp
 from nmspy.mod_loader import NMSMod
-from nmspy.utils import safe_assign_enum
 
 
 # region Data
+
+FREE_MEMORY_STEPS = 250  # multiple of it should be TOTAL_SEEDS
 
 LANGUAGES = [
     "Name (en)",
@@ -54,80 +59,80 @@ PRODUCT = [
     "TOOL",
 ]
 
-PROGRESS_STEPS = 25000  # multiple of it should equal TOTAL_SEEDS
-
 RE_PRODUCT_AGE = re.compile("([0-9]+)")
+
+ROUND_DIGITS = 5
 
 TECHNOLOGY = {
     "AlienShip": {
-        "UA_HYP": ["1", "2", "3" , "4"],
-        "UA_LAUN": ["1", "2", "3" , "4"],
-        "UA_PULSE": ["1", "2", "3" , "4"],
-        "UA_S_SHL": ["1", "2", "3" , "4"],
-        "UA_SGUN": ["1", "2", "3" , "4"],
-        "UA_SLASR": ["1", "2", "3" , "4"],
+        "UA_HYP": ["1", "2", "3", "4"],
+        "UA_LAUN": ["1", "2", "3", "4"],
+        "UA_PULSE": ["1", "2", "3", "4"],
+        "UA_S_SHL": ["1", "2", "3", "4"],
+        "UA_SGUN": ["1", "2", "3", "4"],
+        "UA_SLASR": ["1", "2", "3", "4"],
     },
     "Exocraft": {
-        "UP_BOOST": ["1", "2", "3" , "4"],
-        "UP_EXENG": ["1", "2", "3" , "4"],
-        "UP_EXGUN": ["1", "2", "3" , "4"],
-        "UP_EXLAS": ["1", "2", "3" , "4"],
+        "UP_BOOST": ["1", "2", "3", "4"],
+        "UP_EXENG": ["1", "2", "3", "4"],
+        "UP_EXGUN": ["1", "2", "3", "4"],
+        "UP_EXLAS": ["1", "2", "3", "4"],
     },
     "Freighter": {
-        "UP_FRCOM": ["1", "2", "3" , "4"],
-        "UP_FREXP": ["1", "2", "3" , "4"],
-        "UP_FRFUE": ["1", "2", "3" , "4"],
-        "UP_FRHYP": ["1", "2", "3" , "4"],
-        "UP_FRMIN": ["1", "2", "3" , "4"],
-        "UP_FRSPE": ["1", "2", "3" , "4"],
-        "UP_FRTRA": ["1", "2", "3" , "4"],
+        "UP_FRCOM": ["1", "2", "3", "4"],
+        "UP_FREXP": ["1", "2", "3", "4"],
+        "UP_FRFUE": ["1", "2", "3", "4"],
+        "UP_FRHYP": ["1", "2", "3", "4"],
+        "UP_FRMIN": ["1", "2", "3", "4"],
+        "UP_FRSPE": ["1", "2", "3", "4"],
+        "UP_FRTRA": ["1", "2", "3", "4"],
     },
     "Mech": {
-        "UP_MCENG": ["2", "3" , "4"],
-        "UP_MCGUN": ["2", "3" , "4"],
-        "UP_MCLAS": ["2", "3" , "4"],
+        "UP_MCENG": ["2", "3", "4"],
+        "UP_MCGUN": ["2", "3", "4"],
+        "UP_MCLAS": ["2", "3", "4"],
     },
     "Ship": {
-        "UP_HYP": ["1", "2", "3" , "4", "X"],
-        "UP_LAUN": ["1", "2", "3" , "4", "X"],
-        "UP_PULSE": ["1", "2", "3" , "4", "X"],
-        "UP_S_SHL": ["1", "2", "3" , "4", "X"],
-        "UP_SBLOB": ["1", "2", "3" , "4", "X"],
-        "UP_SGUN": ["1", "2", "3" , "4", "X"],
-        "UP_SLASR": ["1", "2", "3" , "4", "X"],
-        "UP_SMINI": ["1", "2", "3" , "4", "X"],
-        "UP_SSHOT": ["1", "2", "3" , "4", "X"],
+        "UP_HYP": ["1", "2", "3", "4", "X"],
+        "UP_LAUN": ["1", "2", "3", "4", "X"],
+        "UP_PULSE": ["1", "2", "3", "4", "X"],
+        "UP_S_SHL": ["1", "2", "3", "4", "X"],
+        "UP_SBLOB": ["1", "2", "3", "4", "X"],
+        "UP_SGUN": ["1", "2", "3", "4", "X"],
+        "UP_SLASR": ["1", "2", "3", "4", "X"],
+        "UP_SMINI": ["1", "2", "3", "4", "X"],
+        "UP_SSHOT": ["1", "2", "3", "4", "X"],
     },
     "Submarine": {
-        "UP_EXSUB": ["1", "2", "3" , "4"],
-        "UP_SUGUN": ["1", "2", "3" , "4"],
+        "UP_EXSUB": ["1", "2", "3", "4"],
+        "UP_SUGUN": ["1", "2", "3", "4"],
     },
     "Suit": {
         "UP_COLD": ["1", "2", "3"],
-        "UP_ENGY": ["1", "2", "3" , "X"],
+        "UP_ENGY": ["1", "2", "3", "X"],
         "UP_HAZ": ["X"],
         "UP_HOT": ["1", "2", "3"],
-        "UP_JET": ["1", "2", "3" , "4", "X"],
+        "UP_JET": ["1", "2", "3", "4", "X"],
         "UP_RAD": ["1", "2", "3"],
-        "UP_SHLD": ["1", "2", "3" , "4", "X"],
+        "UP_RBSUIT": [""],
+        "UP_SHLD": ["1", "2", "3", "4", "X"],
         "UP_SNSUIT": [""],
         "UP_TOX": ["1", "2", "3"],
         "UP_UNW": ["1", "2", "3"],
     },
     "Weapon": {
-        "UP_BOLT": ["1", "2", "3" , "4", "X"],
-        "UP_CANN": ["1", "2", "3" , "4", "X"],
-        "UP_GREN": ["1", "2", "3" , "4", "X"],
-        "UP_LASER": ["1", "2", "3" , "4", "X"],
-        "UP_RAIL": ["1", "2", "3" , "4", "X"],
-        "UP_SCAN": ["1", "2", "3" , "4", "X"],
+        "UP_BOLT": ["1", "2", "3", "4", "X"],
+        "UP_CANN": ["1", "2", "3", "4", "X"],
+        "UP_GREN": ["1", "2", "3", "4", "X"],
+        "UP_LASER": ["1", "2", "3", "4", "X"],
+        "UP_RAIL": ["1", "2", "3", "4", "X"],
+        "UP_SCAN": ["1", "2", "3", "4", "X"],
         "UP_SENGUN": [""],
-        "UP_SHOT": ["1", "2", "3" , "4", "X"],
-        "UP_SMG": ["1", "2", "3" , "4", "X"],
-        "UP_TGREN": ["1", "2", "3" , "4", "X"],
+        "UP_SHOT": ["1", "2", "3", "4", "X"],
+        "UP_SMG": ["1", "2", "3", "4", "X"],
+        "UP_TGREN": ["1", "2", "3", "4", "X"],
     },
 }
-TECHNOLOGY_ITEMS_LIST = list(TECHNOLOGY.items())
 
 TOTAL_SEEDS = 100000
 
@@ -239,513 +244,125 @@ TRANSLATION = {
 
 # endregion
 
-# region Structs
-
-# Level 0 (Inherited)
-
-class cTkDynamicArray(common.cTkDynamicArray):
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.miSize})"
-
-    def __str__(self) -> str:  # aka remove
-        return self.__repr__()
-
-    def __len__(self) -> int:
-        return self.miSize
+# region Helper
 
 
-class cTkDynamicString(common.cTkDynamicString):
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.miSize})"
+class Counter(object):
+    def __init__(self, start=0):
+        self.lock = threading.Lock()
+        self.value = start
 
     def __str__(self) -> str:
-        return self.value.decode("utf-8")
+        return str(self.value)
 
-    def __len__(self) -> int:
-        return self.miSize
+    def increment(self):
+        self.lock.acquire()
+        try:
+            self.value = self.value + 1
+        finally:
+            self.lock.release()
 
-# Level 1
 
-class cGcAlienRace(ctypes.Structure):
-    _fields_ = [
-        ("_meAlienRace", ctypes.c_uint32),
-    ]
-
-    _meAlienRace: int
-
-    @property
-    def meAlienRace(self):
-        return safe_assign_enum(nms_enums.eAlienRace, self._meAlienRace)
-
-    def __str__(self) -> str:
-        return str(self.meAlienRace)
-
-
-class cGcInventoryType(ctypes.Structure):
-    _fields_ = [
-        ("_meInventoryType", ctypes.c_uint32),
-    ]
-
-    _meInventoryType: int
-
-    @property
-    def meInventoryType(self):
-        return safe_assign_enum(nms_enums.eInventoryType, self._meInventoryType)
-
-    def __str__(self) -> str:
-        return str(self.meInventoryType)
-
-
-class cGcItemPriceModifiers(ctypes.Structure):
-    _fields_ = [
-        ("mfSpaceStationMarkup", ctypes.c_float),
-        ("mfLowPriceMod", ctypes.c_float),
-        ("mfHighPriceMod", ctypes.c_float),
-        ("mfBuyBaseMarkup", ctypes.c_float),
-        ("mfBuyMarkupMod", ctypes.c_float),
-    ]
-
-    mfSpaceStationMarkup: float
-    mfLowPriceMod: float
-    mfHighPriceMod: float
-    mfBuyBaseMarkup: float
-    mfBuyMarkupMod: float
-
-
-class cGcLegality(ctypes.Structure):
-    _fields_ = [
-        ("_meLegality", ctypes.c_uint32),
-    ]
-
-    _meLegality: int
-
-    @property
-    def meLegality(self):
-        return safe_assign_enum(nms_enums.eLegality, self._meLegality)
-
-    def __str__(self) -> str:
-        return str(self.meLegality)
-
-
-class cGcProductCategory(ctypes.Structure):
-    _fields_ = [
-        ("_meProductCategory", ctypes.c_uint32),
-    ]
-
-    _meProductCategory: int
-
-    @property
-    def meProductCategory(self):
-        return safe_assign_enum(nms_enums.eProductCategory, self._meProductCategory)
-
-    def __str__(self) -> str:
-        return str(self.meProductCategory)
-
-
-class cGcRarity(ctypes.Structure):
-    _fields_ = [
-        ("_meRarity", ctypes.c_uint32),
-    ]
-
-    _meRarity: int
-
-    @property
-    def meRarity(self):
-        return safe_assign_enum(nms_enums.eRarity, self._meRarity)
-
-    def __str__(self) -> str:
-        return str(self.meRarity)
-
-
-class cGcRealitySubstanceCategory(ctypes.Structure):
-    _fields_ = [
-        ("_meSubstanceCategory", ctypes.c_uint32),
-    ]
-
-    _meSubstanceCategory: int
-
-    @property
-    def meSubstanceCategory(self):
-        return safe_assign_enum(nms_enums.eSubstanceCategory, self._meSubstanceCategory)
-
-    def __str__(self) -> str:
-        return str(self.meSubstanceCategory)
-
-
-class cGcStatsTypes(ctypes.Structure):
-    _fields_ = [
-        ("_meStatsType", ctypes.c_uint32),
-    ]
-
-    _meStatsType: int
-
-    @property
-    def meStatsType(self):
-        return safe_assign_enum(nms_enums.eStatsType, self._meStatsType)
-
-    def __str__(self) -> str:
-        return str(self.meStatsType)
-
-
-class cGcTechnologyCategory(ctypes.Structure):
-    _fields_ = [
-        ("_meTechnologyCategory", ctypes.c_uint32),
-    ]
-
-    _meTechnologyCategory: int
-
-    @property
-    def meTechnologyCategory(self):
-        return safe_assign_enum(nms_enums.eTechnologyCategory, self._meTechnologyCategory)
-
-    def __str__(self) -> str:
-        return str(self.meTechnologyCategory)
-
-
-class cGcTechnologyRarity(ctypes.Structure):
-    _fields_ = [
-        ("_meTechnologyRarity", ctypes.c_uint32),
-    ]
-
-    _meTechnologyRarity: int
-
-    @property
-    def meTechnologyRarity(self):
-        return safe_assign_enum(nms_enums.eTechnologyRarity, self._meTechnologyRarity)
-
-    def __str__(self) -> str:
-        return str(self.meTechnologyRarity)
-
-
-class cGcTechnologyRequirement(ctypes.Structure):
-    _fields_ = [
-        ("mID", ctypes.c_char * 0x10),  # TkID<128>
-        ("mType", cGcInventoryType),
-        ("miAmount", ctypes.c_int32),
-    ]
-
-    mID: bytes
-    mType: cGcInventoryType
-    miAmount: int
-
-
-class cGcTradeCategory(ctypes.Structure):
-    _fields_ = [
-        ("_meTradeCategory", ctypes.c_uint32),
-    ]
-
-    _meTradeCategory: int
-
-    @property
-    def meTradeCategory(self):
-        return safe_assign_enum(nms_enums.eTradeCategory, self._meTradeCategory)
-
-    def __str__(self) -> str:
-        return str(self.meTradeCategory)
-
-
-class cTkLanguageManagerBase(ctypes.Structure):
-    _fields_ = [
-        ("_dummy0x0", ctypes.c_ubyte * 0x8),
-        ("meRegion", ctypes.c_int32),
-        ("_dummy0xC", ctypes.c_ubyte * 0x221C),
-    ]
-
-    meRegion: int
-
-
-class cTkModelResource(ctypes.Structure):
-    _fields_ = [
-        ("macFilename", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("mResHandle", ctypes.c_uint32),  # TODO cTkSmartResHandle
-    ]
-
-    macFilename: bytes
-
-    def __str__(self) -> str:
-        return self.macFilename.decode("utf-8")
-
-
-class cTkTextureResource(ctypes.Structure):
-    _fields_ = [
-        ("macFilename", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("mResHandle", ctypes.c_uint32),  # TODO cTkSmartResHandle
-    ]
-
-    macFilename: bytes
-
-    def __str__(self) -> str:
-        return self.macFilename.decode("utf-8")
-
-# Level 2
-
-class cGcStatsBonus(ctypes.Structure):
-    _fields_ = [
-        ("mStat", cGcStatsTypes),
-        ("mfBonus", ctypes.c_float),
-        ("miLevel", ctypes.c_int32),
-    ]
-
-    mStat: cGcStatsTypes
-    mfBonus: float
-    miLevel: int
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.mStat}, {self.mfBonus})"
-
-# Level 3 (Main)
-
-class cGcProductData(ctypes.Structure):
-    _fields_ = [
-        ("mID", ctypes.c_char * 0x10),  # TkID<128>
-        ("macName", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("macNameLower", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("macSubtitle", cTkDynamicString),
-        ("macDescription", cTkDynamicString),
-        ("mHint", ctypes.c_char * 0x20),  # TkID<256>
-        ("mGroupID", ctypes.c_char * 0x10),  # TkID<128>
-        ("mDebrisFile", cTkModelResource),
-        ("miBaseValue", ctypes.c_int32),
-        ("miLevel", ctypes.c_int32),
-        ("mIcon", cTkTextureResource),
-        ("mHeroIcon", cTkTextureResource),
-        ("_padding0x2F4", ctypes.c_ubyte * 0xC),
-        ("mColour", common.Colour),
-        ("mCategory", cGcTechnologyCategory),
-        ("mType", cGcProductCategory),
-        ("mRarity", cGcRarity),
-        ("mLegality", cGcLegality),
-        ("mbConsumable", ctypes.c_ubyte),
-        ("_padding0x321", ctypes.c_ubyte * 0x3),
-        ("miChargeValue", ctypes.c_int32),
-        ("miStackMultiplier", ctypes.c_int32),
-        ("miDefaultCraftAmount", ctypes.c_int32),
-        ("miCraftAmountStepSize", ctypes.c_int32),
-        ("miCraftAmountMultiplier", ctypes.c_int32),
-        ("maRequirements", cTkDynamicArray[cGcTechnologyRequirement]),
-        ("maAltRequirements", cTkDynamicArray[cGcTechnologyRequirement]),
-        ("mCost", cGcItemPriceModifiers),
-        ("miRecipeCost", ctypes.c_int32),
-        ("mbSpecificChargeOnly", ctypes.c_ubyte),
-        ("_padding0x371", ctypes.c_ubyte * 0x3),
-        ("mfNormalisedValueOnWorld", ctypes.c_float),
-        ("mfNormalisedValueOffWorld", ctypes.c_float),
-        ("mTradeCategory", cGcTradeCategory),
-        ("_meWikiCategory", ctypes.c_uint32),
-        ("mbIsCraftable", ctypes.c_ubyte),
-        ("_padding0x385", ctypes.c_ubyte * 0x3),
-        ("mDeploysInto", ctypes.c_char * 0x10),  # TkID<128>
-        ("mfEconomyInfluenceMultiplier", ctypes.c_float),
-        ("_padding0x39C", ctypes.c_ubyte * 0x4),
-        ("mPinObjective", ctypes.c_char * 0x20),  # TkID<256>
-        ("mPinObjectiveTip", ctypes.c_char * 0x20),  # TkID<256>
-        ("mbCookingIngredient", ctypes.c_ubyte),
-        ("_padding0x3E1", ctypes.c_ubyte * 0x3),
-        ("mfCookingValue", ctypes.c_float),
-        ("mbGoodForSelling", ctypes.c_ubyte),
-        ("_padding0x3E9", ctypes.c_ubyte * 0x7),
-        ("mGiveRewardOnSpecialPurchase", ctypes.c_char * 0x10),  # TkID<128>
-        ("mbEggModifierIngredient", ctypes.c_ubyte),
-        ("mbIsTechbox", ctypes.c_ubyte),
-        ("mbCanSendToOtherPlayers", ctypes.c_ubyte),
-        ("_padding0x403", ctypes.c_ubyte * 0xD),
-    ]
-
-    @property
-    def meWikiCategory(self):
-        return safe_assign_enum(nms_enums.eWikiCategory, self._meWikiCategory)
-
-
-class cGcTechnology(ctypes.Structure):
-    _fields_ = [
-        ("mID", ctypes.c_char * 0x10),  # TkID<128>
-        ("mGroup", ctypes.c_char * 0x20),  # TkID<256>
-        ("macName", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("macNameLower", ctypes.c_char * 0x80),  # cTkFixedString<128,char>
-        ("macSubtitle", cTkDynamicString),
-        ("macDescription", cTkDynamicString),
-        ("mbTeach", ctypes.c_ubyte),
-        ("_padding0x151", ctypes.c_ubyte * 0x7),
-        ("mHintStart", ctypes.c_char * 0x20),  # TkID<256>
-        ("mHintEnd", ctypes.c_char * 0x20),  # TkID<256>
-        ("mIcon", cTkTextureResource),
-        ("_padding0x21C", ctypes.c_ubyte * 0x4),
-        ("mColour", common.Colour),
-        ("miLevel", ctypes.c_int32),
-        ("mbChargeable", ctypes.c_ubyte),
-        ("_padding0x235", ctypes.c_ubyte * 0x3),
-        ("miChargeAmount", ctypes.c_int32),
-        ("mChargeType", cGcRealitySubstanceCategory),
-        ("maChargeBy", cTkDynamicArray[ctypes.c_char * 0x10]),  # TkID<128>
-        ("mfChargeMultiplier", ctypes.c_float),
-        ("mbBuildFullyCharged", ctypes.c_ubyte),
-        ("mbUsesAmmo", ctypes.c_ubyte),
-        ("_padding0x256", ctypes.c_ubyte * 0x2),
-        ("mAmmoId", ctypes.c_char * 0x10),  # TkID<128>
-        ("mbPrimaryItem", ctypes.c_ubyte),
-        ("mbUpgrade", ctypes.c_ubyte),
-        ("mbCore", ctypes.c_ubyte),
-        ("mbRepairTech", ctypes.c_ubyte),
-        ("mbProcedural", ctypes.c_ubyte),
-        ("_padding0x26B", ctypes.c_ubyte * 0x3),
-        ("mCategory", cGcTechnologyCategory),
-        ("mRarity", cGcTechnologyRarity),
-        ("mfValue", ctypes.c_float),
-        ("_padding0x27A", ctypes.c_ubyte * 0x4),
-        ("maRequirements", cTkDynamicArray[cGcTechnologyRequirement]),
-        ("mBaseStat", cGcStatsTypes),
-        ("_padding0x28E", ctypes.c_ubyte * 0x4),
-        ("maStatBonuses", cTkDynamicArray[cGcStatsBonus]),
-        ("mRequiredTech", ctypes.c_char * 0x10),  # TkID<128>
-        ("miRequiredLevel", ctypes.c_int32),
-        ("_padding0x2B6", ctypes.c_ubyte * 0x4),
-        ("mFocusLocator", ctypes.c_char * 0x20),  # TkID<256>
-        ("mUpgradeColour", common.Colour),
-        ("mLinkColour", common.Colour),
-        ("mRewardGroup", ctypes.c_char * 0x10),  # TkID<128>
-        ("miBaseValue", ctypes.c_int32),
-        ("mCost", cGcItemPriceModifiers),
-        ("miRequiredRank", ctypes.c_int32),
-        ("mDispensingRace", cGcAlienRace),
-        ("miFragmentCost", ctypes.c_int32),
-        ("mTechShopRarity", cGcTechnologyRarity),
-        ("mbWikiEnabled", ctypes.c_ubyte),
-        ("_padding0x333", ctypes.c_ubyte * 0x7),
-        ("macDamagedDescription", cTkDynamicString),
-        ("mParentTechId", ctypes.c_char * 0x10),  # TkID<128>
-        ("mbIsTemplate", ctypes.c_ubyte),
-        ("_padding0x354", ctypes.c_ubyte * 0xF),
-    ]
-
-
-# endregion
-
-# region Helper Methods
-
-
-def extract_previous_languages(read_rows, seed):
-    if seed < len(read_rows):  # just in case read file has less rows than expected
-        # add all languages and get previous translations or empty string
-        return {
-            language: read_rows[seed].get(language, "")
-            for language in LANGUAGES
-        }
-
-    return {}
-
-
-def get_next_technology(iter_next):
-    inventory_type, items = TECHNOLOGY_ITEMS_LIST[iter_next[0]]
-    item_id, qualities = list(items.items())[iter_next[1]]
-
-    return inventory_type, items, item_id, qualities, qualities[iter_next[2]]
-
-
-def print_struct_fields(struct, level=0):
+def print_struct_fields(struct: ctypes.Structure, level=0):
     l = max(len(f) for f, _ in struct._fields_)
     for field_name, _ in struct._fields_:
         if field_name.startswith("_"):
             continue
 
-        field = getattr(struct, field_name)
+        try:
+            field = getattr(struct, field_name)
 
-        if isinstance(field, ctypes.Structure) and str(field).startswith("<"):
-            logging.debug(f"{(' ' * 4 * level)}{field_name:{l}}")
-            print_struct_fields(field, level + 1)
-        else:
-            if field_name.startswith("mb"):
-                log_value = f"{bool(field)} ({field})"
-            elif isinstance(field, common.cTkDynamicArray):
+            if isinstance(field, nms_common_structs.cTkDynamicArray):
+                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}} >> {field}")
                 if len(field):
-                    log_value = f"{field} > 0: {field.value[0]}"
+                    for i, item in enumerate(field.value):
+                        logging.debug(f"{(' ' * 4 * level)}{i:{len(field)}}:")
+                        print_struct_fields(item, level + 1)
+            elif isinstance(field, ctypes.Structure) and str(field).startswith("<"):
+                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}}")
+                print_struct_fields(field, level + 1)
+            else:
+                if field_name.startswith("mb"):
+                    log_value = f"{bool(field)} ({field})"
                 else:
                     log_value = field
-            else:
-                log_value = field
 
-            logging.debug(f"{(' ' * 4 * level)}{field_name:{l}} >> {log_value}")
-
-
-# read existing file to carry over all previous translations
-def read_languages(f_name):
-    if os.path.isfile(f_name):
-        with open(f_name, mode='r', encoding="utf-8", newline='') as f:
-            f.readline()  # skip first line with delimiter indicator
-            reader = csv.DictReader(f, dialect='excel')
-            return list(reader)
-
-    return []
+                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}} >> {log_value}")
+        except Exception as e:
+            logging.exception(e)
 
 
-# translate raw value to look more like in-game
-def translate_value(stat_bonus):
-    instructions = TRANSLATION.get(str(stat_bonus.mStat), [])
-    value = stat_bonus.mfBonus
+# decorator to wrap an entire method. useful as exceptions raised in mod methods will not be visible otherwise
+def try_except(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            logging.exception(e)
 
-    for instruction in instructions:
-        if isinstance(instruction[0], str):  # operator first (value - 1)
-            if instruction[0] == "+":
-                value += instruction[1]
-
-            if instruction[0] == "-":
-                value -= instruction[1]
-
-            if instruction[0] == "*":
-                value *= instruction[1]
-
-            if instruction[0] == "/":
-                value /= instruction[1]
-        else:  # operator second (1 - value)
-            if instruction[1] == "+":
-                value = instruction[0] + value
-
-            if instruction[1] == "-":
-                value = instruction[0] - value
-
-            if instruction[1] == "*":
-                value = instruction[0] * value
-
-            if instruction[1] == "/":
-                value = instruction[0] / value
-
-    return value
+    return wrapper
 
 
-def write_result(f_name, meta, result):
-    fieldnames = ["Seed", "Perfection"] + sorted(meta.keys()) + LANGUAGES
-    with open(f_name, mode="w", encoding="utf-8", newline="") as f:
-        f.write("sep=,\r\n")
-        writer = csv.DictWriter(f, fieldnames=fieldnames, dialect="excel")
-        writer.writeheader()
-        writer.writerows(result)
+# endregion
 
+# region Changelog
+
+# 1.0.0 Initial Release
+# 1.1.0
+#       UP_RBSUIT added incl. a warning when an item is not available in the running game
+#       Fixed memory leak thanks to NMS.py version 0.6.5
+#       Removed most of the iteration mode code thanks to the fixed leak and replaced with the possibility to run a single items up to entire inventories
+#       Use a new hook to execute directly when game is fully booted
+#       Use the new executor to execute generation in the background without blocking the game
 
 # endregion
 
 
 class Pi(NMSMod):
-    __NMSPY_required_version__ = "0.6.3"
+    __NMSPY_required_version__ = "0.6.5"  # TODO 0.6.6 when released
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.0.0"
+    __version__ = "1.1.0"
 
-    # False = disable
-    # True = enable automatic iteration mode
-    # isinstance(, list) = enable manual iteration mode. set a manual starting point (e.g. [1, 2, 3] for [Exocraft, UP_EXGUN, 4])
-    iteration_technology = True
+    def __init__(self):
+        super().__init__()
 
-    # do more in less time. you are about 30% faster but you also have more work as you have to make more restarts
-    # if True there will be only 1 iteration per run (4 takes 4.5 minutes), otherwise 2 or 3 (4 takes 6.25 minutes)
-    iteration_more_in_less = True
+        self.language = None  # name of column to write the name in, will be set automatically
+        self.product_counter = (Counter(), Counter())   # spawned, finished
+        self.product_start_time = None
+        self.technology_counter = (Counter(), Counter())   # spawned, finished
+        self.technology_start_time = None
 
-    language = None  # name of column to write the name in, will be set automatically
-    round_digits_product = 5
-    round_digits_technology = 3
+        # properties for manual configuration
+        self.product_manual = []  # set to items of PRODUCT
+        self.technology_manual = []  # set to items of TECHNOLOGY. can be any inventory_type, item_id, and item_name
+
+    # read existing file to carry over all previous translations
+    @staticmethod
+    def read_existing_file(f_name):
+        if os.path.isfile(f_name):
+            with open(f_name, mode="r", encoding="utf-8", newline="") as f:
+                f.readline()  # skip first line with delimiter indicator
+                reader = csv.DictReader(f, dialect="excel")
+                return list(reader)
+
+        return []
+
+    @staticmethod
+    def write_result(f_name, meta, result):
+        fieldnames = ["Seed", "Perfection"] + sorted(meta.keys()) + LANGUAGES
+        with open(f_name, mode="w", encoding="utf-8", newline="") as f:
+            f.write("sep=,\r\n")
+            writer = csv.DictWriter(f, fieldnames=fieldnames, dialect="excel")
+            writer.writeheader()
+            writer.writerows(result)
+
+    # region Language
 
     @hooks.cTkLanguageManagerBase.Load.after
-    def language_manager_load(self, this):
-        result = original = map_struct(this, cTkLanguageManagerBase).meRegion
+    def language_changed(self, this):
+        result = original = map_struct(this, nms_structs.cTkLanguageManagerBase).meRegion
         if original == nms_enums.eLanguageRegion.LR_USEnglish:
             result = nms_enums.eLanguageRegion.LR_English
         if original == nms_enums.eLanguageRegion.LR_LatinAmericanSpanish:
@@ -759,55 +376,70 @@ class Pi(NMSMod):
 
         self.language = LANGUAGES[result]
 
-        logging.debug(f">> cTkLanguageManagerBase.Load: {original} > {result} > {self.language}")
+        logging.debug(f">> Pi: Language loaded is {original} > {result} > {self.language}")
 
-    # TODO remove @disable when technology memory leak is fixed
-    @one_shot
-    @hooks.cGcRealityManager.GenerateProceduralProduct.overload("cGcRealityManager *, const TkID<128> *")
-    @disable
-    def reality_manager_generate_procedural_product(self, this, lProcProdID):
-        begin = datetime.now()
-        logging.info(f"Pi started generate_procedural_product at {begin}")
+    @staticmethod
+    def extract_previous_languages(read_rows, seed):
+        if seed < len(read_rows):  # just in case read file has less rows than expected
+            # add all languages and get previous translations or empty string
+            return {
+                language: read_rows[seed].get(language, "")
+                for language in LANGUAGES
+            }
 
-        try:
-            for item_id in PRODUCT:
-                self.generate_product(this, item_id)
-        except Exception as e:
-            logging.exception(e)
+        return {}
 
-        end = datetime.now()
-        logging.info(f"Pi finished generate_procedural_product in {end - begin}")
+    # endregion
 
-        return hooks.cGcRealityManager.GenerateProceduralProduct.original(this, lProcProdID)
+    # region Product
 
-    def generate_product(self, this, item_id):
+    @on_fully_booted
+    # @disable  # not working for @on_fully_booted at the moment
+    def start_generating_procedural_product(self):
+        self.product_start_time = datetime.now()
+        logging.info(f">> Pi: Product generation started")
+
+        for item_id in PRODUCT:
+            if not self.technology_manual or (item_id in self.product_manual):
+                self.product_counter[0].increment()
+                nms.executor.submit(self.generate_procedural_product, item_id)
+
+    def generate_procedural_product(self, item_id):
+        available = True
         item_name = f"PROC_{item_id}"
+        item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
+        reality_manager = nms.GcApplication.data.contents.RealityManager
         result = []  # result for each seed
-        middle = datetime.now()
 
         f_name = f"{PI_ROOT}\\Product\\{item_name}.csv"
 
-        read_rows =  read_languages(f_name)
-
-        logging.info(f"    {item_name}")
+        read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
-            pointer = hooks.cGcRealityManager.GenerateProceduralProduct.original(this, f"{item_name}#{seed:05}".encode("utf-8"))
-            generated = map_struct(pointer, cGcProductData)
-            row = extract_previous_languages(read_rows, seed)  # carry over all previous translations
+            pointer = reality_manager.GenerateProceduralProduct["cGcRealityManager *, const TkID<128> *"](f"{item_name}#{seed:05}".encode("utf-8"))
+            try:
+                generated = map_struct(pointer, nms_structs.cGcProductData)
+            except ValueError:
+                available = False
+                logging.warning(f"  ! Warning: Product '{item_name}' is not available in your game version.")
+                break
+
+            # carry over all previous translations
+            row = self.extract_previous_languages(read_rows, seed)
 
             # add seed and current translation
             row.update({
-                self.language: generated.macNameLower.decode("utf-8"),  # name for current language
+                self.language: str(generated.macNameLower),  # name for current language
                 "Age": int(RE_PRODUCT_AGE.findall(str(generated.macDescription))[0]),
                 "Seed": seed,
                 "Value": generated.miBaseValue,
             })
 
+            # update to track meta values
             if not meta:
-                logging.debug(f"      >> Age: {row['Age']}")  # check whether value correct
-                logging.debug(f"      >> Value: {generated.miBaseValue}")
+                logging.debug(f"     > Age > {row.get('Age')}")
+                logging.debug(f"     > Value > {generated.miBaseValue}")
                 meta = [generated.miBaseValue, generated.miBaseValue]
             else:
                 meta = [
@@ -818,158 +450,170 @@ class Pi(NMSMod):
             # add completed row to result
             result.append(row)
 
-            # print progress in given steps
-            if (seed - (PROGRESS_STEPS - 1)) % PROGRESS_STEPS == 0:
-                middle_next = datetime.now()
-                logging.info(f"      {seed:>5} ({middle_next - middle}) ({middle_next})")
-                middle = middle_next
+        if available:
+            # add calculated perfection
+            for row in result:
+                row.update({
+                    "Perfection": round(1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]), ROUND_DIGITS),
+                })
 
-        for row in result:
-            row.update({
-                "Perfection": round(1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]), self.round_digits_product),
-            })
+            logging.debug(f"   > {item_name} > {datetime.now() - item_start_time}")
 
-        write_result(f_name, {"Age": None, "Value": None}, result)
+            self.write_result(f_name, {"Age": None, "Value": None}, result)
 
-    @one_shot
-    @hooks.cGcRealityManager.GenerateProceduralTechnology
-    # @disable
-    def reality_manager_generate_procedural_technology(self, this, lProcTechID, lbExampleForWiki):
-        begin = datetime.now()
-        logging.info(f"Pi started generate_procedural_technology at {begin}")
+        self.product_counter[1].increment()
+        self.log_procedural_product_generation_finshed()
 
-        try:
-            is_manual = False
-            if self.iteration_technology or (is_manual := type(self.iteration_product) == list and len(self.iteration_technology) >= 3):
-                if not is_manual:
-                    f_name = f"{os.path.dirname(__file__)}\\iteration_technology"
+    def log_procedural_product_generation_finshed(self):
+        if self.product_counter[0].value == self.product_counter[1].value:
+            logging.info(f">> Pi: Product generation finished in {datetime.now() - self.product_start_time}!")
 
-                    # read next start index if file exists or start at the beginning
-                    if os.path.isfile(f_name):
-                        with open(f_name, mode="r") as f:
-                            iter_next = eval(f.read().strip())
-                    else:
-                        iter_next = [0, 0, 0]
-                else:
-                    iter_next = self.iteration_technology
+    # endregion
 
-                inventory_type, items, item_id, qualities, quality = get_next_technology(iter_next)
-                iterations = (1) if self. iteration_more_in_less else (3 if iter_next[0] == len(TECHNOLOGY) - 1 and iter_next[1] == len(items) - 1 and len(qualities[iter_next[2]:]) <= 3 else 2)
+    # region Technology
 
-                for _ in range(iterations):
-                    self.generate_technology(this, inventory_type, item_id, quality)
+    @on_fully_booted
+    # @disable  # not working for @on_fully_booted at the moment
+    def start_generating_procedural_technology(self):
+        self.technology_start_time = datetime.now()
+        logging.info(f">> Pi: Technology generation started")
 
-                    iter_next[2] += 1  # next quality
+        for inventory_type, items in TECHNOLOGY.items():
+            for item_id, qualities in items.items():
+                for quality in qualities:
+                    item_name = f"{item_id}{quality}"
+                    if not self.technology_manual or any((key in self.technology_manual) for key in [inventory_type, item_id, item_name]):
+                        self.technology_counter[0].increment()
+                        nms.executor.submit(self.generate_procedural_technology, inventory_type, item_name)
 
-                    if iter_next[2] == len(qualities):  # start with next item
-                        iter_next[1] += 1
-                        iter_next[2] = 0
-
-                    if iter_next[1] == len(items):  # start with next inventory
-                        iter_next[0] += 1
-                        iter_next[1] = 0
-
-                    if iter_next[0] == len(TECHNOLOGY):  # stop it it was last inventory
-                        break
-
-                    inventory_type, items, item_id, qualities, quality = get_next_technology(iter_next)
-
-                if not is_manual:
-                    # delete file if it was the last iteration or write the next start
-                    if iter_next[0] == len(TECHNOLOGY):
-                        os.remove(f_name)
-                    else:
-                        with open(f_name, mode="w") as f:
-                            f.write(str(iter_next))
-            else:
-                for inventory_type, items in TECHNOLOGY.items():
-                    logging.info(f"  {inventory_type}")
-                    for item_id, qualities in items.items():
-                        for quality in qualities:
-                            self.generate_technology(this, inventory_type, item_id, quality)
-        except Exception as e:
-            logging.exception(e)
-
-        end = datetime.now()
-        logging.info(f"Pi finished generate_procedural_technology in {end - begin}")
-
-        return hooks.cGcRealityManager.GenerateProceduralTechnology.original(this, lProcTechID, lbExampleForWiki)
-
-    # TODO release memory to speed up execution
-    def generate_technology(self, this, inventory_type, item_id, quality):
-        item_name = f"{item_id}{quality}"
+    @try_except
+    def generate_procedural_technology(self, inventory_type, item_name):
+        available = True
+        item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
         number = 0  # maximum number of unique stats per seed
+        reality_manager = nms.GcApplication.data.contents.RealityManager
         result = []  # result for each seed
-        middle = datetime.now()
 
         f_name = f"{PI_ROOT}\\{inventory_type}\\{item_name}.csv"
 
-        read_rows =  read_languages(f_name)
-
-        logging.info(f"    {item_name}")
+        read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
-            pointer = hooks.cGcRealityManager.GenerateProceduralTechnology.original(this, f"{item_name}#{seed:05}".encode("utf-8"), 0)
-            generated = map_struct(pointer, cGcTechnology)
-            number = max(number, len(generated.maStatBonuses.value))
-            row = extract_previous_languages(read_rows, seed)  # carry over all previous translations
+            pointer = reality_manager.GenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"), False)
 
-            # add seed and current translation
-            row.update({
-                self.language: generated.macNameLower.decode("utf-8"),  # name for current language
-                "Seed": seed,
-            })
+            try:
+                with map_struct_temp(pointer, nms_structs.cGcTechnology) as generated:
+                    number = max(number, len(generated.maStatBonuses.value))
+                    row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
 
-            for stat_bonus in generated.maStatBonuses.value:
-                stat = str(stat_bonus.mStat)[22:]  # skip identical-for-all prefix
-                stat_value = row[stat] = translate_value(stat_bonus)  # add in-game like value of a stat
+                    # add seed and current translation
+                    row.update({
+                        self.language: str(generated.macNameLower),  # name for current language
+                        "Seed": seed,
+                    })
 
-                if stat not in meta:
-                    logging.debug(f"      >> {stat}: {stat_bonus.mfBonus} > {stat_value}")  # to see how the value looks
-                    meta[stat] = [stat_value, stat_value]
-                else:
-                    meta[stat] = [
-                        min(meta[stat][0], stat_value),
-                        max(meta[stat][1], stat_value),
-                    ]
+                    # update to track meta values
+                    for stat_bonus in generated.maStatBonuses.value:
+                        stat = str(stat_bonus.mStat)[22:]  # skip identical-for-all prefix
+                        stat_value = row[stat] = self.translate_value(stat_bonus)  # add in-game like value of a stat
 
-            # add completed row to result
-            result.append(row)
+                        if stat not in meta:
+                            logging.debug(f"     > {stat} > {stat_bonus.mfBonus} > {stat_value}")  # to see how the value looks
+                            meta[stat] = [stat_value, stat_value]
+                        else:
+                            meta[stat] = [
+                                min(meta[stat][0], stat_value),
+                                max(meta[stat][1], stat_value),
+                            ]
 
-            # print progress in given steps
-            if (seed - (PROGRESS_STEPS - 1)) % PROGRESS_STEPS == 0:
-                middle_next = datetime.now()
-                logging.info(f"      {seed:>5} ({middle_next - middle}) ({middle_next})")
-                middle = middle_next
+                    # add completed row to result
+                    result.append(row)
+            except ValueError:
+                available = False
+                logging.warning(f"  ! Warning: Technology '{item_name}' is not available in your game version.")
+                break
 
-        weighting = [stat[1] - stat[0] + 1 for stat in meta.values()]  # max - min + 1
-        weighting_min = min(weighting)
+            if seed % FREE_MEMORY_STEPS == 0:
+                # Clear the pending new technologies to free up some memory.
+                # Note that this may cause some internal issues in the game, so maybe don't load the game... But maybe not? I dunno!
+                reality_manager.PendingNewTechnologies.clear()
 
-        # add weighting to each stat
-        meta = {key: value + [weighting[i] / weighting_min] for i, (key, value) in enumerate(meta.items())}
+        if available:
+            weighting = [stat[1] - stat[0] + 1 for stat in meta.values()]  # max - min + 1
+            weighting_min = min(weighting)
 
-        for row in result:
-            perfection = []
-            weighting_total = 0
+            # add weighting to each stat
+            meta = {key: value + [weighting[i] / weighting_min] for i, (key, value) in enumerate(meta.items())}
 
-            # calculate perfection for each seed
-            for stat_name, stat_meta in meta.items():
-                if stat_name not in row:
-                    continue
+            for row in result:
+                perfection = []
+                weighting_total = 0
 
-                stat_value = row[stat_name]
-                weight = stat_meta[2]
-                weighting_total += weight
+                # calculate perfection for each seed
+                for stat_name, stat_meta in meta.items():
+                    if stat_name not in row:
+                        continue
 
-                p = 1.0
-                if stat_meta[1] - stat_meta[0] > 0:
-                    p -= (stat_meta[1] - stat_value) / (stat_meta[1] - stat_meta[0])
-                p *= weight
-                perfection.append(p)
+                    stat_value = row[stat_name]
+                    weight = stat_meta[2]
+                    weighting_total += weight
 
-            row.update({
-                "Perfection": round(sum(perfection) / weighting_total * (len(perfection) / number), self.round_digits_technology),
-            })
+                    p = 1.0
+                    if stat_meta[1] - stat_meta[0] > 0:
+                        p -= (stat_meta[1] - stat_value) / (stat_meta[1] - stat_meta[0])
+                    if number <= len(meta):
+                        p *= weight
+                    perfection.append(p)
 
-        write_result(f_name, meta, result)
+                # add calculated perfection
+                row.update({
+                    "Perfection": round(sum(perfection) / weighting_total * (len(perfection) / number), ROUND_DIGITS),
+                })
+
+            logging.debug(f"   > {item_name} > {datetime.now() - item_start_time}")
+
+            self.write_result(f_name, meta, result)
+
+        self.technology_counter[1].increment()
+        self.log_procedural_technology_generation_finshed()
+
+    # translate raw value to look more like in-game
+    @staticmethod
+    def translate_value(stat_bonus):
+        instructions = TRANSLATION.get(str(stat_bonus.mStat), [])
+        value = stat_bonus.mfBonus
+
+        for instruction in instructions:
+            if isinstance(instruction[0], str):  # operator first (value - 1)
+                if instruction[0] == "+":
+                    value += instruction[1]
+
+                if instruction[0] == "-":
+                    value -= instruction[1]
+
+                if instruction[0] == "*":
+                    value *= instruction[1]
+
+                if instruction[0] == "/":
+                    value /= instruction[1]
+            else:  # operator second (1 - value)
+                if instruction[1] == "+":
+                    value = instruction[0] + value
+
+                if instruction[1] == "-":
+                    value = instruction[0] - value
+
+                if instruction[1] == "*":
+                    value = instruction[0] * value
+
+                if instruction[1] == "/":
+                    value = instruction[0] / value
+
+        return value
+
+    def log_procedural_technology_generation_finshed(self):
+        if self.technology_counter[0].value == self.technology_counter[1].value:
+            logging.info(f">> Pi: Technology generation finished in {datetime.now() - self.technology_start_time}!")
+
+    # endregion
