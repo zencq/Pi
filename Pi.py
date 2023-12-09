@@ -61,8 +61,6 @@ PRODUCT = [
 
 RE_PRODUCT_AGE = re.compile("([0-9]+)")
 
-ROUND_DIGITS = 5
-
 TECHNOLOGY = {
     "AlienShip": {
         "UA_HYP": ["1", "2", "3", "4"],
@@ -314,6 +312,7 @@ def try_except(func):
 #       Removed most of the iteration mode code thanks to the fixed leak and replaced with the possibility to run a single items up to entire inventories
 #       Use a new hook to execute directly when game is fully booted
 #       Use the new executor to execute generation in the background without blocking the game
+#       Changed perfection calculation to not round and use no weighting if number of possible stats in the pool of this item is greater than the maximum number of stats per seed
 
 # endregion
 
@@ -454,7 +453,7 @@ class Pi(NMSMod):
             # add calculated perfection
             for row in result:
                 row.update({
-                    "Perfection": round(1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]), ROUND_DIGITS),
+                    "Perfection": 1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]),
                 })
 
             logging.debug(f"   > {item_name} > {datetime.now() - item_start_time}")
@@ -568,7 +567,7 @@ class Pi(NMSMod):
 
                 # add calculated perfection
                 row.update({
-                    "Perfection": round(sum(perfection) / weighting_total * (len(perfection) / number), ROUND_DIGITS),
+                    "Perfection": sum(perfection) / weighting_total * (len(perfection) / number),
                 })
 
             logging.debug(f"   > {item_name} > {datetime.now() - item_start_time}")
