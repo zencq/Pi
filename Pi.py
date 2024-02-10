@@ -594,7 +594,7 @@ class Pi(NMSMod):
             weighting_min = min(weighting)
 
             # add weighting to each stat
-            meta = {key: value + [weighting[i] / weighting_min] for i, (key, value) in enumerate(meta.items())}
+            meta = {key: value + [value[1] - value [0], weighting[i] / weighting_min] for i, (key, value) in enumerate(meta.items())}
 
             for row in result:
                 perfection = []
@@ -606,17 +606,17 @@ class Pi(NMSMod):
                         continue
 
                     stat_value = row[stat_name]
-                    weight = stat_meta[2]
+                    weight = stat_meta[3]
                     weighting_total += weight
 
                     p = 1.0
-                    if stat_meta[1] - stat_meta[0] > 0:
-                        p -= (stat_meta[1] - stat_value) / (stat_meta[1] - stat_meta[0])
+                    if stat_meta[2] > 0:
+                        p -= (stat_meta[1] - stat_value) / stat_meta[2]
                     perfection.append(p * weight)
 
                 # add calculated perfection
                 row.update({
-                    "Perfection": sum(perfection) / weighting_total * (len(perfection) / number),
+                    "Perfection": (sum(perfection) / weighting_total) * (len(perfection) / number),
                 })
 
             logging.info(f"   > {item_name} > {datetime.now() - item_start_time}")
