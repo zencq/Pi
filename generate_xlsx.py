@@ -21,20 +21,20 @@ def _(original: str) -> str:
 # region Data
 
 LANGUAGES = [
+    "Name (de)",
     "Name (en)",
+    "Name (es)",
     "Name (fr)",
     "Name (it)",
-    "Name (de)",
-    "Name (es)",
-    "Name (ru)",
-    "Name (pl)",
+    "Name (ja)",
+    "Name (ko)",
     "Name (nl)",
+    "Name (pl)",
     "Name (pt)",
     "Name (pt-BR)",
-    "Name (ja)",
+    "Name (ru)",
     "Name (zh-CN)",
     "Name (zh-TW)",
-    "Name (ko)",
 ]
 
 PRODUCT = [
@@ -352,7 +352,7 @@ class Pi():
 
         # argparse
         self.debug = False
-        self._language = LANGUAGES[0]  # english. name of column to use for the procedural names
+        self._language = LANGUAGES[1]  # english. name of column to use for the procedural names
 
         # properties to work with
         self.link_settings = {
@@ -830,28 +830,13 @@ class Pi():
 
                         f_result = pandas.concat([f_result, ignition_l, ignition_h])
 
-                    dataframe_undesirable = dataframe_source[dataframe_source["Suit_Jetpack_Drain"].notna()]
-                    dataframe_undesirable = dataframe_undesirable[dataframe_undesirable["Suit_Stamina_Strength"].notna()]
-
-                    # add 1/3 of undesirable combination and use rest for the desirable ones
-                    best = dataframe_undesirable.sort_values(by=["Perfection", "Seed"], ascending=False).head(n)
-                    f_result = pandas.concat([f_result, best])
-
-                    dataframe_source = self.remove_undesirable_suit_movement_system_stats(dataframe_source)
+                    dataframe_source = self.remove_undesirable_suit_movement_system_stats(data)  # do with original data
                     columns.remove("Suit_Jetpack_Drain")
                     columns.remove("Suit_Stamina_Strength")
 
                 if item_id == "UP_BOLT":
                     # * DHarhan: Boltcaster mods with Dmg, Clip, ShotsPer, & BurstCool are desirable due to pairing well with ? mods with Dmg, Rate, Reload
-                    dataframe_undesirable = dataframe_source[dataframe_source["Weapon_Projectile_Rate"].notna()]
-                    dataframe_undesirable = dataframe_undesirable[dataframe_undesirable["Weapon_Projectile_ReloadTime"].notna()]
-
-                    # add 1/3 of undesirable combination and use rest for the desirable ones
-                    best = dataframe_undesirable.sort_values(by=["Perfection", "Seed"], ascending=False).head(n)
-                    f_result = pandas.concat([f_result, best])
-
-                    dataframe_source = dataframe_source[dataframe_source["Weapon_Projectile_Rate"].isna()]
-                    dataframe_source = dataframe_source[dataframe_source["Weapon_Projectile_ReloadTime"].isna()]
+                    dataframe_source = self.remove_undesirable_weapon_boltcater_stats(dataframe_source)
                     columns.remove("Weapon_Projectile_Rate")
                     columns.remove("Weapon_Projectile_ReloadTime")
 
