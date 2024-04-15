@@ -1,5 +1,9 @@
 # Every Item Procedural
 
+![Maintained](https://img.shields.io/maintenance/yes/2024)
+![GitHub Release](https://img.shields.io/github/v/release/zencq/Pi?display_name=release)
+[![Supported by the No Man's Sky Community Developers & Designers](https://raw.githubusercontent.com/NMSCD/About/master/badge/purple.svg)](https://nmscd.com/)
+
 This repository contains a collection of CSV files with values of stats for every
 procedural item in **[No Man's Sky](https://www.nomanssky.com/)**. This includes
 mainly technology upgrades but also the products (artifacts in-game).
@@ -18,6 +22,16 @@ to `40`).
 There is also the `Pi.xlsx` file which is a user friendly collection of best and
 most desirable seeds. It is categorized by inventory type and contains the best
 values for each stat per item in addition to those already mentioned.
+
+## Known Issues
+
+The following items are currently *outdated* or not *available* due to changes in
+a newer game version than the one currently supported. The latest supported version
+can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases)
+and is tied to the capabilities of NMS.py ([see below](readme#you-can-help-20)).
+
+* **Neutron Cannon** (UP_CANN) is *outdated* since **Singularity 4.30**
+* **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
 
 ## You can help 2.0
 
@@ -56,11 +70,8 @@ eventually.
 
 ## Credits
 
-* Biggest thanks goes to **monkeyman192** for creating NMS.py and the support he
-  did while I created the mod!
-
-* Another thanks goes to **DHarhan** for giving feedback about the desirability
-  of certain stats and combinations.
-
-* Previously used scripts based on those shared by **ICE** and **DarkWalker** in
-  the **No Man's Sky [Creative & Sharing Hub](https://discord.gg/RSGQFQv2pP)**.
+* **monkeyman192** - Biggest thanks goes to him for creating NMS.py and the support
+  he did while I created the mod
+* **DHarhan** - Giving feedback about the desirability of certain stats and combinations
+* **ICE** and **DarkWalker** - Previously used scripts based on those shared by
+  them in the [Creative & Sharing Hub](https://discord.gg/RSGQFQv2pP)
