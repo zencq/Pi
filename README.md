@@ -16,8 +16,8 @@ named with game internal names but you can use them without any developer knowle
 
 All values are shown without rounding and without regard to its sign as it does
 not matter for the purpose of this. Most, but not all, stats are shown in a in-game
-like form (e.g. `UP_RAIL1` always shows `+2%` but has actually a range from `30`
-to `40`).
+like form. If not, the raw value is added and not multiplied with the base value
+(e.g. `UP_RAIL1` always shows `+2%` but has actually a range from `30` to `40`).
 
 There is also the `Pi.xlsx` file which is a user friendly collection of best and
 most desirable seeds. It is categorized by inventory type and contains the best

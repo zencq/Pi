@@ -20,21 +20,21 @@ def _(original: str) -> str:
 
 # region Data
 
-LANGUAGES = [
-    "Name (de)",
+LANGUAGES = [  # order defined by game
     "Name (en)",
-    "Name (es)",
     "Name (fr)",
     "Name (it)",
-    "Name (ja)",
-    "Name (ko)",
-    "Name (nl)",
+    "Name (de)",
+    "Name (es)",
+    "Name (ru)",
     "Name (pl)",
+    "Name (nl)",
     "Name (pt)",
     "Name (pt-BR)",
-    "Name (ru)",
+    "Name (ja)",
     "Name (zh-CN)",
     "Name (zh-TW)",
+    "Name (ko)",
 ]
 
 PRODUCT = [

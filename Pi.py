@@ -15,7 +15,7 @@ from nmspy.data import (
     function_hooks as hooks,
     structs as nms_structs,
 )
-from nmspy.hooking import disable, on_fully_booted, on_key_release
+from nmspy.hooking import on_fully_booted, on_key_release
 from nmspy.memutils import map_struct, map_struct_temp
 from nmspy.mod_loader import NMSMod
 
@@ -24,7 +24,7 @@ from nmspy.mod_loader import NMSMod
 
 FREE_MEMORY_STEPS = 250  # multiple of it should be TOTAL_SEEDS
 
-LANGUAGES = [
+LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
     "Name (en)",
     "Name (fr)",
     "Name (it)",
@@ -134,108 +134,108 @@ TECHNOLOGY = {
 
 TOTAL_SEEDS = 100000
 
-TRANSLATION = {
+TRANSFORM = {
     # region Weapon
 
-    nms_enums.eStatsType.Weapon_Laser_Damage: [],  # Damage (+4%) > 36.83852767944336
-    nms_enums.eStatsType.Weapon_Laser_Mining_Speed: [(1, "-"), ("*", 100)],  # Mining Speed (+17%) > 0.8384891152381897 > 16.15108847618103
-    nms_enums.eStatsType.Weapon_Laser_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+46%) > 1.407882571220398 > 40.788257122039795
-    nms_enums.eStatsType.Weapon_Laser_ReloadTime: [(1, "-"), ("*", 100)],  # Overheat Downtime (-16%) > 0.8482741117477417 > 15.17258882522583
-    nms_enums.eStatsType.Weapon_Laser_Drain: [("-", 1), ("*", 100)],  # Fuel Efficiency (+21%) > 1.2000000476837158 > 20.000004768371582
-    nms_enums.eStatsType.Weapon_Laser_ChargeTime: [(1, "-"), ("*", 100)],  # Time to Full Power (-20%) > 0.9363773465156555 > 6.36226534843445
-    nms_enums.eStatsType.Weapon_Projectile_Damage: [],  # Damage (+1%) > 3.270596981048584
-    nms_enums.eStatsType.Weapon_Projectile_Rate: [("-", 1), ("*", 100)],  # Fire Rate (+11%) > 1.13314688205719 > 13.314688205718994
-    nms_enums.eStatsType.Weapon_Projectile_ClipSize: [],  # Clip Size (+8.0) > 8.0
-    nms_enums.eStatsType.Weapon_Projectile_ReloadTime: [(1, "-"), ("*", 100)],  # Reload Time (-15%) > 0.8999865055084229 > 10.001349449157715
+    nms_enums.eStatsType.Weapon_Laser_Damage: [],  # Damage (+???%) > 70.25779724121094
+    nms_enums.eStatsType.Weapon_Laser_Mining_Speed: [(1, "-"), ("*", 100)],  # Mining Speed (+16%) > 0.8384891152381897 > 16.15108847618103
+    nms_enums.eStatsType.Weapon_Laser_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+41%) > 1.407882571220398 > 40.788257122039795
+    nms_enums.eStatsType.Weapon_Laser_ReloadTime: [(1, "-"), ("*", 100)],  # Overheat Downtime (-15%) > 0.8482741117477417 > 15.17258882522583
+    nms_enums.eStatsType.Weapon_Laser_Drain: [("-", 1), ("*", 100)],  # Fuel Efficiency (+20%) > 1.2000000476837158 > 20.000004768371582
+    nms_enums.eStatsType.Weapon_Laser_ChargeTime: [(1, "-"), ("*", 100)],  # Time to Full Power (-19%) > 0.8105689287185669 > 18.94310712814331
+    nms_enums.eStatsType.Weapon_Projectile_Damage: [],  # Damage (+???%) > 2.270596981048584
+    nms_enums.eStatsType.Weapon_Projectile_Rate: [("-", 1), ("*", 100)],  # Fire Rate (+13%) > 1.13314688205719 > 13.314688205718994
+    nms_enums.eStatsType.Weapon_Projectile_ClipSize: [],  # Clip Size (+12.0) > 12.0
+    nms_enums.eStatsType.Weapon_Projectile_ReloadTime: [(1, "-"), ("*", 100)],  # Reload Time (-6%) > 0.9432281255722046 > 5.677187442779541
     nms_enums.eStatsType.Weapon_Projectile_MaximumCharge: [],  # Ion Spheres Created (+1.0) > 1.0
-    nms_enums.eStatsType.Weapon_Projectile_BurstCap: [],  # Shots Per Burst (+1.3) > 1.1662184000015259
-    nms_enums.eStatsType.Weapon_Projectile_BurstCooldown: [(1, "-"), ("*", 100)],  # Burst Cooldown (-6%) > 0.8500000238418579 > 14.999997615814209
-    nms_enums.eStatsType.Weapon_ChargedProjectile_ChargeTime: [(1, "-"), ("*", 100)],  # Charging Speed (-22%) > 0.76045161485672 > 23.954838514328003
-    nms_enums.eStatsType.Weapon_ChargedProjectile_ExtraSpeed: [],  # Ion Sphere Speed (+12%) > 12.988007545471191
-    nms_enums.eStatsType.Weapon_Grenade_Damage: [],  # Damage (+38%) > 116.51052856445312
-    nms_enums.eStatsType.Weapon_Grenade_Radius: [],  # Explosion Radius (+49%) > 1.1039005517959595
-    nms_enums.eStatsType.Weapon_Grenade_Speed: [],  # Projectile Velocity (+103%) > 2.7219414710998535
-    nms_enums.eStatsType.Weapon_Grenade_Bounce: [],  # Bounce Potential (+33%) > 1.0
-    nms_enums.eStatsType.Weapon_Scan_Radius: [("-", 1), ("*", 100)],  # Scan Radius (+38%) > 1.0582551956176758 >
-    nms_enums.eStatsType.Weapon_Scan_Discovery_Creature: [("*", 100)],  # Fauna Analysis Rewards (+5,071%) > 10.788254737854004 > 1078.8254737854004
-    nms_enums.eStatsType.Weapon_Scan_Discovery_Flora: [("*", 100)],  # Flora Analysis Rewards (+8,220%) > 10.094901084899902 > 1009.4901084899902
-    nms_enums.eStatsType.Weapon_Scan_Discovery_Mineral: [("*", 100)],  # Mineral Analysis Rewards (+7,467%) > 17.21941566467285 > 1721.9415664672852
+    nms_enums.eStatsType.Weapon_Projectile_BurstCap: [],  # Shots Per Burst (+1.0) > 1.0
+    nms_enums.eStatsType.Weapon_Projectile_BurstCooldown: [(1, "-"), ("*", 100)],  # Burst Cooldown (-19%) > 0.8145824074745178 > 18.541759252548218
+    nms_enums.eStatsType.Weapon_ChargedProjectile_ChargeTime: [(1, "-"), ("*", 100)],  # Charging Speed (-10%) > 0.8965481519699097 > 10.345184803009033
+    nms_enums.eStatsType.Weapon_ChargedProjectile_ExtraSpeed: [],  # Ion Sphere Speed (+22%) > 21.99700164794922
+    nms_enums.eStatsType.Weapon_Grenade_Damage: [],  # Damage (+???%) > 350.14752197265625 > 350.14752197265625
+    nms_enums.eStatsType.Weapon_Grenade_Radius: [("-", 1), ("*", 100)],  # Explosion Radius (+41%) > 1.407882571220398 > 40.788257122039795
+    nms_enums.eStatsType.Weapon_Grenade_Speed: [("*", 100)],  # Projectile Velocity (+272%) > 2.7219414710998535 > 272.19414710998535
+    nms_enums.eStatsType.Weapon_Grenade_Bounce: [],  # Bounce Potential (+???%) > 3.0
+    nms_enums.eStatsType.Weapon_Scan_Radius: [("-", 1), ("*", 100)],  # Scan Radius (+33%) > 1.3270596265792847 > 32.70596265792847
+    nms_enums.eStatsType.Weapon_Scan_Discovery_Creature: [("*", 100)],  # Fauna Analysis Rewards (+6,775%) > 67.75889587402344 > 6775.889587402344
+    nms_enums.eStatsType.Weapon_Scan_Discovery_Flora: [("*", 100)],  # Flora Analysis Rewards (+7,897%) > 78.97901153564453 > 7897.901153564453
+    nms_enums.eStatsType.Weapon_Scan_Discovery_Mineral: [("*", 100)],  # Mineral Analysis Rewards (+9,026%) > 90.26795196533203 > 9026.795196533203
 
     # endregion
 
     # region Suit
 
-    nms_enums.eStatsType.Suit_Armour_Health: [],  # Core Health (+33%) > 20.0
-    nms_enums.eStatsType.Suit_Armour_Shield_Strength: [("*", 100)],  # Shield Strength (+31%) > 0.13419264554977417 > 13.419264554977417
-    nms_enums.eStatsType.Suit_Energy: [("*", 100)],  # Life Support Tanks (+84%) > 0.1525779366493225 > 15.257793664932251
-    nms_enums.eStatsType.Suit_Energy_Regen: [("-", 1), ("*", 100)],  # Solar Panel Power (+26%) > 1.0146995782852173 > 1.4699578285217285
-    nms_enums.eStatsType.Suit_Protection_Cold: [],  # Cold Protection (?) > 230.13558959960938
-    nms_enums.eStatsType.Suit_Protection_Heat: [],  # Heat Protection (?) > 230.13558959960938
-    nms_enums.eStatsType.Suit_Protection_Toxic: [],  # Toxic Protection (?) > 230.13558959960938
-    nms_enums.eStatsType.Suit_Protection_Radiation: [],  # Radiation Protection (?) > 230.13558959960938
-    nms_enums.eStatsType.Suit_Underwater: [],  # Oxygen Tank (?) > 66.08882904052734
-    nms_enums.eStatsType.Suit_DamageReduce_Cold: [(1, "-"), ("*", 100)],  # Cold Damage Shielding (?) > 0.9542275667190552 > 4.577243328094482
-    nms_enums.eStatsType.Suit_DamageReduce_Heat: [(1, "-"), ("*", 100)],  # Heat Damage Shielding (?) > 0.9542275667190552 > 4.577243328094482
-    nms_enums.eStatsType.Suit_DamageReduce_Radiation: [(1, "-"), ("*", 100)],  # Radiation Damage Shielding (?) > 0.9542275667190552 > 4.577243328094482
-    nms_enums.eStatsType.Suit_DamageReduce_Toxic: [(1, "-"), ("*", 100)],  # Toxic Damage Shielding (?) > 0.9542275667190552 > 4.577243328094482
-    nms_enums.eStatsType.Suit_Protection_HeatDrain: [("-", 1), ("*", 100)],  # Heat Resistance (+4%) > 1.0696643590927124 > 6.96643590927124
-    nms_enums.eStatsType.Suit_Protection_ColdDrain: [("-", 1), ("*", 100)],  # Cold Resistance (+6%) > 1.0343537330627441 > 3.435373306274414
-    nms_enums.eStatsType.Suit_Protection_ToxDrain: [("-", 1), ("*", 100)],  # Toxic Resistance (+2%) > 1.0958983898162842 > 9.589838981628418
+    nms_enums.eStatsType.Suit_Armour_Health: [],  # Core Health (+???%) > 20.0
+    nms_enums.eStatsType.Suit_Armour_Shield_Strength: [("*", 100)],  # Shield Strength (+32%) > 0.3216187655925751 > 32.16187655925751
+    nms_enums.eStatsType.Suit_Energy: [("*", 100)],  # Life Support Tanks (+108%) > 1.0757951736450195 > 107.57951736450195
+    nms_enums.eStatsType.Suit_Energy_Regen: [("-", 1), ("*", 100)],  # Solar Panel Power (+73%) > 1.7318912744522095 > 73.18912744522095
+    nms_enums.eStatsType.Suit_Protection_Cold: [],  # Cold Protection (???) > 334.7082214355469
+    nms_enums.eStatsType.Suit_Protection_Heat: [],  # Heat Protection (???) > 334.7082214355469
+    nms_enums.eStatsType.Suit_Protection_Toxic: [],  # Toxic Protection (???) > 334.7082214355469
+    nms_enums.eStatsType.Suit_Protection_Radiation: [],  # Radiation Protection (???) > 334.7082214355469
+    nms_enums.eStatsType.Suit_Underwater: [],  # Oxygen Tank (???) > 159.639404296875
+    nms_enums.eStatsType.Suit_DamageReduce_Cold: [(1, "-"), ("*", 100)],  # Cold Damage Shielding (+19%) > 0.8105689287185669 > 18.94310712814331
+    nms_enums.eStatsType.Suit_DamageReduce_Heat: [(1, "-"), ("*", 100)],  # Heat Damage Shielding (+19%) > 0.8105689287185669 > 18.94310712814331
+    nms_enums.eStatsType.Suit_DamageReduce_Radiation: [(1, "-"), ("*", 100)],  # Radiation Damage Shielding (+19%) > 0.8105689287185669 > 18.94310712814331
+    nms_enums.eStatsType.Suit_DamageReduce_Toxic: [(1, "-"), ("*", 100)],  # Toxic Damage Shielding (+19%) > 0.8105689287185669 > 18.94310712814331
+    nms_enums.eStatsType.Suit_Protection_HeatDrain: [("-", 1), ("*", 100)],  # Heat Resistance (+7%) > 1.0696643590927124 > 6.96643590927124
+    nms_enums.eStatsType.Suit_Protection_ColdDrain: [("-", 1), ("*", 100)],  # Cold Resistance (+3%) > 1.0343537330627441 > 3.435373306274414
+    nms_enums.eStatsType.Suit_Protection_ToxDrain: [("-", 1), ("*", 100)],  # Toxic Resistance (+10%) > 1.0958983898162842 > 9.589838981628418
     nms_enums.eStatsType.Suit_Protection_RadDrain: [("-", 1), ("*", 100)],  # Radiation Resistance (+2%) > 1.0243568420410156 > 2.4356842041015625
-    nms_enums.eStatsType.Suit_Stamina_Strength: [("*", 100)],  # Sprint Distance (+31%) > 0.1399400383234024 > 13.99400383234024
-    nms_enums.eStatsType.Suit_Stamina_Recovery: [("-", 1), ("*", 100)],  # Sprint Recovery Time (+31%) > 1.0165899991989136 > 1.6589999198913574
-    nms_enums.eStatsType.Suit_Jetpack_Tank: [("*", 100)],  # Jetpack Tanks (+217%) > 2.0275888442993164 > 202.75888442993164
-    nms_enums.eStatsType.Suit_Jetpack_Drain: [(1, "-"), ("*", 100)],  # Fuel Efficiency (+16%) > 0.9013239741325378 > 9.867602586746216
-    nms_enums.eStatsType.Suit_Jetpack_Refill: [("-", 1), ("*", 100)],  # Recharge Rate (+6%) > 1.011878252029419 > 1.1878252029418945
-    nms_enums.eStatsType.Suit_Jetpack_Ignition: [("-", 1), ("*", 100)],  # Initial Boost Power (+15%) > 1.016648769378662 > 1.6648769378662
+    nms_enums.eStatsType.Suit_Stamina_Strength: [("*", 100)],  # Sprint Distance (+43%) > 0.431468665599823 > 43.1468665599823
+    nms_enums.eStatsType.Suit_Stamina_Recovery: [("-", 1), ("*", 100)],  # Sprint Recovery Time (+38%) > 1.3798800706863403 > 37.98800706863403
+    nms_enums.eStatsType.Suit_Jetpack_Tank: [("*", 100)],  # Jetpack Tanks (+203%) > 2.0275888442993164 > 202.75888442993164
+    nms_enums.eStatsType.Suit_Jetpack_Drain: [(1, "-"), ("*", 100)],  # Fuel Efficiency (+6%) > 0.9411903619766235 > 5.8809638023376465
+    nms_enums.eStatsType.Suit_Jetpack_Refill: [("-", 1), ("*", 100)],  # Recharge Rate (+15%) > 1.1500355005264282 > 15.003550052642822
+    nms_enums.eStatsType.Suit_Jetpack_Ignition: [("-", 1), ("*", 100)],  # Initial Boost Power (+8%) > 1.0770596265792847 > 7.705962657928467
 
     # endregion
 
     # region Ship
 
-    nms_enums.eStatsType.Ship_Weapons_Guns_Damage: [],  # Damage (+6%) > 20.023605346679688
-    nms_enums.eStatsType.Ship_Weapons_Guns_Rate: [("-", 1), ("*", 100)],  # Fire Rate (+3%) > 1.0210000276565552 > 2.1000027656555176
-    nms_enums.eStatsType.Ship_Weapons_Guns_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+3%) > 1.0299999713897705 > 2.999997138977051
-    nms_enums.eStatsType.Ship_Weapons_Lasers_Damage: [],  # Damage (+25%) > 60.78825378417969
-    nms_enums.eStatsType.Ship_Weapons_Lasers_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+63%) > 1.7505900859832764 > 75.05900859832764
-    nms_enums.eStatsType.Ship_Weapons_ShieldLeech: [],  # Shield recharge on impact (+105%) > 0.27219414710998535
-    nms_enums.eStatsType.Ship_Armour_Shield_Strength: [],  # Shield Strength (+30%) > 0.20000000298023224
-    nms_enums.eStatsType.Ship_Hyperdrive_JumpDistance: [],  # Hyperdrive Range (221 ly) > 250.77337646484375
+    nms_enums.eStatsType.Ship_Weapons_Guns_Damage: [],  # Damage (+???%) > 6.0000176429748535
+    nms_enums.eStatsType.Ship_Weapons_Guns_Rate: [("-", 1), ("*", 100)],  # Fire Rate (+6%) > 1.0602484941482544 > 6.0248494148254395
+    nms_enums.eStatsType.Ship_Weapons_Guns_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+6%) > 1.0629289150238037 > 6.292891502380371
+    nms_enums.eStatsType.Ship_Weapons_Lasers_Damage: [],  # Damage (+???%) > 60.02950668334961
+    nms_enums.eStatsType.Ship_Weapons_Lasers_HeatTime: [("-", 1), ("*", 100)],  # Heat Dispersion (+89%) > 1.8867706060409546 > 88.67706060409546
+    nms_enums.eStatsType.Ship_Weapons_ShieldLeech: [],  # Shield recharge on impact (+???%) > 0.27219414710998535
+    nms_enums.eStatsType.Ship_Armour_Shield_Strength: [],  # Shield Strength (+???%) > 0.20000000298023224
+    nms_enums.eStatsType.Ship_Hyperdrive_JumpDistance: [],  # Hyperdrive Range (251 ly) > 250.77337646484375
     nms_enums.eStatsType.Ship_Hyperdrive_JumpsPerCell: [("*", 100)],  # Warp Cell Efficiency (+100%) > 1.0 > 100.0
     nms_enums.eStatsType.Ship_Launcher_TakeOffCost: [(1, "-"), ("*", 100)],  # Launch Cost (-20%) > 0.800000011920929 > 19.999998807907104
     nms_enums.eStatsType.Ship_Launcher_AutoCharge: [],  # Automatic Recharging (Enabled) > 1.0
     nms_enums.eStatsType.Ship_PulseDrive_MiniJumpFuelSpending: [(1, "-"), ("*", 100)],  # Pulse Drive Fuel Efficiency (+20%) > 0.800000011920929 > 19.999998807907104
     nms_enums.eStatsType.Ship_Boost: [("-", 1), ("*", 100)],  # Boost (+14%) > 1.1405895948410034 > 14.058959484100342
-    nms_enums.eStatsType.Ship_Maneuverability: [],  # Maneuverability (?) > 1.006500005722046
-    nms_enums.eStatsType.Ship_BoostManeuverability: [("-", 1), ("*", 100)],  # Maneuverability (+17%) > 1.1019220352172852 > 10.192203521728516
+    nms_enums.eStatsType.Ship_Maneuverability: [],  # Maneuverability (???) > 1.006500005722046
+    nms_enums.eStatsType.Ship_BoostManeuverability: [("-", 1), ("*", 100)],  # Maneuverability (+10%) > 1.1019220352172852 > 10.192203521728516
 
     # endregion
 
     # region Freighter
 
-    nms_enums.eStatsType.Freighter_Hyperdrive_JumpDistance: [],  # Hyperdrive Range (209 ly) > 53.26720428466797
+    nms_enums.eStatsType.Freighter_Hyperdrive_JumpDistance: [],  # Hyperdrive Range (230 ly) > 229.639404296875
     nms_enums.eStatsType.Freighter_Hyperdrive_JumpsPerCell: [("*", 100)],  # Warp Cell Efficiency (+100%) > 1.0 > 100.0
-    nms_enums.eStatsType.Freighter_Fleet_Speed: [("-", 1), ("*", 100)],  # Expedition Speed (+15%) > 1.0126137733459473 > 1.2613773345947266
-    nms_enums.eStatsType.Freighter_Fleet_Fuel: [(1, "-"), ("*", 100)],  # Expedition Efficiency (+20%) > 0.9721637964248657 >
-    nms_enums.eStatsType.Freighter_Fleet_Combat: [("-", 1), ("*", 100)],  # # Expedition Defenses (+15%) > 1.0126137733459473 > 1.26137733459473
-    nms_enums.eStatsType.Freighter_Fleet_Trade: [("-", 1), ("*", 100)],  # Expedition Trade Ability (+15%) > 1.0126137733459473 > 1.2613773345947266
-    nms_enums.eStatsType.Freighter_Fleet_Explore: [("-", 1), ("*", 100)],  # Expedition Scientific Ability (+15%) > 1.1026138067245483 > 10.261380672454834
-    nms_enums.eStatsType.Freighter_Fleet_Mine: [("-", 1), ("*", 100)],  # Expedition Mining Ability (+15%) > 1.14999997615814209 > 14.999997615814209
+    nms_enums.eStatsType.Freighter_Fleet_Speed: [("-", 1), ("*", 100)],  # Expedition Speed (+15%) > 1.149999976158142 > 14.999997615814209
+    nms_enums.eStatsType.Freighter_Fleet_Fuel: [(1, "-"), ("*", 100)],  # Expedition Efficiency (+17%) > 0.8277047276496887 > 17.229527235031128
+    nms_enums.eStatsType.Freighter_Fleet_Combat: [("-", 1), ("*", 100)],  # Expedition Defenses (+15%) > 1.149999976158142 > 14.999997615814209
+    nms_enums.eStatsType.Freighter_Fleet_Trade: [("-", 1), ("*", 100)],  # Expedition Trade Ability (+15%) > 1.149999976158142 > 14.999997615814209
+    nms_enums.eStatsType.Freighter_Fleet_Explore: [("-", 1), ("*", 100)],  # Expedition Scientific Ability (+15%) > 1.149999976158142 > 14.999997615814209
+    nms_enums.eStatsType.Freighter_Fleet_Mine: [("-", 1), ("*", 100)],  # Expedition Mining Ability (+15%) > 1.149999976158142 > 14.999997615814209
 
     # endregion
 
     # region Vehicle
 
-    nms_enums.eStatsType.Vehicle_EngineFuelUse: [(1, "-"), ("*", 100)],  # Fuel Usage (-17%) > 0.9888021945953369 > 1.11978054046631
-    nms_enums.eStatsType.Vehicle_EngineTopSpeed: [("-", 1), ("*", 100)],  # Top Speed (+11%) > 1.0145702362060547 > 1.45702362060547
-    nms_enums.eStatsType.Vehicle_BoostSpeed: [("*", 100)],  # Boost Power (+55%) > 0.16838529706001282 > 16.838529706001282
-    nms_enums.eStatsType.Vehicle_BoostTanks: [("*", 100)],  # Boost Tank Size (+50%) > 0.12285126000642776 > 12.285126000642776
-    nms_enums.eStatsType.Vehicle_SubBoostSpeed: [("*", 100)],  # Acceleration (+25%) > 0.11943772435188293 > 11.943772435188293
-    nms_enums.eStatsType.Vehicle_LaserDamage: [],  # Mining Laser Power (+43%) > 8.419264793395996
-    nms_enums.eStatsType.Vehicle_LaserHeatTime: [(1, "-"), ("*", 100)],   # Mining Laser Efficiency (+17%) > 0.9791018962860107 > 2.089810371398926
-    nms_enums.eStatsType.Vehicle_GunDamage: [],  # Damage (+12%) > 5.014753341674805
-    nms_enums.eStatsType.Vehicle_GunHeatTime: [(1, "-"), ("*", 100)],  # Weapon Power Efficiency (+17%) > 0.9890878200531006 > 1.09121799468994
-    nms_enums.eStatsType.Vehicle_GunRate: [(1, "-"), ("*", 100)],  # Rate of Fire (+9%) > 0.9895480275154114 > 1.04519724845886
+    nms_enums.eStatsType.Vehicle_EngineFuelUse: [(1, "-"), ("*", 100)],  # Fuel Usage (-28%) > 0.7158533930778503 > 28.414660692214966
+    nms_enums.eStatsType.Vehicle_EngineTopSpeed: [("-", 1), ("*", 100)],  # Top Speed (+10%) >  1.100000023841858 > 10.000002384185791
+    nms_enums.eStatsType.Vehicle_BoostSpeed: [("*", 100)],  # Boost Power (+65%) > 0.6525779366493225 > 65.25779366493225
+    nms_enums.eStatsType.Vehicle_BoostTanks: [("*", 100)],  # Boost Tank Size (+25%) > 0.2501475214958191 > 25.01475214958191
+    nms_enums.eStatsType.Vehicle_SubBoostSpeed: [("*", 100)],  # Acceleration (+26%) > 0.26352986693382263 > 26.352986693382263
+    nms_enums.eStatsType.Vehicle_LaserDamage: [],  # Mining Laser Power (+???%) > 36.83852767944336
+    nms_enums.eStatsType.Vehicle_LaserHeatTime: [(1, "-"), ("*", 100)],   # Mining Laser Efficiency (+19%) > 0.8052845001220703 > 19.47154998779297
+    nms_enums.eStatsType.Vehicle_GunDamage: [],  # Damage (+???%) > 36.83852767944336
+    nms_enums.eStatsType.Vehicle_GunHeatTime: [(1, "-"), ("*", 100)],  # Weapon Power Efficiency (+18%) > 0.8241346478462219 > 17.586535215377808
+    nms_enums.eStatsType.Vehicle_GunRate: [(1, "-"), ("*", 100)],  # Rate of Fire (+9%) > 0.9060062170028687 > 9.399378299713135
 
     # endregion
 }
@@ -325,7 +325,9 @@ def try_except(func):
 #       All required structs are now included in NMS.py itself
 #       Use the new executor to execute generation in the background without blocking the game
 #       Use a new hook to toggle product and technology and start via button press
-#       Taking into account how desirable certain stats and combinations are
+# 1.1.1
+#       Fixed the transformation of raw values that was not triggered due to a mismatch of the data type
+#       Added missing transformation for Weapon_Grenade_Radius and Weapon_Grenade_Speed
 
 # endregion
 
@@ -335,7 +337,7 @@ class Pi(NMSMod):
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.1.0"
+    __version__ = "1.1.1"
 
     def __init__(self):
         super().__init__()
@@ -411,11 +413,6 @@ class Pi(NMSMod):
     def enable_generation_on_fully_booted(self):
         self.fully_booted = True
         logging.info(f">> Pi: The game is now fully booted.")
-
-    @on_key_release("d")
-    @disable
-    def toggle_product(self):
-        pass
 
     @on_key_release("p")
     def toggle_product(self):
@@ -566,7 +563,7 @@ class Pi(NMSMod):
                     # update to track meta values
                     for stat_bonus in generated.maStatBonuses.value:
                         stat = nms_enums.eStatsType(stat_bonus.mStat.meStatsType).name
-                        stat_value = row[stat] = self.translate_value(stat_bonus)  # add in-game like value of a stat
+                        stat_value = row[stat] = self.transform_value(stat_bonus)  # add in-game like value of a stat
 
                         if stat not in meta:
                             logging.debug(f"     > {stat} > {stat_bonus.mfBonus} > {stat_value}")  # to see how the value looks
@@ -626,10 +623,10 @@ class Pi(NMSMod):
         self.technology_counter[1].increment()
         self.check_procedural_technology_generation_finished()
 
-    # translate raw value to look more like in-game
+    # transform raw value to look more like in-game
     @staticmethod
-    def translate_value(stat_bonus):
-        instructions = TRANSLATION.get(str(stat_bonus.mStat), [])
+    def transform_value(stat_bonus):
+        instructions = TRANSFORM.get(stat_bonus.mStat.meStatsType, [])
         value = stat_bonus.mfBonus
 
         for instruction in instructions:
