@@ -476,7 +476,7 @@ class Pi(NMSMod):
 
             # add seed and current translation
             row.update({
-                self.language: str(generated.macNameLower),  # name for current language
+                self.language: str(generated.macNameLower).strip(),  # name for current language
                 "Age": int(RE_PRODUCT_AGE.findall(str(generated.macDescription))[0]),
                 "Seed": seed,
                 "Value": generated.miBaseValue,
@@ -556,7 +556,7 @@ class Pi(NMSMod):
 
                     # add seed and current translation
                     row.update({
-                        self.language: str(generated.macNameLower),  # name for current language
+                        self.language: str(generated.macNameLower).strip(),  # name for current language
                         "Seed": seed,
                     })
 

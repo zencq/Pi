@@ -28,7 +28,7 @@ values for each stat per item in addition to those already mentioned.
 The following items are currently *outdated* or not *available* due to changes in
 a newer game version than the one currently supported. The latest supported version
 can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases)
-and is tied to the capabilities of NMS.py ([see below](readme#you-can-help-20)).
+and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/Pi?tab=readme-ov-file#you-can-help-20)).
 
 * **Neutron Cannon** (UP_CANN) is *outdated* since **Singularity 4.30**
 * **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
