@@ -25,13 +25,27 @@ values for each stat per item in addition to those already mentioned.
 
 ## Known Issues
 
-The following items are currently *outdated* or not *available* due to changes in
+The following items are currently *outdated* or *not available* due to changes in
 a newer game version than the one currently supported. The latest supported version
 can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases)
 and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/Pi?tab=readme-ov-file#you-can-help-20)).
 
 * **Neutron Cannon** (UP_CANN) is *outdated* since **Singularity 4.30**
 * **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
+* Rusted Upgrades are *available* since **Aquarius 5.10**
+  * **Mining Beam** (UP_LASER0)
+  * **Analysis Visor** (UP_SCAN0)
+  * **Boltcaster** (UP_BOLT0)
+  * **Life Support** (UP_ENGY0)
+  * **Hazard Protection** (UP_HAZ0)
+  * **Movement System** (UP_JET0)
+  * **Defence Systems** (UP_SHLD0)
+  * **Pulse Engine** (UP_PULSE0)
+  * **Launch Thruster** (UP_LAUN0)
+  * **Hyperdrive** (UP_HYP0)
+  * **Deflector Shield** (UP_S_SHL0)
+  * **Photon Cannon** (UP_SGUN0)
+* **Message in a Bottle** (PROC_BOTT) is *available* since **Aquarius 5.10**
 
 ## You can help 2.0
 
@@ -71,7 +85,7 @@ eventually.
 ## Credits
 
 * **monkeyman192** - Biggest thanks goes to him for creating NMS.py and the support
-  he did while I created the mod
+  while I created the mod
 * **DHarhan** - Giving feedback about the desirability of certain stats and combinations
 * **ICE** and **DarkWalker** - Previously used scripts based on those shared by
   them in the [Creative & Sharing Hub](https://discord.gg/RSGQFQv2pP)
