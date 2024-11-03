@@ -1,3 +1,6 @@
 [submodule "NMS.py"]
 	path = NMS.py
 	url = https://github.com/monkeyman192/NMS.py
+[submodule "pyMHF"]
+	path = pyMHF
+	url = https://github.com/monkeyman192/pyMHF
