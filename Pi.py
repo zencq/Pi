@@ -36,8 +36,8 @@ LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
     "Name (pt)",
     "Name (pt-BR)",
     "Name (ja)",
-    "Name (zh-CN)",
-    "Name (zh-TW)",
+    "Name (zh-Hans)",
+    "Name (zh-Hant)",
     "Name (ko)",
 ]
 
@@ -46,6 +46,7 @@ PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..\\..")  # use Pi roo
 PRODUCT = [
     "BIO",
     "BONE",
+    "BOTT",
     "DARK",
     "FARM",
     "FEAR",
@@ -91,12 +92,12 @@ TECHNOLOGY = {
         "UP_MCLAS": ["2", "3", "4"],
     },
     "Ship": {
-        "UP_HYP": ["1", "2", "3", "4", "X"],
-        "UP_LAUN": ["1", "2", "3", "4", "X"],
-        "UP_PULSE": ["1", "2", "3", "4", "X"],
-        "UP_S_SHL": ["1", "2", "3", "4", "X"],
+        "UP_HYP": ["0", "1", "2", "3", "4", "X"],
+        "UP_LAUN": ["0", "1", "2", "3", "4", "X"],
+        "UP_PULSE": ["0", "1", "2", "3", "4", "X"],
+        "UP_S_SHL": ["0", "1", "2", "3", "4", "X"],
         "UP_SBLOB": ["1", "2", "3", "4", "X"],
-        "UP_SGUN": ["1", "2", "3", "4", "X"],
+        "UP_SGUN": ["0", "1", "2", "3", "4", "X"],
         "UP_SLASR": ["1", "2", "3", "4", "X"],
         "UP_SMINI": ["1", "2", "3", "4", "X"],
         "UP_SSHOT": ["1", "2", "3", "4", "X"],
@@ -107,24 +108,24 @@ TECHNOLOGY = {
     },
     "Suit": {
         "UP_COLD": ["1", "2", "3"],
-        "UP_ENGY": ["1", "2", "3", "X"],
-        "UP_HAZ": ["X"],
+        "UP_ENGY": ["0", "1", "2", "3", "X"],
+        "UP_HAZ": ["0", "X"],
         "UP_HOT": ["1", "2", "3"],
-        "UP_JET": ["1", "2", "3", "4", "X"],
+        "UP_JET": ["0", "1", "2", "3", "4", "X"],
         "UP_RAD": ["1", "2", "3"],
         "UP_RBSUIT": [""],
-        "UP_SHLD": ["1", "2", "3", "4", "X"],
+        "UP_SHLD": ["0", "1", "2", "3", "4", "X"],
         "UP_SNSUIT": [""],
         "UP_TOX": ["1", "2", "3"],
         "UP_UNW": ["1", "2", "3"],
     },
     "Weapon": {
-        "UP_BOLT": ["1", "2", "3", "4", "X"],
+        "UP_BOLT": ["0", "1", "2", "3", "4", "X"],
         "UP_CANN": ["1", "2", "3", "4", "X"],
         "UP_GREN": ["1", "2", "3", "4", "X"],
-        "UP_LASER": ["1", "2", "3", "4", "X"],
+        "UP_LASER": ["0", "1", "2", "3", "4", "X"],
         "UP_RAIL": ["1", "2", "3", "4", "X"],
-        "UP_SCAN": ["1", "2", "3", "4", "X"],
+        "UP_SCAN": ["0", "1", "2", "3", "4", "X"],
         "UP_SENGUN": [""],
         "UP_SHOT": ["1", "2", "3", "4", "X"],
         "UP_SMG": ["1", "2", "3", "4", "X"],
@@ -328,6 +329,9 @@ def try_except(func):
 # 1.1.1
 #       Fixed the transformation of raw values that was not triggered due to a mismatch of the data type
 #       Added missing transformation for Weapon_Grenade_Radius and Weapon_Grenade_Speed
+# 1.1.2
+#       Added new items from game version 5.10
+#       Changed chinese language codes
 
 # endregion
 
@@ -337,7 +341,7 @@ class Pi(NMSMod):
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.1.1"
+    __version__ = "1.1.2"
 
     def __init__(self):
         super().__init__()
