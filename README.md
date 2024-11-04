@@ -45,22 +45,21 @@ and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/
   * **Hyperdrive** (UP_HYP0)
   * **Deflector Shield** (UP_S_SHL0)
   * **Photon Cannon** (UP_SGUN0)
-* **Message in a Bottle** (PROC_BOTT) is *available* since **Aquarius 5.10**
 
 ## You can help 2.0
 
 If you notice that some files are outdated you can help updating them! The current
 implementation utilizes [NMS.py](https://github.com/monkeyman192/NMS.py) by [monkeyman192](https://github.com/monkeyman192).
 
-NMS.py is included in this repository as submodule to ensure best compatibility.
-After cloning you must also execute `git submodule update --init --recursive` in
-the newly created directory to initialize it.
+NMS.py (and its backend [pyMHF](https://github.com/monkeyman192/pyMHF)) is included
+in this repository as submodule to ensure best compatibility. After cloning you
+must also execute `git submodule update --init --recursive` in the newly created
+directory to initialize them.
 
-To run an update set up NMS.py and copy the `Pi.py` in its `mods` directory
-(`cp Pi.py NMS.py/mods`). Then you just need to run NMS.py and as soon as the save
-selection appears, the magic can begin. When NMS.py runs, a distinct terminal window
-opens where some information are logged. All output is prefixed with `>> Pi` or
-indented below it.
+To run an update set up NMS.py and make sure the `mod_dir` is set to the `./pyMHF_mods`
+directory. Then you just need to run it and as soon as the save selection appears,
+the magic can begin. When NMS.py runs, a distinct terminal window opens where some
+information are logged. All output is prefixed with `>> Pi` or indented below it.
 
 It is also possible to extend the records with the generated names for your language
 by running it with the game set to your language. This will not overwrite existing
@@ -68,9 +67,11 @@ names of other languages. The selected language will be shown in the log mention
 above.
 
 Both, technology and products, are enabled by default but and can be toggled separately.
-You can toggle the technology generation by pressing `[T]` and the one for products
-with `[P]`. To actually start the generation press `[Space]` and it will run a couple of
-minutes (depending on your machine) in the background with some progress logging.
+You can do so via the little UI window that opens short after the terminal. This
+is also where you start the generation which will then run a couple of minutes
+(depending on your machine) in the background with some progress logging. It is
+also possible to set custom values for each category to only generate those specific
+items (comma separated).
 
 After the generation is done you can start it again to add another lang for example.
 

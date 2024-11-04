@@ -32,8 +32,8 @@ LANGUAGES = [  # order defined by game
     "Name (pt)",
     "Name (pt-BR)",
     "Name (ja)",
-    "Name (zh-CN)",
-    "Name (zh-TW)",
+    "Name (zh-Hans)",
+    "Name (zh-Hant)",
     "Name (ko)",
 ]
 
@@ -409,12 +409,10 @@ class Pi():
     @staticmethod
     def get_quality_information(item_name: str) -> tuple:
         # C -
-        # B Significant
-        # A Powerful
         # S Supreme
         # X Illegal
         # ? Forbidden (Sentinel)
-        # ? Salvaged (Autophage)
+        # ! Salvaged (Autophage)
 
         quality = item_name[-1]
 
@@ -431,7 +429,7 @@ class Pi():
             return "Forbidden Upgrade (?)", COLOR_SPECIAL
 
         if item_name == "UP_RBSUIT":
-            return "Salvaged Upgrade (?)", COLOR_SPECIAL
+            return "Salvaged Upgrade (!)", COLOR_SPECIAL
 
         # no special case, therefore it can only be this
         return f"Supreme Upgrade ({quality})", COLOR_COMMODITY

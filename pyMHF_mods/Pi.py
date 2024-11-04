@@ -5,19 +5,24 @@ import os
 import re
 import threading
 
-import nmspy.common as nms
-
+# from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from datetime import datetime
 
+import nmspy.common as nms
+
+from nmspy import NMSMod
 from nmspy.data import (
     common as nms_common_structs,
     enums as nms_enums,
-    function_hooks as hooks,
     structs as nms_structs,
 )
-from nmspy.hooking import on_fully_booted, on_key_release
-from nmspy.memutils import map_struct, map_struct_temp
-from nmspy.mod_loader import NMSMod
+from nmspy.data.functions import hooks
+from nmspy.decorators import on_fully_booted
+
+from pymhf.core.memutils import map_struct
+from pymhf.core.mod_loader import ModState
+from pymhf.gui import BOOLEAN, STRING, gui_button
 
 
 # region Data
@@ -41,23 +46,38 @@ LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
     "Name (ko)",
 ]
 
-PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..\\..")  # use Pi root directory as starting point
+PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..")  # use Pi root directory as starting point
 
-PRODUCT = [
-    "BIO",
-    "BONE",
-    "BOTT",
-    "DARK",
-    "FARM",
-    "FEAR",
-    "FOSS",
-    "HIST",
+PRODUCT = [  # ordered by occurrence in GcProceduralProductTable
     "LOOT",
+    "HIST",
+    "BIO",
+    "FOSS",
     "PLNT",
-    "SALV",
-    "SEA",
-    "STAR",
     "TOOL",
+    "FARM",
+    "SEA",
+    "FEAR",
+    "SALV",
+    "BONE",
+    "DARK",
+    "STAR",
+
+    # ! No treasure and therefore not relevant for generating its value.
+    # "PASS",  # FreighterPassword
+    # "CAPT",  # FreighterCaptLog
+    # "CREW",  # FreighterCrewList
+    # "UP_FRHYP",  # FreighterTechHyp
+    # "UP_FRSPE",  # FreighterTechSpeed
+    # "UP_FRFUE",  # FreighterTechFuel
+    # "UP_FRTRA",  # FreighterTechTrade
+    # "UP_FRCOM",  # FreighterTechCombat
+    # "UP_FRMIN",  # FreighterTechMine
+    # "UP_FREXP",  # FreighterTechExp
+    # "LUMP",  # DismantleBio
+    # "COG",   # DismantleTech
+    # "DATA",  # DismantleData
+    # "BOTT",  # MessageInBottle
 ]
 
 RE_PRODUCT_AGE = re.compile("([0-9]+)")
@@ -332,33 +352,119 @@ def try_except(func):
 # 1.1.2
 #       Added new items from game version 5.10
 #       Changed chinese language codes
+# 1.1.3
+#       Updated to latest NMS.py that uses pyMHF as backend
+#       Fixed a bug when using product_manual
 
 # endregion
 
 
-class Pi(NMSMod):
-    __NMSPY_required_version__ = "0.6.7"
+@dataclass
+class PiModState(ModState):
+    # does not work at the moment due to "access violation reading" (a multi threading issue)
+    # executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="Pi_Executor")
+
+    language = None  # name of column to write the name in, will be set automatically
+
+    is_fully_booted : bool = False
+    is_generation_started : bool = False
+
+    product_counter = (Counter(), Counter())   # spawned, finished
+    product_generation_enabled : bool = True
+    product_manual : list = None
+    product_start_time : datetime = None
+
+    technology_counter = (Counter(), Counter())   # spawned, finished
+    technology_generation_enabled : bool = True
+    technology_manual : list = None
+    technology_start_time : datetime = None
+
+
+class PiMod(NMSMod):
+    __NMSPY_required_version__ = "0.7.0"
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.1.2"
+    __version__ = "1.1.3"
 
     def __init__(self):
         super().__init__()
+        self.state = PiModState()
 
-        self.language = None  # name of column to write the name in, will be set automatically
-        self.is_fully_booted = False
-        self.is_generation_started = False
-        self.product_counter = (Counter(), Counter())   # spawned, finished
-        self.product_generation_enabled = True
-        self.product_start_time = None
-        self.technology_counter = (Counter(), Counter())   # spawned, finished
-        self.technology_generation_enabled = True
-        self.technology_start_time = None
+    # region GUI
 
-        # properties for manual configuration
-        self.product_manual = []  # set to items of PRODUCT
-        self.technology_manual = []  # set to items of TECHNOLOGY. can be any inventory_type, item_id, and item_name
+    @property
+    @BOOLEAN(label="Products")
+    def product_generation_enabled(self):
+        return self.state.product_generation_enabled
+
+    @product_generation_enabled.setter
+    def product_generation_enabled(self, value: bool):
+        self.state.product_generation_enabled = value
+
+    @property
+    @STRING(label="Products (overwrite)", hint="any product")
+    def product_manual(self):
+        return ",".join(self.state.product_manual or [])
+
+    @product_manual.setter
+    def product_manual(self, value: str):
+        self.state.product_manual = [item.strip() for item in value.split(",") if item.strip()]
+
+    @property
+    @BOOLEAN(label="Technologies")
+    def technology_generation_enabled(self):
+        return self.state.technology_generation_enabled
+
+    @technology_generation_enabled.setter
+    def technology_generation_enabled(self, value: bool):
+        self.state.technology_generation_enabled = value
+
+    @property
+    @STRING(label="Technologies (overwrite)", hint="any inventory_type, item_id, and item_name")
+    def technology_manual(self):
+        return ",".join(self.state.technology_manual or [])
+
+    @technology_manual.setter
+    def technology_manual(self, value: str):
+        self.state.technology_manual = [item.strip() for item in value.split(",") if item.strip()]
+
+    # endregion
+
+    # region Language
+
+    @hooks.cTkLanguageManagerBase.Load.after
+    def language_changed(self, this):
+        result = original = map_struct(this, nms_structs.cTkLanguageManagerBase).meRegion
+        if original == nms_enums.eLanguageRegion.LR_USEnglish:
+            result = nms_enums.eLanguageRegion.LR_English
+        if original == nms_enums.eLanguageRegion.LR_LatinAmericanSpanish:
+            result = nms_enums.eLanguageRegion.LR_Spanish
+        if original > 0x1:  # -1 in total
+            result -= 1
+        if original > 0xA:  # -2 in total
+            result -= 1
+        if original > 0xF:  # -3 in total
+            result -= 1
+
+        self.state.language = LANGUAGES[result]
+
+        logging.debug(f">> Pi: Language loaded is {original} > {result} > {self.state.language}")
+
+    @staticmethod
+    def extract_previous_languages(read_rows, seed):
+        if seed < len(read_rows):  # just in case read file has less rows than expected
+            # add all languages and get previous translations or empty string
+            return {
+                language: read_rows[seed].get(language, "") or ("zh-Hans" in language and read_rows[seed].get("Name (zh-CN)", "")) or ("zh-Hant" in language and read_rows[seed].get("Name (zh-TW)", "")) or ""
+                for language in LANGUAGES
+            }
+
+        return {}
+
+    # endregion
+
+    # region Read/Write
 
     # read existing file to carry over all previous translations
     @staticmethod
@@ -380,80 +486,45 @@ class Pi(NMSMod):
             writer.writeheader()
             writer.writerows(result)
 
-    # region Language
-
-    @hooks.cTkLanguageManagerBase.Load.after
-    def language_changed(self, this):
-        result = original = map_struct(this, nms_structs.cTkLanguageManagerBase).meRegion
-        if original == nms_enums.eLanguageRegion.LR_USEnglish:
-            result = nms_enums.eLanguageRegion.LR_English
-        if original == nms_enums.eLanguageRegion.LR_LatinAmericanSpanish:
-            result = nms_enums.eLanguageRegion.LR_Spanish
-        if original > 0x1:  # -1 in total
-            result -= 1
-        if original > 0xA:  # -2 in total
-            result -= 1
-        if original > 0xF:  # -3 in total
-            result -= 1
-
-        self.language = LANGUAGES[result]
-
-        logging.debug(f">> Pi: Language loaded is {original} > {result} > {self.language}")
-
-    @staticmethod
-    def extract_previous_languages(read_rows, seed):
-        if seed < len(read_rows):  # just in case read file has less rows than expected
-            # add all languages and get previous translations or empty string
-            return {
-                language: read_rows[seed].get(language, "")
-                for language in LANGUAGES
-            }
-
-        return {}
-
     # endregion
 
     @on_fully_booted
     def enable_generation_on_fully_booted(self):
-        self.fully_booted = True
+        self.state.fully_booted = True
         logging.info(f">> Pi: The game is now fully booted.")
 
-    @on_key_release("p")
-    def toggle_product(self):
-        self.product_generation_enabled = not self.product_generation_enabled
-        logging.info(f">> Pi: Product generation is now {('enabled' if self.product_generation_enabled else 'disabled')}.")
-
-    @on_key_release("t")
-    def toggle_technology(self):
-        self.technology_generation_enabled = not self.technology_generation_enabled
-        logging.info(f">> Pi: Technology generation is now {('enabled' if self.technology_generation_enabled else 'disabled')}.")
-
-    @on_key_release("space")
+    @gui_button("Start Generating")
     def start_generating(self):
-        if not self.fully_booted:
-            logging.info(f">> Pi: Please wait until the game is fully booted.")
+        if not self.state.fully_booted:
+            logging.info(f">> Pi: Please wait until the game is fully booted...")
             return
 
-        if not self.is_generation_started:
-            self.is_generation_started = True
+        if self.state.is_generation_started:
+            logging.info(f">> Pi: Please wait until the currently running generation has finished...")
+            return
 
-            if self.product_generation_enabled:
-                logging.info(f">> Pi: Product generation started")
-                self.start_generating_procedural_product()
-            if self.technology_generation_enabled:
-                logging.info(f">> Pi: Technology generation started")
-                self.start_generating_procedural_technology()
+        self.state.is_generation_started = True
+
+        if self.product_generation_enabled:
+            logging.info(f">> Pi: Product generation started")
+            self.start_generating_procedural_product()
+        if self.technology_generation_enabled:
+            logging.info(f">> Pi: Technology generation started")
+            self.start_generating_procedural_technology()
 
     # region Product
 
     def start_generating_procedural_product(self):
-        self.product_start_time = datetime.now()
+        self.state.product_start_time = datetime.now()
 
         for item_id in PRODUCT:
-            if not self.technology_manual or (item_id in self.product_manual):
-                self.product_counter[0].increment()
-                nms.executor.submit(self.generate_procedural_product, item_id)
+            if not self.state.product_manual or (item_id in self.state.product_manual):
+                self.state.product_counter[0].increment()
+                # TODO make executor work again
+                # self.state.executor.submit(self.generate_procedural_product, item_id)  # ! access violation reading 0x0000000000000018
+                self.generate_procedural_product(item_id)
 
+    @try_except
     def generate_procedural_product(self, item_id):
         available = True
         item_name = f"PROC_{item_id}"
@@ -480,7 +551,7 @@ class Pi(NMSMod):
 
             # add seed and current translation
             row.update({
-                self.language: str(generated.macNameLower).strip(),  # name for current language
+                self.state.language: str(generated.macNameLower).strip(),  # name for current language
                 "Age": int(RE_PRODUCT_AGE.findall(str(generated.macDescription))[0]),
                 "Seed": seed,
                 "Value": generated.miBaseValue,
@@ -511,31 +582,33 @@ class Pi(NMSMod):
 
             self.write_result(f_name, {"Age": None, "Value": None}, result)
 
-        self.product_counter[1].increment()
+        self.state.product_counter[1].increment()
         self.check_procedural_product_generation_finished()
 
     def check_procedural_product_generation_finished(self):
-        if self.product_counter[0].value == self.product_counter[1].value:
-            logging.info(f">> Pi: Product generation finished in {datetime.now() - self.product_start_time}!")
-            self.product_counter[0].reset()
-            self.product_counter[1].reset()
-            if not (self.technology_counter[0].is_incremented or self.technology_counter[1].is_incremented):
-                self.is_generation_started = False
+        if self.state.product_counter[0].value == self.state.product_counter[1].value == len(self.state.product_manual or PRODUCT):
+            logging.info(f">> Pi: Product generation finished in {datetime.now() - self.state.product_start_time}!")
+            self.state.product_counter[0].reset()
+            self.state.product_counter[1].reset()
+            if not (self.state.technology_counter[0].is_incremented or self.state.technology_counter[1].is_incremented):
+                self.state.is_generation_started = False
 
     # endregion
 
     # region Technology
 
     def start_generating_procedural_technology(self):
-        self.technology_start_time = datetime.now()
+        self.state.technology_start_time = datetime.now()
 
         for inventory_type, items in TECHNOLOGY.items():
             for item_id, qualities in items.items():
                 for quality in qualities:
                     item_name = f"{item_id}{quality}"
-                    if not self.technology_manual or any((key in self.technology_manual) for key in [inventory_type, item_id, item_name]):
-                        self.technology_counter[0].increment()
-                        nms.executor.submit(self.generate_procedural_technology, inventory_type, item_name)
+                    if not self.state.technology_manual or any((key in self.state.technology_manual) for key in [inventory_type, item_id, item_name]):
+                        self.state.technology_counter[0].increment()
+                        # TODO make executor work again
+                        # self.state.executor.submit(self.generate_procedural_technology, inventory_type, item_name)  # ! access violation reading
+                        self.generate_procedural_technology(inventory_type, item_name)
 
     @try_except
     def generate_procedural_technology(self, inventory_type, item_name):
@@ -554,36 +627,37 @@ class Pi(NMSMod):
             pointer = reality_manager.GenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"), False)
 
             try:
-                with map_struct_temp(pointer, nms_structs.cGcTechnology) as generated:
-                    number = max(number, len(generated.maStatBonuses.value))
-                    row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
-
-                    # add seed and current translation
-                    row.update({
-                        self.language: str(generated.macNameLower).strip(),  # name for current language
-                        "Seed": seed,
-                    })
-
-                    # update to track meta values
-                    for stat_bonus in generated.maStatBonuses.value:
-                        stat = nms_enums.eStatsType(stat_bonus.mStat.meStatsType).name
-                        stat_value = row[stat] = self.transform_value(stat_bonus)  # add in-game like value of a stat
-
-                        if stat not in meta:
-                            logging.debug(f"     > {stat} > {stat_bonus.mfBonus} > {stat_value}")  # to see how the value looks
-                            meta[stat] = [stat_value, stat_value]
-                        else:
-                            meta[stat] = [
-                                min(meta[stat][0], stat_value),
-                                max(meta[stat][1], stat_value),
-                            ]
-
-                    # add completed row to result
-                    result.append(row)
+                generated = map_struct(pointer, nms_structs.cGcTechnology)
             except ValueError:
                 available = False
                 logging.warning(f"  ! Warning: Technology '{item_name}' is not available in your game version.")
                 break
+
+            number = max(number, len(generated.maStatBonuses.value))
+            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
+
+            # add seed and current translation
+            row.update({
+                self.state.language: str(generated.macNameLower).strip(),  # name for current language
+                "Seed": seed,
+            })
+
+            # update to track meta values
+            for stat_bonus in generated.maStatBonuses.value:
+                stat = nms_enums.eStatsType(stat_bonus.mStat.meStatsType).name
+                stat_value = row[stat] = self.transform_value(stat_bonus)  # add in-game like value of a stat
+
+                if stat not in meta:
+                    logging.debug(f"     > {stat} > {stat_bonus.mfBonus} > {stat_value}")  # to see how the value looks
+                    meta[stat] = [stat_value, stat_value]
+                else:
+                    meta[stat] = [
+                        min(meta[stat][0], stat_value),
+                        max(meta[stat][1], stat_value),
+                    ]
+
+                # add completed row to result
+                result.append(row)
 
             if seed % FREE_MEMORY_STEPS == 0:
                 # Clear the pending new technologies to free up some memory.
@@ -624,7 +698,7 @@ class Pi(NMSMod):
 
             self.write_result(f_name, meta, result)
 
-        self.technology_counter[1].increment()
+        self.state.technology_counter[1].increment()
         self.check_procedural_technology_generation_finished()
 
     # transform raw value to look more like in-game
@@ -662,11 +736,11 @@ class Pi(NMSMod):
         return value
 
     def check_procedural_technology_generation_finished(self):
-        if self.technology_counter[0].value == self.technology_counter[1].value:
-            logging.info(f">> Pi: Technology generation finished in {datetime.now() - self.technology_start_time}!")
-            self.technology_counter[0].reset()
-            self.technology_counter[1].reset()
-            if not (self.product_counter[0].is_incremented or self.product_counter[1].is_incremented):
-                self.is_generation_started = False
+        if self.state.technology_counter[0].value == self.state.technology_counter[1].value == (len(self.state.technology_manual) or len(qualities for items in TECHNOLOGY.values() for qualities in items.values())):
+            logging.info(f">> Pi: Technology generation finished in {datetime.now() - self.state.technology_start_time}!")
+            self.state.technology_counter[0].reset()
+            self.state.technology_counter[1].reset()
+            if not (self.state.product_counter[0].is_incremented or self.state.product_counter[1].is_incremented):
+                self.state.is_generation_started = False
 
     # endregion
