@@ -1,4 +1,5 @@
 lxml
+numpy
 openpyxl
 pandas
 Pyarrow

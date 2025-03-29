@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Pi
+NMSpy_mods/*/
+NMSpy_mods/Package.py

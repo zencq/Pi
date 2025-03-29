@@ -30,6 +30,7 @@ LANGUAGES = [  # order defined by game
     "Name (pl)",
     "Name (nl)",
     "Name (pt)",
+    "Name (es-419)",
     "Name (pt-BR)",
     "Name (ja)",
     "Name (zh-Hans)",
@@ -51,6 +52,7 @@ PRODUCT = [
     "PROC_BONE",
     "PROC_DARK",
     "PROC_STAR",
+    "PROC_EXH",
 ]
 
 # order here defines how it will be in the generated file
@@ -116,6 +118,7 @@ TECHNOLOGY = {
         "UP_MCLAS": ["4"],
         "UP_MCGUN": ["4"],
         "UP_MCENG": ["4"],
+        "UP_MFIRE": ["4"],
     },
 
     "Freighter": {
@@ -157,6 +160,7 @@ TRANSLATION = {
     "PROC_BONE": "Excavated Bones",
     "PROC_DARK": "Terrifying Sample",
     "PROC_STAR": "Ancient Skeleton",
+    "PROC_EXH": "Exhibit Fossil Sample",
 
     # Stats
 
@@ -297,6 +301,7 @@ TRANSLATION = {
     "UP_MCENG": "Daedalus Engine",
     "UP_MCGUN": "Minotaur Cannon",
     "UP_MCLAS": "Minotaur Laser",
+    "UP_MFIRE": "Minotaur Flamethrower",
 
     "UP_FRCOM": "Expedition Defenses Control",
     "UP_FREXP": "Expedition Scientific Control",
@@ -338,8 +343,13 @@ HIGH_NUMBER_MULTIPLIER = 3
 OUTDATED = {  # outdated or only available since
     "UP_CANN": "4.30",
     "UP_RBSUIT": "4.40",
+    "UP_MFIRE": "5.00",
+    "PROC_EXH": "5.50",
+    "UP_CANNX": "5.50",
+    "UP_UNW": "5.50",
+    "UP_EXSUB": "5.50",
 }
-RE_LANGUAGE = re.compile("\(([A-Z-a-z]+)\)")
+RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
 URL = "https://github.com/zencq/Pi"
 VERSION = "4.13"
 
@@ -440,7 +450,7 @@ class Pi():
     # region Helper for OpenPyXL
 
     @staticmethod
-    def cell_set_fill_color(cell: Cell, fill: Color | PatternFill) -> None:
+    def cell_set_fill_color(cell: Cell, fill: Fill) -> None:
         if not isinstance(fill, Fill):
             fill = PatternFill(fill_type=fills.FILL_SOLID, start_color=fill)
 
@@ -464,7 +474,7 @@ class Pi():
                 cell.border = BORDER_MIXED if cell.border.right.style else BORDER_BOTTOM
 
     @staticmethod
-    def row_max_set_fill_color(sheet: Worksheet, fill: Color | PatternFill) -> None:
+    def row_max_set_fill_color(sheet: Worksheet, fill: Fill) -> None:
         if not isinstance(fill, Fill):
             fill = PatternFill(fill_type=fills.FILL_SOLID, start_color=fill)
 
@@ -514,11 +524,10 @@ class Pi():
         for j, column in enumerate(columns):
             for k in range(len(result)):
                 row = result.iloc[k]
-                column_slice = row[columns[0]:columns[-1]]
-                is_perfect = [column_slice[c] == columns_max[i] for i, c in enumerate(columns)]
+                is_perfect = [row[c] == columns_max[i] for i, c in enumerate(columns)]
                 is_perfect_sum = sum(is_perfect)
 
-                max_stats_per_seed = max(max_stats_per_seed, sum(not math.isnan(column_slice[c]) for c in columns))
+                max_stats_per_seed = max(max_stats_per_seed, sum(not math.isnan(row[c]) for c in columns))
 
                 if is_perfect[j] and is_perfect_sum > subset.get(column, (column, 0))[1]:  # get a default tuple if necessary
                     subset[column] = (row["Seed"], is_perfect_sum)
@@ -664,7 +673,7 @@ class Pi():
             "row_first": len(overview) + 1,
         }
 
-    def insert_in_overview_sheet(self, inventory_translation: str, item_id: str, target_coordinate: str | None = None) -> None:
+    def insert_in_overview_sheet(self, inventory_translation: str, item_id: str, target_coordinate = None) -> None:
         is_technology = inventory_translation != "Product"
 
         column = self.link_settings["column_technology" if is_technology else "column_product"]
@@ -692,6 +701,10 @@ class Pi():
             for i, row in enumerate(dataframe_to_rows(product)):
                 if i == 0:
                     index_name = row.index(self.language)
+                    index_seed = row.index("Seed")
+                    index_perfection = row.index("Perfection")
+                    index_age = row.index("Age")
+                    index_value = row.index("Value")
                     continue
 
                 if i == 1:  # ignore as it is empty
@@ -700,13 +713,22 @@ class Pi():
                 # add data
                 sheet.append([
                     row[index_name],
-                    row[1],  # Seed
-                    row[2],  # Perfection
-                    row[3],  # Age
-                    row[4],  # Value
+                    row[index_seed],
+                    row[index_perfection],
+                    row[index_age],
+                    row[index_value],
                 ])
 
                 sheet.cell(row=sheet.max_row, column=3).number_format = "0%"  # perfection
+        else:
+            # add note that product is not available
+            if item_name in OUTDATED:
+                value = f"This product is not yet available in game version {VERSION} but was added in {OUTDATED[item_name]}."
+            else:
+                value = f"This product is not yet available in game version {VERSION}."
+
+            self.cell_set_fill_color(sheet.cell(row=sheet.max_row + 1, column=1, value=value), FILL_RED)
+            self.row_max_merge_columns(sheet, 1, 5)
 
         sheet.append([""])
 
@@ -722,19 +744,22 @@ class Pi():
 
         if not data:
             # add note that technology is not available
-            self.row_max_merge_columns(sheet, 4, 9)
             if item_id in OUTDATED:
                 value = f"This technology is not yet available in game version {VERSION} but was added in {OUTDATED[item_id]}."
             else:
                 value = f"This technology is not yet available in game version {VERSION}."
             self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=4, value=value), FILL_RED)
+
+            sheet.cell(row=sheet.max_row, column=4).alignment = ALIGNMENT_CENTER
+            self.row_max_merge_columns(sheet, 4, 9)
         else:
             for (item_name, max_stats_per_seed, is_all_same), dataframe in data.items():
                 quality_translation, colors = self.get_quality_information(item_name)
 
-                if item_id in OUTDATED:
+                outdated_item = item_id in OUTDATED and item_id or item_name in OUTDATED and item_name
+                if outdated_item:
                     # add note that technology is outdated
-                    sheet.append([quality_translation, "", max_stats_per_seed, f"This technology is outdated in game version {VERSION} as it was changed in {OUTDATED[item_id]}."])
+                    sheet.append([quality_translation, "", max_stats_per_seed, f"This technology is outdated in game version {VERSION} as it was changed in {OUTDATED[outdated_item]}."])
                     self.row_max_set_fill_color(sheet, colors[1])
                     self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=4), FILL_RED)
                 else:
@@ -748,6 +773,9 @@ class Pi():
                 for i, row in enumerate(dataframe_to_rows(dataframe)):
                     if i == 0:
                         index_name = row.index(self.language)
+                        index_seed = row.index("Seed")
+                        index_perfection = row.index("Perfection")
+                        index_stats = {stat: row.index(stat) for stat in stats_raw}
                         continue
 
                     if i == 1:  # ignore as it is empty
@@ -757,9 +785,9 @@ class Pi():
                     sheet.append(
                         [
                             row[index_name],
-                            row[1],  # Seed
-                            row[2],  # Perfection
-                        ] + [row[3 + i] for i, stat in enumerate(stats_raw)]  # stats always start at 3 and order is given by stats_raw
+                            row[index_seed],
+                            row[index_perfection],
+                        ] + [row[index_stats[stat]] for stat in stats_raw]
                     )
                     # style added row
                     if i % 2 == 1:
@@ -784,9 +812,9 @@ class Pi():
     # region Pandas
 
     def get_product_with_pandas(self, item_name) -> pandas.DataFrame:
-        f_name = f"{F_PATH}\\Product\\{item_name}.csv"
+        f_name = f"{F_PATH}\\Product\\{item_name}.parquet"
         if os.path.isfile(f_name):
-            data = pandas.read_csv(f_name, skiprows=1)  # skip first line with separator
+            data = pandas.read_parquet(f_name)
             return data[data["Perfection"] == 1.0]
 
         return pandas.DataFrame()
@@ -797,11 +825,11 @@ class Pi():
         for i, quality in enumerate(qualities, 1):
             item_name = f"{item_id}{quality}"
 
-            f_name = f"{F_PATH}\\{inventory_type}\\{item_name}.csv"
+            f_name = f"{F_PATH}\\{inventory_type}\\{item_name}.parquet"
             if not os.path.isfile(f_name):
                 continue
 
-            data = pandas.read_csv(f_name, skiprows=1)  # skip first line with separator
+            data = pandas.read_parquet(f_name)
             n = math.floor(3 / i)  # 3 for best, 1 for second
 
             columns = self.get_stat_column_names_from_dataframe(data)
