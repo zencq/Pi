@@ -1,6 +1,6 @@
 # Every Item Procedural
 
-![Maintained](https://img.shields.io/maintenance/yes/2024)
+![Maintained](https://img.shields.io/maintenance/yes/2025)
 ![GitHub Release](https://img.shields.io/github/v/release/zencq/Pi?display_name=release)
 [![Supported by the No Man's Sky Community Developers & Designers](https://raw.githubusercontent.com/NMSCD/About/master/badge/purple.svg)](https://nmscd.com/)
 
@@ -30,7 +30,7 @@ a newer game version than the one currently supported. The latest supported vers
 can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases)
 and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/Pi?tab=readme-ov-file#you-can-help-20)).
 
-* **Neutron Cannon** (UP_CANN) is *outdated* since **Singularity 4.30**
+* **Neutron Cannon** Upgrades (UP_CANN) are *outdated* since **Singularity 4.30**
 * **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
 * Rusted Upgrades are *available* since **Aquarius 5.10**
   * **Mining Beam** (UP_LASER0)
@@ -45,6 +45,12 @@ and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/
   * **Hyperdrive** (UP_HYP0)
   * **Deflector Shield** (UP_S_SHL0)
   * **Photon Cannon** (UP_SGUN0)
+* **Minotaur Flamethrower** Upgrades (UP_MFIRE) are *available* since **Worlds Part I 5.00**
+* Treasure **Exhibit Fossil Sample** (PROC_EXH) is *available* since **Worlds Part II 5.50**
+* The following technology is *outdated* since **Worlds Part II 5.50**
+  * Illegal **Neutron Cannon** Upgrade (UP_CANNX)
+  * **Aeration Membrane** Upgrades (UP_UNW)
+  * **Humboldt Drive** Upgrades (UP_EXSUB)
 
 ## You can help 2.0
 
