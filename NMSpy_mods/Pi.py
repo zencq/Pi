@@ -13,39 +13,104 @@ import threading
 from dataclasses import dataclass
 from datetime import datetime
 
+from pymhf import FUNCDEF
+from pymhf.core import _internal as pymhf_internal
+from pymhf.core.memutils import map_struct
+from pymhf.core.mod_loader import ModState
+from pymhf.gui import BOOLEAN, STRING, gui_button
+
 from nmspy import NMSMod
 from nmspy.data import (
     common as nms_common_structs,
     enums as nms_enums,
     structs as nms_structs,
 )
-from nmspy.data.functions import hooks
+from nmspy.data.functions import call_sigs, hooks, patterns
 from nmspy.decorators import on_fully_booted
 
-from pymhf.core.calling import call_function
-from pymhf.core.memutils import map_struct
-from pymhf.core.mod_loader import ModState
-from pymhf.gui import BOOLEAN, STRING, gui_button
+
+# region NMS.py
 
 
-# region Monkey Patching
 
 
-def CustomGenerateProceduralProduct(self, lProcProdID: bytes) -> bytes:
-    # 413: 48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48 8D AC 24 E0 F1 FF FF
-    this = ctypes.addressof(self)
-    return call_function("cGcRealityManager::GenerateProceduralProduct", this, lProcProdID, overload="cGcRealityManager *, const TkID<128> *", pattern="48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48 8D AC 24 E0 F1 FF FF")
+
+KNOWN_BINARY_HASH = [
+    "014f5fd1837e2bd8356669b92109fd3add116137",  # 4.13 (GOG.dev)
+    "239fac0224333873c733c4e5b4d9694ea6cc0b41",  # 5.20 (GOG.com)
+    "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2",  # 5.61 (GOG.com)
+]
+if pymhf_internal.BINARY_HASH in KNOWN_BINARY_HASH:
+    FUNC_CALL_SIGS_LANGUAGE_MANAGER_BASE_LOAD_DEFAULT = FUNCDEF(  # 5.20
+        restype=None,  # void
+        argtypes=[
+            ctypes.c_ulonglong,  # cTkLanguageManagerBase *
+            ctypes.c_ulonglong,  # char*
+            ctypes.c_char,
+        ]
+    )
+    FUNC_CALL_SIGS_LANGUAGE_MANAGER_BASE_LOAD = {  # "Metadata/Simulation/Missions/Tables/MissionTable.mXml"
+        "014f5fd1837e2bd8356669b92109fd3add116137": call_sigs.FUNC_CALL_SIGS["cTkLanguageManagerBase::Load"],  # 4.13
+    }
+    call_sigs.FUNC_CALL_SIGS["cTkLanguageManagerBase::Load"] = FUNC_CALL_SIGS_LANGUAGE_MANAGER_BASE_LOAD.get(pymhf_internal.BINARY_HASH, FUNC_CALL_SIGS_LANGUAGE_MANAGER_BASE_LOAD_DEFAULT)
 
 
-def CustomGenerateProceduralTechnology(self, lProcTechID: bytes) -> bytes:
-    # 413: 44 88 44 24 18 48 89 4C 24 08 55 56 41 57 48 8D AC 24 90 FA FF FF
-    this = ctypes.addressof(self)
-    return call_function("cGcRealityManager::GenerateProceduralTechnology", this, lProcTechID, False, pattern="44 88 44 24 18 48 89 4C 24 08 55 56 41 57 48 8D AC 24 90 FA FF FF")
+    # offset="0x0BC5AF0",  # 4.13
+    # offset="0x0D14080",  # 5.20
+    # offset="0x0D61800",  # 5.61
+    PATTERN_REALITY_MANAGER_CONSTRUCT_DEFAULT = "48 8B C4 48 89 48 08 55 53 56 57 41 54 41 56"  # 5.61
+    PATTERN_REALITY_MANAGER_CONSTRUCT = {  # "Metadata/Simulation/Missions/Tables/MissionTable.mXml"
+        "014f5fd1837e2bd8356669b92109fd3add116137": "48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88",  # 4.13
+        "239fac0224333873c733c4e5b4d9694ea6cc0b41": "48 89 4C 24 08 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 E0",  # 5.20
+    }
+    patterns.FUNC_PATTERNS["cGcRealityManager::Construct"] = PATTERN_REALITY_MANAGER_CONSTRUCT.get(pymhf_internal.BINARY_HASH, PATTERN_REALITY_MANAGER_CONSTRUCT_DEFAULT)
+
+    # offset="0x0BCEAE0"  # 4.13
+    # offset="0x0D218B0"  # 5.20
+    # offset="0x0D6F0B0"  # 5.61
+    PATTERN_GENERATE_PROCEDURAL_PRODUCT_DEFAULT = "48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48"  # 5.20, 5.61
+    PATTERN_GENERATE_PROCEDURAL_PRODUCT = {  # "ITEMGEN_FORMAT_FREI_PASS"
+        "014f5fd1837e2bd8356669b92109fd3add116137": "48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48",  # 4.13
+    }
+    patterns.FUNC_PATTERNS["cGcRealityManager::GenerateProceduralProduct"] = PATTERN_GENERATE_PROCEDURAL_PRODUCT.get(pymhf_internal.BINARY_HASH, PATTERN_GENERATE_PROCEDURAL_PRODUCT_DEFAULT)
+
+    # offset="0x0BD1E00"  # 4.13
+    # offset="0x0D24F40"  # 5.20
+    # offset="0x0D72AD0"  # 5.61
+    PATTERN_GENERATE_PROCEDURAL_TECHNOLOGY_DEFAULT = "44 88 44 24 18 48 89 4C 24 08 55 41"  # 5.20, 5.61
+    PATTERN_GENERATE_PROCEDURAL_TECHNOLOGY = {  # "UI_WIKI_PROC_TECH_SUB"
+        "014f5fd1837e2bd8356669b92109fd3add116137": "44 88 44 24 18 48 89 4C 24 08 55 56 41",  # 4.13
+    }
+    patterns.FUNC_PATTERNS["cGcRealityManager::GenerateProceduralTechnology"] = PATTERN_GENERATE_PROCEDURAL_TECHNOLOGY.get(pymhf_internal.BINARY_HASH, PATTERN_GENERATE_PROCEDURAL_TECHNOLOGY_DEFAULT)
+
+    # offset="0x24D5E90",  # 4.13
+    # offset="0x23653E0",  # 5.20
+    # offset="0x262C940",  # 5.61
+    PATTERN_LANGUAGE_MANAGER_BASE_LOAD_DEFAULT = "48 89 5C 24 10 57 48 81 EC 20 01 00 00 33"  # 5.20, 5.61
+    PATTERN_LANGUAGE_MANAGER_BASE_LOAD = {  # "LANGUAGE\\%s_%s.MBIN"
+        "014f5fd1837e2bd8356669b92109fd3add116137": "48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20",  # 4.13
+    }
+    patterns.FUNC_PATTERNS["cTkLanguageManagerBase::Load"] = PATTERN_LANGUAGE_MANAGER_BASE_LOAD.get(pymhf_internal.BINARY_HASH, PATTERN_LANGUAGE_MANAGER_BASE_LOAD_DEFAULT)
 
 
-nms_structs.cGcRealityManager.CustomGenerateProceduralProduct = CustomGenerateProceduralProduct
-nms_structs.cGcRealityManager.CustomGenerateProceduralTechnology = CustomGenerateProceduralTechnology
 
+
+    # offset="0x24D16B0",  # 4.13
+    # offset="0x2367C40",  # 5.20
+    # offset="0x0000000",  # 5.61
+    PATTERN_LANGUAGE_MANAGER_BASE_Construct_DEFAULT = "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 81 EC 20 01 00 00 48 8D 2D"  # 5.20
+    PATTERN_LANGUAGE_MANAGER_BASE_Construct = {
+        "014f5fd1837e2bd8356669b92109fd3add116137": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 81 EC 20 01",  # 4.13
+    }
+    patterns.FUNC_PATTERNS["cTkLanguageManagerBase::Construct"] = PATTERN_LANGUAGE_MANAGER_BASE_Construct.get(pymhf_internal.BINARY_HASH, PATTERN_LANGUAGE_MANAGER_BASE_Construct_DEFAULT)
+    # offset="0x24D5E90",  # 4.13
+    # offset="0x2370B90",  # 5.20
+    # offset="0x0000000",  # 5.61
+    PATTERN_LANGUAGE_MANAGER_BASE_ChangeLanguage_DEFAULT = "48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 DB 48 8B F1 39"  # 5.20
+    PATTERN_LANGUAGE_MANAGER_BASE_ChangeLanguage = {
+        "014f5fd1837e2bd8356669b92109fd3add116137": "80 79 0E 00 89",  # 4.13
+    }
+    patterns.FUNC_PATTERNS["cTkLanguageManagerBase::ChangeLanguage"] = PATTERN_LANGUAGE_MANAGER_BASE_ChangeLanguage.get(pymhf_internal.BINARY_HASH, PATTERN_LANGUAGE_MANAGER_BASE_ChangeLanguage_DEFAULT)
 
 # endregion
 
@@ -395,14 +460,15 @@ class PiModState(ModState):
 
     is_fully_booted : bool = False
     is_generation_started : bool = False
+    is_reality_manager_constructed : bool = False
 
-    product_counter = (Counter(), Counter())   # spawned, finished
+    product_counter = (Counter(), Counter())  # spawned, finished
     product_counter_total : int = 0
     product_generation_enabled : bool = True
     product_manual : list = None
     product_start_time : datetime = None
 
-    technology_counter = (Counter(), Counter())   # spawned, finished
+    technology_counter = (Counter(), Counter())  # spawned, finished
     technology_counter_total : int = 0
     technology_generation_enabled : bool = True
     technology_manual : list = None
@@ -462,9 +528,9 @@ class PiMod(NMSMod):
 
     # region Language
 
-    @hooks.cTkLanguageManagerBase.Load.after
-    def language_changed(self, this):
-        result = original = map_struct(this, nms_structs.cTkLanguageManagerBase).meRegion
+    def update_language(self, offset):
+        language_manager = map_struct(offset, nms_structs.cTkLanguageManagerBase)
+        result = original = language_manager.meRegion
         if original == nms_enums.eLanguageRegion.LR_USEnglish:
             result = nms_enums.eLanguageRegion.LR_English
         if original > 0x1:  # -1 in total
@@ -474,7 +540,22 @@ class PiMod(NMSMod):
 
         self.state.language = LANGUAGES[result]
 
-        logging.debug(f">> Pi: Language loaded is {original} > {result} > {self.state.language}")
+        logging.info(f">> Pi: Language loaded is {original} > {result} > {self.state.language}")
+
+    @hooks.cTkLanguageManagerBase.Construct.after
+    def language_manager_construct_after(self, this, arg1, arg2, arg3, arg4):
+        logging.warning(f">> Pi: language_manager_construct_after")
+        self.update_language(this)
+
+    @hooks.cTkLanguageManagerBase.ChangeLanguage.after
+    def language_manager_change_language_after(self, this, language_region):
+        logging.warning(f">> Pi: language_manager_change_language_after")
+        self.update_language(this)
+
+    @hooks.cTkLanguageManagerBase.Load.after
+    def language_manager_load(self, this, arg1, arg2):
+        logging.warning(f">> Pi: language_manager_load")
+        self.update_language(this)
 
     @staticmethod
     def extract_previous_languages(read_rows, seed):
@@ -522,7 +603,9 @@ class PiMod(NMSMod):
 
     @hooks.cGcRealityManager.Construct.after
     def hook_reality_manager_construct_after(self, this):
+        logging.debug(f">> Pi: hook_reality_manager_construct_after")
         self.reality_manager = map_struct(this, nms_structs.cGcRealityManager)
+        self.state.is_reality_manager_constructed = True
 
     @on_fully_booted
     def enable_generation_on_fully_booted(self):
@@ -531,12 +614,12 @@ class PiMod(NMSMod):
 
     @gui_button("Start Generating")
     def start_generating(self):
-        if not self.state.fully_booted:
-            logging.info(f">> Pi: Please wait until the game is fully booted...")
+        if not self.state.is_reality_manager_constructed or not self.state.fully_booted:
+            logging.error(f">> Pi: Required data could not be constructed ({not self.state.is_reality_manager_constructed}) or the game is fully booted yet ({not self.state.fully_booted}).")
             return
 
         if self.state.is_generation_started:
-            logging.info(f">> Pi: Please wait until the currently running generation has finished...")
+            logging.warning(f">> Pi: Please wait until the currently running generation has finished...")
             return
 
         self.state.is_generation_started = True
@@ -550,6 +633,7 @@ class PiMod(NMSMod):
 
     # region Product
 
+    @try_except
     def start_generating_procedural_product(self):
         self.state.product_counter_total = len(self.state.product_manual or PRODUCT)
         self.state.product_start_time = datetime.now()
@@ -557,16 +641,16 @@ class PiMod(NMSMod):
         logging.info(f">> Pi: Generation for {self.state.product_counter_total} PRODUCTS started...")
 
         for item_id in PRODUCT:
-            if not self.state.product_manual or (item_id in self.state.product_manual):
+            item_name = f"PROC_{item_id}"
+            if not self.state.product_manual or (item_id in self.state.product_manual) or (item_name in self.state.product_manual):
                 self.state.product_counter[0].increment()
                 # TODO make executor work again
-                # self.state.executor.submit(self.generate_procedural_product, item_id)  # ! access violation reading 0x0000000000000018
-                self.generate_procedural_product(item_id)
+                # self.state.executor.submit(self.generate_procedural_product, item_name)  # ! access violation reading 0x0000000000000018
+                self.generate_procedural_product(item_name)
 
     @try_except
-    def generate_procedural_product(self, item_id):
+    def generate_procedural_product(self, item_name):
         available = True
-        item_name = f"PROC_{item_id}"
         item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
         result = []  # result for each seed
@@ -576,7 +660,7 @@ class PiMod(NMSMod):
         read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
-            pointer = self.reality_manager.CustomGenerateProceduralProduct(f"{item_name}#{seed:05}".encode("utf-8"))
+            pointer = self.reality_manager.GenerateProceduralProduct["cGcRealityManager *, const TkID<128> *"](f"{item_name}#{seed:05}".encode("utf-8"))
             try:
                 generated = map_struct(pointer, nms_structs.cGcProductData)
             except ValueError:
@@ -588,6 +672,9 @@ class PiMod(NMSMod):
             row = self.extract_previous_languages(read_rows, seed)
 
             # add seed and current translation
+            logging.warning(f"  ! {item_name}#{seed:05} > name > {generated.macNameLower}")
+            logging.warning(f"  ! {item_name}#{seed:05} > description > {generated.macDescription}")
+            logging.warning(f"  ! {item_name}#{seed:05} > value > {generated.miBaseValue}")
             row.update({
                 self.state.language: str(generated.macNameLower).strip(),  # name for current language
                 "Age": int(RE_PRODUCT_AGE.findall(str(generated.macDescription))[0]),
@@ -633,6 +720,7 @@ class PiMod(NMSMod):
 
     # region Technology
 
+    @try_except
     def start_generating_procedural_technology(self):
         self.state.technology_counter_total = (self.state.technology_manual and len([True for inventory_type, items in TECHNOLOGY.items() for item_id, qualities in items.items() for quality in qualities if any((key in self.state.technology_manual) for key in [inventory_type, item_id, f"{item_id}{quality}"])])) or len([qualities for items in TECHNOLOGY.values() for qualities in items.values()])
         self.state.technology_start_time = datetime.now()
@@ -643,7 +731,6 @@ class PiMod(NMSMod):
             for item_id, qualities in items.items():
                 for quality in qualities:
                     item_name = f"{item_id}{quality}"
-                    logging.info(f">> Pi: {self.state.technology_manual} >> {any((key in self.state.technology_manual) for key in [inventory_type, item_id, item_name])}")
                     if not self.state.technology_manual or any((key in self.state.technology_manual) for key in [inventory_type, item_id, item_name]):
                         self.state.technology_counter[0].increment()
                         # TODO make executor work again
@@ -663,7 +750,7 @@ class PiMod(NMSMod):
         read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
-            pointer = self.reality_manager.CustomGenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"))
+            pointer = self.reality_manager.GenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"), False)
             try:
                 generated = map_struct(pointer, nms_structs.cGcTechnology)
             except ValueError:
@@ -675,6 +762,7 @@ class PiMod(NMSMod):
             row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
 
             # add seed and current translation
+            logging.info(f"   > {generated.mID}")
             row.update({
                 self.state.language: str(generated.macNameLower).strip(),  # name for current language
                 "Seed": seed,

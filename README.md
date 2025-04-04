@@ -4,9 +4,9 @@
 ![GitHub Release](https://img.shields.io/github/v/release/zencq/Pi?display_name=release)
 [![Supported by the No Man's Sky Community Developers & Designers](https://raw.githubusercontent.com/NMSCD/About/master/badge/purple.svg)](https://nmscd.com/)
 
-This repository contains a collection of CSV files with values of stats for every
-procedural item in **[No Man's Sky](https://www.nomanssky.com/)**. This includes
-mainly technology upgrades but also the products (artifacts in-game).
+This repository contains a collection of files with values of stats for every
+**p**rocedural **i**tem in [No Man's Sky](https://www.nomanssky.com/). This includes
+mainly technology upgrades but also the products (treasures/artifacts in-game).
 
 ## Usage
 
@@ -32,6 +32,7 @@ and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/
 
 * **Neutron Cannon** Upgrades (UP_CANN) are *outdated* since **Singularity 4.30**
 * **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
+* **Minotaur Flamethrower** Upgrades (UP_MFIRE) are *available* since **Worlds Part I 5.00**
 * Rusted Upgrades are *available* since **Aquarius 5.10**
   * **Mining Beam** (UP_LASER0)
   * **Analysis Visor** (UP_SCAN0)
@@ -45,7 +46,6 @@ and is tied to the capabilities of NMS.py ([see below](https://github.com/zencq/
   * **Hyperdrive** (UP_HYP0)
   * **Deflector Shield** (UP_S_SHL0)
   * **Photon Cannon** (UP_SGUN0)
-* **Minotaur Flamethrower** Upgrades (UP_MFIRE) are *available* since **Worlds Part I 5.00**
 * Treasure **Exhibit Fossil Sample** (PROC_EXH) is *available* since **Worlds Part II 5.50**
 * The following technology is *outdated* since **Worlds Part II 5.50**
   * Illegal **Neutron Cannon** Upgrade (UP_CANNX)
