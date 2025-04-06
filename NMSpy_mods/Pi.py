@@ -1262,8 +1262,15 @@ class PiMod(NMSMod):
             writer.writerows(result)
 
         # Parquet
-        table = pa.Table.from_pylist(result)
-        with pq.ParquetWriter(f"{f_name}.parquet", table.schema) as writer:
+        schema = pa.schema(
+            [pa.field('Seed', pa.int32(), nullable=False), pa.field('Perfection', pa.float64(), nullable=False)]
+            +
+            [pa.field(column, pa.float64()) for column in meta.keys()]
+            +
+            [pa.field(language, pa.string(), nullable=False) for language in LANGUAGES]
+        )
+        table = pa.Table.from_pylist(result, schema=schema)
+        with pq.ParquetWriter(f"{f_name}.parquet", schema) as writer:
             writer.write_table(table)
 
     # endregion
@@ -1383,7 +1390,7 @@ class PiMod(NMSMod):
 
     @try_except
     def start_generating_procedural_technology(self):
-        self.state.technology_counter_total = (self.state.technology_manual and len([True for inventory_type, items in TECHNOLOGY.items() for item_id, qualities in items.items() for quality in qualities if any((key in self.state.technology_manual) for key in [inventory_type, item_id, f"{item_id}{quality}"])])) or len([qualities for items in TECHNOLOGY.values() for qualities in items.values()])
+        self.state.technology_counter_total = (self.state.technology_manual and len([True for inventory_type, items in TECHNOLOGY.items() for item_id, qualities in items.items() for quality in qualities if any((key in self.state.technology_manual) for key in [inventory_type, item_id, f"{item_id}{quality}"])])) or sum(len(qualities) for items in TECHNOLOGY.values() for qualities in items.values())
         self.state.technology_start_time = datetime.now()
 
         logging.info(f">> Pi: Generation for {self.state.technology_counter_total} {'TECHNOLOGY' if self.state.technology_counter_total == 1 else 'TECHNOLOGIES'} started...")

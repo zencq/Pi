@@ -9,34 +9,36 @@ import pandas
 
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
-from openpyxl.styles import Alignment, Border, Color, Fill, Font, PatternFill, Side, alignment, borders, colors, fills, numbers
+from openpyxl.styles import Alignment, Border, Fill, Font, PatternFill, Side, alignment, borders, colors, fills, numbers
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.worksheet import Worksheet
 
 
-def _(original: str) -> str:
-    return TRANSLATION.get(original, original)
+# region Configuration
 
+F_PATH = os.path.dirname(__file__)
+F_NAME = f"{F_PATH}\\Pi.xlsx"
+F_BASE = os.path.basename(F_NAME)
+
+HIGH_NUMBER_MULTIPLIER = 3
+OUTDATED = {  # outdated or only available since
+    # "UP_CANN": "4.30",  # example
+    # "UP_CANNX": "5.50",
+    "UP_CANN": "4.30",
+    "UP_RBSUIT": "4.40",
+    "UP_MFIRE": "5.00",
+    "PROC_EXH": "5.50",
+    "UP_CANNX": "5.50",
+    "UP_UNW": "5.50",
+    "UP_EXSUB": "5.50",
+}
+RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
+URL = "https://github.com/zencq/Pi"
+VERSION = "4.13"
+
+# endregion
 
 # region Data
-
-LANGUAGES = [  # order defined by game
-    "Name (en)",
-    "Name (fr)",
-    "Name (it)",
-    "Name (de)",
-    "Name (es)",
-    "Name (ru)",
-    "Name (pl)",
-    "Name (nl)",
-    "Name (pt)",
-    "Name (es-419)",
-    "Name (pt-BR)",
-    "Name (ja)",
-    "Name (zh-Hans)",
-    "Name (zh-Hant)",
-    "Name (ko)",
-]
 
 PRODUCT = [
     "PROC_LOOT",
@@ -132,6 +134,48 @@ TECHNOLOGY = {
     },
 }
 TECHNOLOGY_INDEX = [item_id for _, items in TECHNOLOGY.items() for item_id in items]
+
+# endregion
+
+# region Styles
+
+ALIGNMENT_CENTER = Alignment(horizontal=alignment.horizontal_alignments[2])  # center
+ALIGNMENT_LEFT = Alignment(horizontal=alignment.horizontal_alignments[1])  # left
+
+BORDER_BOTTOM = Border(bottom=Side(border_style=borders.BORDER_MEDIUM, color=colors.BLACK))
+BORDER_MIXED = Border(right=Side(border_style=borders.BORDER_DASHED, color=colors.BLACK), bottom=Side(border_style=borders.BORDER_MEDIUM, color=colors.BLACK))
+BORDER_RIGHT = Border(right=Side(border_style=borders.BORDER_DASHED, color=colors.BLACK))
+
+COLOR_COMMODITY = ("ffe8b3", "ffc94d", "ffbc25")  # gold
+COLOR_FLORA = ("c8fab7", "7ef457", "8af567")  # green
+COLOR_METAL = ("deddd3", "b3af98", "dbd9ce")  # gray
+COLOR_SPECIAL = ("cdb3ff", "8b4dff", "be9bff")  # purple
+
+FILL_RED = PatternFill(fill_type=fills.FILL_SOLID, start_color=colors.COLOR_INDEX[2])  # red
+
+FONT_BOLD = Font(bold=True)
+
+# endregion
+
+# region Translation
+
+LANGUAGES = [  # order defined by game
+    "Name (en)",
+    "Name (fr)",
+    "Name (it)",
+    "Name (de)",
+    "Name (es)",
+    "Name (ru)",
+    "Name (pl)",
+    "Name (nl)",
+    "Name (pt)",
+    "Name (es-419)",
+    "Name (pt-BR)",
+    "Name (ja)",
+    "Name (zh-Hans)",
+    "Name (zh-Hant)",
+    "Name (ko)",
+]
 
 TRANSLATION = {
     # Inventories
@@ -312,46 +356,12 @@ TRANSLATION = {
     "UP_FRTRA": "Expedition Trade Control",
 }
 
-# endregion
 
-# region Styles
+def _(original: str) -> str:
+    return TRANSLATION.get(original, original)
 
-ALIGNMENT_CENTER = Alignment(horizontal=alignment.horizontal_alignments[2])  # center
-ALIGNMENT_LEFT = Alignment(horizontal=alignment.horizontal_alignments[1])  # left
-
-BORDER_BOTTOM = Border(bottom=Side(border_style=borders.BORDER_MEDIUM, color=colors.BLACK))
-BORDER_MIXED = Border(right=Side(border_style=borders.BORDER_DASHED, color=colors.BLACK), bottom=Side(border_style=borders.BORDER_MEDIUM, color=colors.BLACK))
-BORDER_RIGHT = Border(right=Side(border_style=borders.BORDER_DASHED, color=colors.BLACK))
-
-COLOR_COMMODITY = ("ffe8b3", "ffc94d", "ffbc25")  # gold
-COLOR_FLORA = ("c8fab7", "7ef457", "8af567")  # green
-COLOR_METAL = ("deddd3", "b3af98", "dbd9ce")  # gray
-COLOR_SPECIAL = ("cdb3ff", "8b4dff", "be9bff")  # purple
-
-FILL_RED = PatternFill(fill_type=fills.FILL_SOLID, start_color=colors.COLOR_INDEX[2])  # red
-
-FONT_BOLD = Font(bold=True)
 
 # endregion
-
-
-F_PATH = os.path.dirname(__file__)
-F_NAME = f"{F_PATH}\\Pi.xlsx"
-F_BASE = os.path.basename(F_NAME)
-
-HIGH_NUMBER_MULTIPLIER = 3
-OUTDATED = {  # outdated or only available since
-    "UP_CANN": "4.30",
-    "UP_RBSUIT": "4.40",
-    "UP_MFIRE": "5.00",
-    "PROC_EXH": "5.50",
-    "UP_CANNX": "5.50",
-    "UP_UNW": "5.50",
-    "UP_EXSUB": "5.50",
-}
-RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
-URL = "https://github.com/zencq/Pi"
-VERSION = "4.13"
 
 
 class Pi():
@@ -635,7 +645,7 @@ class Pi():
             ["Version", VERSION],
             [],
             ["This file is a automatically generated compilation of all files available at GitHub in the repository zencq/Pi."],
-            ["The repository contains a collection of CSV files with values of stats for every procedural item in No Man's Sky. This includes mainly technology upgrades but also the products (artifacts in-game)."],
+            ["The repository contains a collection of files with values of stats for every procedural item in No Man's Sky. This includes mainly technology upgrades but also the products (treasures/artifacts in-game)."],
             ["Link to GitHub", URL],
             [],
             [],
