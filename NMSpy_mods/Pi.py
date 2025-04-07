@@ -35,6 +35,7 @@ from nmspy.decorators import on_fully_booted
 
 # region Class
 
+
 # size is one more than the last value
 class eStatsType_413(IntEnum):
     Unspecified = 0x0
@@ -663,23 +664,21 @@ STRUCTS_FIELDS = {
     "StatBonuses": (nms_structs_common.cTkDynamicArray[cGcStatsBonus], 0x10),
 }
 
-# must be ordered in the same way as KNOWN_BINARY_HASH and fields must be present in STRUCTS_FIELDS.
-# offsets can be taken from MBINCompiler.
-STRUCTS_FIELDS_OFFSETS_PRODUCTDATA = [
-    [("BaseValue", 0x1E4), ("Description", 0x120), ("NameLower", 0x090)],  # 4.13
-    [("BaseValue", 0x16C), ("Description", 0x0F8), ("NameLower", 0x238)],  # 5.20
-    [("BaseValue", 0x174), ("Description", 0x100), ("NameLower", 0x24C)],  # 5.61
-]
-STRUCTS_FIELDS_OFFSETS_STATSBONUS = [  # must contain all fields as it is an array
-    [("Bonus", 0x4), ("Level", 0x8), ("Stat", 0x0)],  # 4.13
-    [("Bonus", 0x0), ("Level", 0x4), ("Stat", 0x8)],  # 5.20
-    [("Bonus", 0x0), ("Level", 0x4), ("Stat", 0x8)],  # 5.61
-]
-STRUCTS_FIELDS_OFFSETS_TECHNOLOGY = [
-    [("NameLower", 0x0B0), ("StatBonuses", 0x298)],  # 4.13
-    [("NameLower", 0x244), ("StatBonuses", 0x158)],  # 5.20
-    [("NameLower", 0x244), ("StatBonuses", 0x158)],  # 5.61
-]
+# offsets can be taken from MBINCompiler
+STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413 = [("BaseValue", 0x1E4), ("Description", 0x120), ("NameLower", 0x090)]
+STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520 = [("BaseValue", 0x16C), ("Description", 0x0F8), ("NameLower", 0x238)]
+STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561 = [("BaseValue", 0x174), ("Description", 0x100), ("NameLower", 0x24C)]
+
+# must contain all fields as it is used in an array
+STRUCTS_FIELDS_OFFSETS_STATSBONUS_413 = [("Bonus", 0x4), ("Level", 0x8), ("Stat", 0x0)]
+STRUCTS_FIELDS_OFFSETS_STATSBONUS_520 = [("Bonus", 0x0), ("Level", 0x4), ("Stat", 0x8)]
+
+STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_413 = [("NameLower", 0x0B0), ("StatBonuses", 0x298)]
+STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520 = [("NameLower", 0x244), ("StatBonuses", 0x158)]
+
+
+def _class_fields(cls, structs_fields_offsets):
+    cls._fields_ = _generate_fields(structs_fields_offsets[_binary_hash_index()])
 
 
 def _generate_fields(structs_fields_offsets: list[tuple[str, int]]):
@@ -707,40 +706,46 @@ def _generate_fields(structs_fields_offsets: list[tuple[str, int]]):
 
 # region Call Signatures
 
-# must be ordered in the same way as KNOWN_BINARY_HASH
-FUNCDEFS_LANGUAGEMANAGERBASE_LOAD = [
-    FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong                                   ]),  # 4.13
-    FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong, ctypes.c_ulonglong, ctypes.c_char]),  # 5.20
-    FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong, ctypes.c_ulonglong, ctypes.c_char]),  # 5.61
-]
+FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_413 = FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong                                   ])
+FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520 = FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong, ctypes.c_ulonglong, ctypes.c_char])
+
+
+def _call_sigs(key, func_call_sigs):
+    call_sigs.FUNC_CALL_SIGS[key] = func_call_sigs[_binary_hash_index()]
+
 
 # endregion
 
 # region Patterns
 
-# must be ordered in the same way as KNOWN_BINARY_HASH
-PATTERNS_LANGUAGEMANAGERBASE_LOAD = [  # search for "LANGUAGE\\%s_%s.MBIN" around the latest offset
-    "48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20",  # 4.13 (offset="0x24D5E90")
-    "48 89 5C 24 10 57 48 81 EC 20 01 00 00 33",     # 5.20 (offset="0x23653E0")
-    "48 89 5C 24 10 57 48 81 EC 20 01 00 00 33",     # 5.61 (offset="0x262C940")
-]
-PATTERNS_REALITYMANAGER_CONSTRUCT = [  # search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the latest offset
-    "48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88",                 # 4.13 (offset="0x0BC5AF0")
-    "48 89 4C 24 08 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 E0",  # 5.20 (offset="0x0D14080")
-    "48 8B C4 48 89 48 08 55 53 56 57 41 54 41 56",                 # 5.61 (offset="0x0D61800")
-]
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT = [  # search for "ITEMGEN_FORMAT_FREI_PASS" around the latest offset
-    "48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48",  # 4.13 (offset="0x0BCEAE0")
-    "48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48",  # 5.20 (offset="0x0D218B0")
-    "48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48",  # 5.61 (offset="0x0D6F0B0")
-]
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY = [  # search for "UI_WIKI_PROC_TECH_SUB" around the latest offset
-    "44 88 44 24 18 48 89 4C 24 08 55 56 41",  # 4.13 (offset="0x0BD1E00")
-    "44 88 44 24 18 48 89 4C 24 08 55 41",     # 5.20 (offset="0x0D24F40")
-    "44 88 44 24 18 48 89 4C 24 08 55 41",     # 5.61 (offset="0x0D72AD0")
-]
+# search for "LANGUAGE\\%s_%s.MBIN" around the latest offset
+PATTERNS_LANGUAGEMANAGERBASE_LOAD_413 = "48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20"
+PATTERNS_LANGUAGEMANAGERBASE_LOAD_520 = "48 89 5C 24 10 57 48 81 EC 20 01 00 00 33"
+
+# search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the latest offset
+PATTERNS_REALITYMANAGER_CONSTRUCT_413 = "48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88"
+PATTERNS_REALITYMANAGER_CONSTRUCT_520 = "48 89 4C 24 08 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 E0"
+PATTERNS_REALITYMANAGER_CONSTRUCT_561 = "48 8B C4 48 89 48 08 55 53 56 57 41 54 41 56"
+
+# search for "ITEMGEN_FORMAT_FREI_PASS" around the latest offset
+PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_413 = "48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48"
+PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_520 = "48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48"
+
+# search for "UI_WIKI_PROC_TECH_SUB" around the latest offset
+PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_413 = "44 88 44 24 18 48 89 4C 24 08 55 56 41"
+PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_520 = "44 88 44 24 18 48 89 4C 24 08 55 41"
+
+
+def _patterns(key, func_patterns):
+    patterns.FUNC_PATTERNS[key] = func_patterns[_binary_hash_index()]
+
 
 # endregion
+
+
+def _binary_hash_index() -> int:
+    return KNOWN_BINARY_HASH.index(pymhf_internal.BINARY_HASH)  # get index of current hash
+
 
 KNOWN_BINARY_HASH = [
     "014f5fd1837e2bd8356669b92109fd3add116137",  # 4.13 (GOG.dev)
@@ -748,20 +753,55 @@ KNOWN_BINARY_HASH = [
     "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2",  # 5.61 (GOG.com)
 ]
 if pymhf_internal.BINARY_HASH in KNOWN_BINARY_HASH:
-    i = KNOWN_BINARY_HASH.index(pymhf_internal.BINARY_HASH)  # get index of current hash
+    _class_fields(cGcProductData, [
+        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413,
+        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520,
+        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561,
+    ])
+    _class_fields(cGcStatsBonus, [
+        STRUCTS_FIELDS_OFFSETS_STATSBONUS_413,
+        STRUCTS_FIELDS_OFFSETS_STATSBONUS_520,
+        STRUCTS_FIELDS_OFFSETS_STATSBONUS_520,
+    ])
+    _class_fields(cGcTechnology, [
+        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_413,
+        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520,
+        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520,
+    ])
 
-    cGcProductData._fields_ = _generate_fields(STRUCTS_FIELDS_OFFSETS_PRODUCTDATA[i])
-    cGcStatsBonus._fields_ = _generate_fields(STRUCTS_FIELDS_OFFSETS_STATSBONUS[i])
-    cGcTechnology._fields_ = _generate_fields(STRUCTS_FIELDS_OFFSETS_TECHNOLOGY[i])
+    _call_sigs("cTkLanguageManagerBase::Load", [
+        FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_413,
+        FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520,
+        FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520,
+    ])
 
-    call_sigs.FUNC_CALL_SIGS["cTkLanguageManagerBase::Load"] = FUNCDEFS_LANGUAGEMANAGERBASE_LOAD[i]
+    _patterns("cTkLanguageManagerBase::Load", [
+        PATTERNS_LANGUAGEMANAGERBASE_LOAD_413,  # 4.13 (offset="0x24D5E90")
+        PATTERNS_LANGUAGEMANAGERBASE_LOAD_520,  # 5.20 (offset="0x23653E0")
+        PATTERNS_LANGUAGEMANAGERBASE_LOAD_520,  # 5.61 (offset="0x262C940")
+    ])
+    _patterns("cGcRealityManager::Construct", [
+        PATTERNS_REALITYMANAGER_CONSTRUCT_413,  # 4.13 (offset="0x0BC5AF0")
+        PATTERNS_REALITYMANAGER_CONSTRUCT_520,  # 5.20 (offset="0x0D14080")
+        PATTERNS_REALITYMANAGER_CONSTRUCT_561,  # 5.61 (offset="0x0D61800")
+    ])
+    _patterns("cGcRealityManager::GenerateProceduralProduct", [
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_413,  # 4.13 (offset="0x0BCEAE0")
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_520,  # 5.20 (offset="0x0D218B0")
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_520,  # 5.61 (offset="0x0D6F0B0")
+    ])
+    _patterns("cGcRealityManager::GenerateProceduralTechnology", [
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_413,  # 4.13 (offset="0x0BD1E00")
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_520,  # 5.20 (offset="0x0D24F40")
+        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_520,  # 5.61 (offset="0x0D72AD0")
+    ])
 
-    patterns.FUNC_PATTERNS["cTkLanguageManagerBase::Load"] = PATTERNS_LANGUAGEMANAGERBASE_LOAD[i]
-    patterns.FUNC_PATTERNS["cGcRealityManager::Construct"] = PATTERNS_REALITYMANAGER_CONSTRUCT[i]
-    patterns.FUNC_PATTERNS["cGcRealityManager::GenerateProceduralProduct"] = PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT[i]
-    patterns.FUNC_PATTERNS["cGcRealityManager::GenerateProceduralTechnology"] = PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY[i]
-
-    eStatsType = [eStatsType_413, eStatsType_520, eStatsType_561][i]
+    enums = [
+        eStatsType_413,
+        eStatsType_520,
+        eStatsType_561,
+    ]
+    eStatsType = enums[_binary_hash_index()]
 
 # endregion
 

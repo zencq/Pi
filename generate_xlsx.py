@@ -24,7 +24,6 @@ HIGH_NUMBER_MULTIPLIER = 3
 OUTDATED = {  # outdated or only available since
     # "UP_CANN": "4.30",  # example
     # "UP_CANNX": "5.50",
-    "UP_CANN": "4.30",
     "UP_RBSUIT": "4.40",
     "UP_MFIRE": "5.00",
     "PROC_EXH": "5.50",
@@ -34,7 +33,7 @@ OUTDATED = {  # outdated or only available since
 }
 RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
 URL = "https://github.com/zencq/Pi"
-VERSION = "4.13"
+VERSION = "4.30"
 
 # endregion
 
