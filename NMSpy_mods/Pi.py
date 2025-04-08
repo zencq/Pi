@@ -19,6 +19,7 @@ from pymhf.core import _internal as pymhf_internal
 from pymhf.core.memutils import map_struct
 from pymhf.core.mod_loader import ModState
 from pymhf.core.utils import safe_assign_enum
+from pymhf.extensions.cpptypes import std
 from pymhf.gui import BOOLEAN, STRING, gui_button
 
 from nmspy import NMSMod
@@ -642,6 +643,11 @@ class cGcProductData(ctypes.Structure):
     pass
 
 
+class cGcRealityManager(ctypes.Structure):
+    GenerateProceduralProduct = nms_structs.cGcRealityManager._GenerateProceduralProduct_2
+    GenerateProceduralTechnology = nms_structs.cGcRealityManager.GenerateProceduralTechnology
+
+
 class cGcStatsBonus(ctypes.Structure):
     pass
 
@@ -660,6 +666,7 @@ STRUCTS_FIELDS = {
     "Description": (nms_structs_common.cTkDynamicString, 0x10),
     "Level": (ctypes.c_int32, 0x4),
     "NameLower": (nms_structs_common.cTkFixedString[0x80], 0x80),
+    "PendingNewTechnologies": (std.vector[ctypes.POINTER(cGcTechnology)], 0x18),
     "Stat": (nms_structs.cGcStatsTypes, 0x4),
     "StatBonuses": (nms_structs_common.cTkDynamicArray[cGcStatsBonus], 0x10),
 }
@@ -668,6 +675,10 @@ STRUCTS_FIELDS = {
 STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413 = [("BaseValue", 0x1E4), ("Description", 0x120), ("NameLower", 0x090)]
 STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520 = [("BaseValue", 0x16C), ("Description", 0x0F8), ("NameLower", 0x238)]
 STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561 = [("BaseValue", 0x174), ("Description", 0x100), ("NameLower", 0x24C)]
+
+STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_413 = [("PendingNewTechnologies", 0x238)]
+STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_520 = [("PendingNewTechnologies", 0x238)]  # TODO changed
+STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_561 = [("PendingNewTechnologies", 0x238)]  # TODO changed again?
 
 # must contain all fields as it is used in an array
 STRUCTS_FIELDS_OFFSETS_STATSBONUS_413 = [("Bonus", 0x4), ("Level", 0x8), ("Stat", 0x0)]
@@ -678,7 +689,8 @@ STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520 = [("NameLower", 0x244), ("StatBonuses", 0
 
 
 def _class_fields(cls, structs_fields_offsets):
-    cls._fields_ = _generate_fields(structs_fields_offsets[_binary_hash_index()])
+    if not hasattr(cls, "_fields_"):
+        cls._fields_ = _generate_fields(structs_fields_offsets[_binary_hash_index()])
 
 
 def _generate_fields(structs_fields_offsets: list[tuple[str, int]]):
@@ -744,19 +756,25 @@ def _patterns(key, func_patterns):
 
 
 def _binary_hash_index() -> int:
-    return KNOWN_BINARY_HASH.index(pymhf_internal.BINARY_HASH)  # get index of current hash
+    # get the index of current hash
+    return list(KNOWN_BINARY_HASH.keys()).index(pymhf_internal.BINARY_HASH)
 
 
-KNOWN_BINARY_HASH = [
-    "014f5fd1837e2bd8356669b92109fd3add116137",  # 4.13 (GOG.dev)
-    "239fac0224333873c733c4e5b4d9694ea6cc0b41",  # 5.20 (GOG.com)
-    "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2",  # 5.61 (GOG.com)
-]
+KNOWN_BINARY_HASH = {
+    "014f5fd1837e2bd8356669b92109fd3add116137": "4.13",  # (GOG.dev)
+    "239fac0224333873c733c4e5b4d9694ea6cc0b41": "5.20",  # (GOG.com)
+    "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2": "5.61",  # (GOG.com)
+}
 if pymhf_internal.BINARY_HASH in KNOWN_BINARY_HASH:
     _class_fields(cGcProductData, [
         STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413,
         STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520,
         STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561,
+    ])
+    _class_fields(cGcRealityManager, [
+        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_413,
+        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_520,
+        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_561,
     ])
     _class_fields(cGcStatsBonus, [
         STRUCTS_FIELDS_OFFSETS_STATSBONUS_413,
@@ -1191,8 +1209,8 @@ class PiMod(NMSMod):
 
     @hooks.cGcRealityManager.Construct.after
     def hook_reality_manager_construct_after(self, this):
-        logging.debug(f">> Pi: hook_reality_manager_construct_after")
-        self.reality_manager = map_struct(this, nms_structs.cGcRealityManager)
+        logging.debug(f">> Pi: hook_reality_manager_construct_after > {this}")
+        self.reality_manager = map_struct(this, cGcRealityManager)
         self.state.is_reality_manager_constructed = True
 
     @on_fully_booted
@@ -1318,7 +1336,7 @@ class PiMod(NMSMod):
     @gui_button("Start Generating")
     def start_generating(self):
         if pymhf_internal.BINARY_HASH not in KNOWN_BINARY_HASH:
-            logging.error(f">> Pi: The used executable is unknown. This only works with the versions 4.13, 5.20, and 5.61 from GOG.")
+            logging.error(f">> Pi: The used executable is unknown. This mod only works with the following GOG.com versions: {', '.join(KNOWN_BINARY_HASH.values())}")
             return
 
         if not all([self.state.is_reality_manager_constructed]):
@@ -1371,7 +1389,7 @@ class PiMod(NMSMod):
         read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
-            pointer = self.reality_manager.GenerateProceduralProduct["cGcRealityManager *, const TkID<128> *"](f"{item_name}#{seed:05}".encode("utf-8"))
+            pointer = self.reality_manager.GenerateProceduralProduct(f"{item_name}#{seed:05}".encode("utf-8"))
             try:
                 generated = map_struct(pointer, cGcProductData)
             except ValueError:

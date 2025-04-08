@@ -31,8 +31,6 @@ The following items are currently *outdated* or *not available* due to changes i
 a newer game version than the one currently supported. The latest supported version
 can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases).
 
-* **Neutron Cannon** Upgrades (UP_CANN) are *outdated* since **Singularity 4.30**
-* **Rebuilt Exosuit Module** (UP_RBSUIT) is *available* since **Echoes 4.40**
 * **Minotaur Flamethrower** Upgrades (UP_MFIRE) are *available* since **Worlds Part I 5.00**
 * Rusted Upgrades are *available* since **Aquarius 5.10**
   * **Mining Beam** (UP_LASER0)
@@ -66,11 +64,11 @@ directory to initialize them.
 Currently `PiMod` is designed to work with GOG.com version 4.13 as well as 5.20
 and 5.61 which cover all changes/additions since 4.13.
 
-To run it, set up NMS.py as mentioned in its [README](https://github.com/monkeyman192/NMS.py?tab=readme-ov-file#installation) and make sure the `mod_dir` setting is set to the
-absolute path to the `./NMSpy_mods` directory. Then you just need to run it and
-as soon as the menu appears, the magic can begin. When NMS.py runs, a distinct terminal
-window opens where some information are logged. All output is prefixed with `>> Pi`
-or indented below it.
+To run it, set up NMS.py as mentioned in its [README](https://github.com/monkeyman192/NMS.py?tab=readme-ov-file#installation)
+and make sure the `mod_dir` setting is set to the absolute path to the `./NMSpy_mods`
+directory. Then you just need to run it and as soon as the menu appears, the magic
+can begin. When NMS.py runs, a distinct terminal window opens where some information
+are logged. All output is prefixed with `>> Pi` or indented below it.
 
 It is also possible to extend the records with the generated names for multiple
 languages by running it multiple times with different language settings. After a
