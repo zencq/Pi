@@ -856,6 +856,7 @@ TRANSFORM = {
     "Weapon_Scan_Discovery_Creature": [("*", 100)],  # Fauna Analysis Rewards (+6,775%) > 67.75889587402344 > 6775.889587402344
     "Weapon_Scan_Discovery_Flora": [("*", 100)],  # Flora Analysis Rewards (+7,897%) > 78.97901153564453 > 7897.901153564453
     "Weapon_Scan_Discovery_Mineral": [("*", 100)],  # Mineral Analysis Rewards (+9,026%) > 90.26795196533203 > 9026.795196533203
+    "Weapon_FireDOT_Duration": [("-", 1), ("*", 100)],  # Impact Fire Duration (+27%) > 1.2693740129470825 > 26.93740129470825
 
     # endregion
 
@@ -1556,7 +1557,7 @@ class PiMod(NMSMod):
     @staticmethod
     def transform_value(stat, bonus):
         if stat not in TRANSFORM:
-            logging.warning(f"     > not in TRANSFORM > {stat}")
+            logging.warning(f"     > not in TRANSFORM > {stat} > {bonus}")
 
         for instruction in TRANSFORM.get(stat, []):
             if isinstance(instruction[0], str):  # operator first (bonus - 1)

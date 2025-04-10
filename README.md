@@ -31,7 +31,6 @@ The following items are currently *outdated* or *not available* due to changes i
 a newer game version than the one currently supported. The latest supported version
 can be seen in the [releases here on GitHub](https://github.com/zencq/Pi/releases).
 
-* **Minotaur Flamethrower** Upgrades (UP_MFIRE) are *available* since **Worlds Part I 5.00**
 * Rusted Upgrades are *available* since **Aquarius 5.10**
   * **Mining Beam** (UP_LASER0)
   * **Analysis Visor** (UP_SCAN0)

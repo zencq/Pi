@@ -22,9 +22,8 @@ F_BASE = os.path.basename(F_NAME)
 
 HIGH_NUMBER_MULTIPLIER = 3
 OUTDATED = {  # outdated or only available since
-    # "UP_CANN": "4.30",  # example
+    # "UP_CANN": "4.30",  # examples
     # "UP_CANNX": "5.50",
-    "UP_MFIRE": "5.00",
     "PROC_EXH": "5.50",
     "UP_CANNX": "5.50",
     "UP_UNW": "5.50",
@@ -32,7 +31,7 @@ OUTDATED = {  # outdated or only available since
 }
 RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
 URL = "https://github.com/zencq/Pi"
-VERSION = "4.40"
+VERSION = "5.00"
 
 # endregion
 
@@ -229,6 +228,7 @@ TRANSLATION = {
     "Weapon_Scan_Discovery_Creature": "Fauna Analysis Rewards",
     "Weapon_Scan_Discovery_Flora": "Flora Analysis Rewards",
     "Weapon_Scan_Discovery_Mineral": "Mineral Analysis Rewards",
+    "Weapon_FireDOT_Duration": "Impact Fire Duration",
 
     "Suit_Armour_Health": "Core Health",
     "Suit_Armour_Shield_Strength": "Shield Strength",
