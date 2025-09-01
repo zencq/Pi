@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["pymhf"]
+# dependencies = ["pymhf[gui]>=0.1.16", "nmspy>=147803.1", "pyarrow"]
 #
 # [tool.pymhf]
 # exe = "<path to install dir>/Binaries/NMS.exe"
@@ -9,667 +9,67 @@
 # window_name_override = "NMS.py: Pi"
 # ///
 
+# pyright: reportAssignmentType=false
+# pyright: reportMissingImports=false
+
+# built-in
 import csv
 import ctypes
+import importlib
 import logging
 import os
 import pyarrow as pa
 import pyarrow.parquet as pq
 import re
-import threading
 
-# from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
-from enum import IntEnum
 
-from pymhf import FUNCDEF, Mod, load_mod_file
+logger = logging.getLogger(__name__.lower())
+
+# pyMHF
+from pymhf import Mod, ModState
 from pymhf.core import _internal as pymhf_internal
 from pymhf.core.memutils import map_struct
-from pymhf.core.module_data import module_data
-from pymhf.core.mod_loader import ModState
-from pymhf.core.utils import safe_assign_enum
-from pymhf.extensions.cpptypes import std
 from pymhf.gui import BOOLEAN, STRING, gui_button
 
-from nmspy._internals.mods.singletons import _INTERNAL_LoadSingletons as nms_singleton
-from nmspy.data import (
-    common as nms_structs_common,
-    enums as nms_enums,
-    structs as nms_structs,
-)
-from nmspy.data.functions import (
-    call_sigs as nms_call_sigs,
-    hooks,
-    patterns as nms_patterns,
-)
-from nmspy.decorators import on_fully_booted
+# local
+try:
+    from common.configuration import LANGUAGES, PRODUCT
+    from common.decorators import try_except
+    from common.objects import Counter
+except Exception as e:
+    message = f"Error while importing specific version data: {e}"
+    logger.critical(message)
+    raise e
 
-
-# region NMS.py
-
-# region Class
-
-
-# size is one more than the last value
-class eStatsType_520(IntEnum):
-    Unspecified = 0x0
-    Weapon_Laser = 0x1
-    Weapon_Laser_Damage = 0x2
-    Weapon_Laser_Mining_Speed = 0x3
-    Weapon_Laser_HeatTime = 0x4
-    Weapon_Laser_Bounce = 0x5
-    Weapon_Laser_ReloadTime = 0x6
-    Weapon_Laser_Recoil = 0x7
-    Weapon_Laser_Drain = 0x8
-    Weapon_Laser_StrongLaser = 0x9
-    Weapon_Laser_ChargeTime = 0xA
-    Weapon_Laser_MiningBonus = 0xB
-    Weapon_Projectile = 0xC
-    Weapon_Projectile_Damage = 0xD
-    Weapon_Projectile_Range = 0xE
-    Weapon_Projectile_Rate = 0xF
-    Weapon_Projectile_ClipSize = 0x10
-    Weapon_Projectile_ReloadTime = 0x11
-    Weapon_Projectile_Recoil = 0x12
-    Weapon_Projectile_Bounce = 0x13
-    Weapon_Projectile_Homing = 0x14
-    Weapon_Projectile_Dispersion = 0x15
-    Weapon_Projectile_BulletsPerShot = 0x16
-    Weapon_Projectile_MinimumCharge = 0x17
-    Weapon_Projectile_MaximumCharge = 0x18
-    Weapon_Projectile_BurstCap = 0x19
-    Weapon_Projectile_BurstCooldown = 0x1A
-    Weapon_ChargedProjectile = 0x1B
-    Weapon_ChargedProjectile_ChargeTime = 0x1C
-    Weapon_ChargedProjectile_CooldownDuration = 0x1D
-    Weapon_ChargedProjectile_Drain = 0x1E
-    Weapon_ChargedProjectile_ExtraSpeed = 0x1F
-    Weapon_Rail = 0x20
-    Weapon_Shotgun = 0x21
-    Weapon_Burst = 0x22
-    Weapon_Flame = 0x23
-    Weapon_Cannon = 0x24
-    Weapon_Grenade = 0x25
-    Weapon_Grenade_Damage = 0x26
-    Weapon_Grenade_Radius = 0x27
-    Weapon_Grenade_Speed = 0x28
-    Weapon_Grenade_Bounce = 0x29
-    Weapon_Grenade_Homing = 0x2A
-    Weapon_Grenade_Clusterbomb = 0x2B
-    Weapon_TerrainEdit = 0x2C
-    Weapon_SunLaser = 0x2D
-    Weapon_SoulLaser = 0x2E
-    Weapon_MineGrenade = 0x2F
-    Weapon_FrontShield = 0x30
-    Weapon_Scope = 0x31
-    Weapon_Spawner = 0x32
-    Weapon_SpawnerAlt = 0x33
-    Weapon_Melee = 0x34
-    Weapon_StunGrenade = 0x35
-    Weapon_Stealth = 0x36
-    Weapon_Scan = 0x37
-    Weapon_Scan_Radius = 0x38
-    Weapon_Scan_Recharge_Time = 0x39
-    Weapon_Scan_Types = 0x3A
-    Weapon_Scan_Binoculars = 0x3B
-    Weapon_Scan_Discovery_Creature = 0x3C
-    Weapon_Scan_Discovery_Flora = 0x3D
-    Weapon_Scan_Discovery_Mineral = 0x3E
-    Weapon_Scan_Secondary = 0x3F
-    Weapon_Scan_Terrain_Resource = 0x40
-    Weapon_Scan_Surveying = 0x41
-    Weapon_Scan_BuilderReveal = 0x42
-    Weapon_Fish = 0x43
-    Weapon_Stun = 0x44
-    Weapon_Stun_Duration = 0x45
-    Weapon_Stun_Damage_Multiplier = 0x46
-    Weapon_FireDOT = 0x47
-    Weapon_FireDOT_Duration = 0x48
-    Weapon_FireDOT_DPS = 0x49
-    Weapon_FireDOT_Damage_Multiplier = 0x4A
-    Suit_Armour_Health = 0x4B
-    Suit_Armour_Shield = 0x4C
-    Suit_Armour_Shield_Strength = 0x4D
-    Suit_Energy = 0x4E
-    Suit_Energy_Regen = 0x4F
-    Suit_Protection = 0x50
-    Suit_Protection_Cold = 0x51
-    Suit_Protection_Heat = 0x52
-    Suit_Protection_Toxic = 0x53
-    Suit_Protection_Radiation = 0x54
-    Suit_Protection_Spook = 0x55
-    Suit_Underwater = 0x56
-    Suit_UnderwaterLifeSupport = 0x57
-    Suit_DamageReduce_Cold = 0x58
-    Suit_DamageReduce_Heat = 0x59
-    Suit_DamageReduce_Toxic = 0x5A
-    Suit_DamageReduce_Radiation = 0x5B
-    Suit_Protection_HeatDrain = 0x5C
-    Suit_Protection_ColdDrain = 0x5D
-    Suit_Protection_ToxDrain = 0x5E
-    Suit_Protection_RadDrain = 0x5F
-    Suit_Protection_WaterDrain = 0x60
-    Suit_Protection_SpookDrain = 0x61
-    Suit_Stamina_Strength = 0x62
-    Suit_Stamina_Speed = 0x63
-    Suit_Stamina_Recovery = 0x64
-    Suit_Jetpack = 0x65
-    Suit_Jetpack_Tank = 0x66
-    Suit_Jetpack_Drain = 0x67
-    Suit_Jetpack_Refill = 0x68
-    Suit_Jetpack_Ignition = 0x69
-    Suit_Jetpack_DoubleJump = 0x6A
-    Suit_Jetpack_WaterEfficiency = 0x6B
-    Suit_Jetpack_MidairRefill = 0x6C
-    Suit_Refiner = 0x6D
-    Suit_AutoTranslator = 0x6E
-    Suit_Utility = 0x6F
-    Suit_RocketLocker = 0x70
-    Suit_FishPlatform = 0x71
-    Suit_Denier = 0x72
-    Ship_Weapons_Guns = 0x73
-    Ship_Weapons_Guns_Damage = 0x74
-    Ship_Weapons_Guns_Rate = 0x75
-    Ship_Weapons_Guns_HeatTime = 0x76
-    Ship_Weapons_Guns_CoolTime = 0x77
-    Ship_Weapons_Guns_Scale = 0x78
-    Ship_Weapons_Guns_BulletsPerShot = 0x79
-    Ship_Weapons_Guns_Dispersion = 0x7A
-    Ship_Weapons_Guns_Range = 0x7B
-    Ship_Weapons_Guns_Damage_Radius = 0x7C
-    Ship_Weapons_Lasers = 0x7D
-    Ship_Weapons_Lasers_Damage = 0x7E
-    Ship_Weapons_Lasers_HeatTime = 0x7F
-    Ship_Weapons_Missiles = 0x80
-    Ship_Weapons_Missiles_NumPerShot = 0x81
-    Ship_Weapons_Missiles_Speed = 0x82
-    Ship_Weapons_Missiles_Damage = 0x83
-    Ship_Weapons_Missiles_Size = 0x84
-    Ship_Weapons_Shotgun = 0x85
-    Ship_Weapons_MiniGun = 0x86
-    Ship_Weapons_Plasma = 0x87
-    Ship_Weapons_Rockets = 0x88
-    Ship_Weapons_ShieldLeech = 0x89
-    Ship_Armour_Shield = 0x8A
-    Ship_Armour_Shield_Strength = 0x8B
-    Ship_Armour_Health = 0x8C
-    Ship_Scan = 0x8D
-    Ship_Scan_EconomyFilter = 0x8E
-    Ship_Scan_ConflictFilter = 0x8F
-    Ship_Hyperdrive = 0x90
-    Ship_Hyperdrive_JumpDistance = 0x91
-    Ship_Hyperdrive_JumpsPerCell = 0x92
-    Ship_Hyperdrive_QuickWarp = 0x93
-    Ship_Launcher = 0x94
-    Ship_Launcher_TakeOffCost = 0x95
-    Ship_Launcher_AutoCharge = 0x96
-    Ship_PulseDrive = 0x97
-    Ship_PulseDrive_MiniJumpFuelSpending = 0x98
-    Ship_PulseDrive_MiniJumpSpeed = 0x99
-    Ship_Boost = 0x9A
-    Ship_Maneuverability = 0x9B
-    Ship_BoostManeuverability = 0x9C
-    Ship_LifeSupport = 0x9D
-    Ship_Drift = 0x9E
-    Ship_Teleport = 0x9F
-    Ship_CargoShield = 0xA0
-    Ship_WaterLandingJet = 0xA1
-    Freighter_Hyperdrive = 0xA2
-    Freighter_Hyperdrive_JumpDistance = 0xA3
-    Freighter_Hyperdrive_JumpsPerCell = 0xA4
-    Freighter_MegaWarp = 0xA5
-    Freighter_Teleport = 0xA6
-    Freighter_Fleet_Boost = 0xA7
-    Freighter_Fleet_Speed = 0xA8
-    Freighter_Fleet_Fuel = 0xA9
-    Freighter_Fleet_Combat = 0xAA
-    Freighter_Fleet_Trade = 0xAB
-    Freighter_Fleet_Explore = 0xAC
-    Freighter_Fleet_Mine = 0xAD
-    Vehicle_Boost = 0xAE
-    Vehicle_Engine = 0xAF
-    Vehicle_Scan = 0xB0
-    Vehicle_EngineFuelUse = 0xB1
-    Vehicle_EngineTopSpeed = 0xB2
-    Vehicle_BoostSpeed = 0xB3
-    Vehicle_BoostTanks = 0xB4
-    Vehicle_Grip = 0xB5
-    Vehicle_SkidGrip = 0xB6
-    Vehicle_SubBoostSpeed = 0xB7
-    Vehicle_Laser = 0xB8
-    Vehicle_LaserDamage = 0xB9
-    Vehicle_LaserHeatTime = 0xBA
-    Vehicle_LaserStrongLaser = 0xBB
-    Vehicle_Gun = 0xBC
-    Vehicle_GunDamage = 0xBD
-    Vehicle_GunHeatTime = 0xBE
-    Vehicle_GunRate = 0xBF
-    Vehicle_StunGun = 0xC0
-    Vehicle_TerrainEdit = 0xC1
-    Vehicle_FuelRegen = 0xC2
-    Vehicle_AutoPilot = 0xC3
-    Vehicle_Flame = 0xC4
-    Vehicle_FlameDamage = 0xC5
-    Vehicle_FlameHeatTime = 0xC6
-
-
-class eStatsType_561(IntEnum):
-    Unspecified = 0x0
-    Weapon_Laser = 0x1
-    Weapon_Laser_Damage = 0x2
-    Weapon_Laser_Mining_Speed = 0x3
-    Weapon_Laser_HeatTime = 0x4
-    Weapon_Laser_Bounce = 0x5
-    Weapon_Laser_ReloadTime = 0x6
-    Weapon_Laser_Recoil = 0x7
-    Weapon_Laser_Drain = 0x8
-    Weapon_Laser_StrongLaser = 0x9
-    Weapon_Laser_ChargeTime = 0xA
-    Weapon_Laser_MiningBonus = 0xB
-    Weapon_Projectile = 0xC
-    Weapon_Projectile_Damage = 0xD
-    Weapon_Projectile_Range = 0xE
-    Weapon_Projectile_Rate = 0xF
-    Weapon_Projectile_ClipSize = 0x10
-    Weapon_Projectile_ReloadTime = 0x11
-    Weapon_Projectile_Recoil = 0x12
-    Weapon_Projectile_Bounce = 0x13
-    Weapon_Projectile_Homing = 0x14
-    Weapon_Projectile_Dispersion = 0x15
-    Weapon_Projectile_BulletsPerShot = 0x16
-    Weapon_Projectile_MinimumCharge = 0x17
-    Weapon_Projectile_MaximumCharge = 0x18
-    Weapon_Projectile_BurstCap = 0x19
-    Weapon_Projectile_BurstCooldown = 0x1A
-    Weapon_ChargedProjectile = 0x1B
-    Weapon_ChargedProjectile_ChargeTime = 0x1C
-    Weapon_ChargedProjectile_CooldownDuration = 0x1D
-    Weapon_ChargedProjectile_Drain = 0x1E
-    Weapon_ChargedProjectile_ExtraSpeed = 0x1F
-    Weapon_Rail = 0x20
-    Weapon_Shotgun = 0x21
-    Weapon_Burst = 0x22
-    Weapon_Flame = 0x23
-    Weapon_Cannon = 0x24
-    Weapon_Grenade = 0x25
-    Weapon_Grenade_Damage = 0x26
-    Weapon_Grenade_Radius = 0x27
-    Weapon_Grenade_Speed = 0x28
-    Weapon_Grenade_Bounce = 0x29
-    Weapon_Grenade_Homing = 0x2A
-    Weapon_Grenade_Clusterbomb = 0x2B
-    Weapon_TerrainEdit = 0x2C
-    Weapon_SunLaser = 0x2D
-    Weapon_SoulLaser = 0x2E
-    Weapon_MineGrenade = 0x2F
-    Weapon_FrontShield = 0x30
-    Weapon_Scope = 0x31
-    Weapon_Spawner = 0x32
-    Weapon_SpawnerAlt = 0x33
-    Weapon_Melee = 0x34
-    Weapon_StunGrenade = 0x35
-    Weapon_Stealth = 0x36
-    Weapon_Scan = 0x37
-    Weapon_Scan_Radius = 0x38
-    Weapon_Scan_Recharge_Time = 0x39
-    Weapon_Scan_Types = 0x3A
-    Weapon_Scan_Binoculars = 0x3B
-    Weapon_Scan_Discovery_Creature = 0x3C
-    Weapon_Scan_Discovery_Flora = 0x3D
-    Weapon_Scan_Discovery_Mineral = 0x3E
-    Weapon_Scan_Secondary = 0x3F
-    Weapon_Scan_Terrain_Resource = 0x40
-    Weapon_Scan_Surveying = 0x41
-    Weapon_Scan_BuilderReveal = 0x42
-    Weapon_Fish = 0x43
-    Weapon_Stun = 0x44
-    Weapon_Stun_Duration = 0x45
-    Weapon_Stun_Damage_Multiplier = 0x46
-    Weapon_FireDOT = 0x47
-    Weapon_FireDOT_Duration = 0x48
-    Weapon_FireDOT_DPS = 0x49
-    Weapon_FireDOT_Damage_Multiplier = 0x4A
-    Suit_Armour_Health = 0x4B
-    Suit_Armour_Shield = 0x4C
-    Suit_Armour_Shield_Strength = 0x4D
-    Suit_Energy = 0x4E
-    Suit_Energy_Regen = 0x4F
-    Suit_Protection = 0x50
-    Suit_Protection_Cold = 0x51
-    Suit_Protection_Heat = 0x52
-    Suit_Protection_Toxic = 0x53
-    Suit_Protection_Radiation = 0x54
-    Suit_Protection_Spook = 0x55
-    Suit_Protection_Pressure = 0x56
-    Suit_Underwater = 0x57
-    Suit_UnderwaterLifeSupport = 0x58
-    Suit_DamageReduce_Cold = 0x59
-    Suit_DamageReduce_Heat = 0x5A
-    Suit_DamageReduce_Toxic = 0x5B
-    Suit_DamageReduce_Radiation = 0x5C
-    Suit_Protection_HeatDrain = 0x5D
-    Suit_Protection_ColdDrain = 0x5E
-    Suit_Protection_ToxDrain = 0x5F
-    Suit_Protection_RadDrain = 0x60
-    Suit_Protection_WaterDrain = 0x61
-    Suit_Protection_SpookDrain = 0x62
-    Suit_Stamina_Strength = 0x63
-    Suit_Stamina_Speed = 0x64
-    Suit_Stamina_Recovery = 0x65
-    Suit_Jetpack = 0x66
-    Suit_Jetpack_Tank = 0x67
-    Suit_Jetpack_Drain = 0x68
-    Suit_Jetpack_Refill = 0x69
-    Suit_Jetpack_Ignition = 0x6A
-    Suit_Jetpack_DoubleJump = 0x6B
-    Suit_Jetpack_WaterEfficiency = 0x6C
-    Suit_Jetpack_MidairRefill = 0x6D
-    Suit_Refiner = 0x6E
-    Suit_AutoTranslator = 0x6F
-    Suit_Utility = 0x70
-    Suit_RocketLocker = 0x71
-    Suit_FishPlatform = 0x72
-    Suit_FoodUnit = 0x73
-    Suit_Denier = 0x74
-    Suit_Vehicle_Summon = 0x75
-    Ship_Weapons_Guns = 0x76
-    Ship_Weapons_Guns_Damage = 0x77
-    Ship_Weapons_Guns_Rate = 0x78
-    Ship_Weapons_Guns_HeatTime = 0x79
-    Ship_Weapons_Guns_CoolTime = 0x7A
-    Ship_Weapons_Guns_Scale = 0x78B
-    Ship_Weapons_Guns_BulletsPerShot = 0x7C
-    Ship_Weapons_Guns_Dispersion = 0x7D
-    Ship_Weapons_Guns_Range = 0x7E
-    Ship_Weapons_Guns_Damage_Radius = 0x7F
-    Ship_Weapons_Lasers = 0x80
-    Ship_Weapons_Lasers_Damage = 0x81
-    Ship_Weapons_Lasers_HeatTime = 0x82
-    Ship_Weapons_Missiles = 0x83
-    Ship_Weapons_Missiles_NumPerShot = 0x84
-    Ship_Weapons_Missiles_Speed = 0x85
-    Ship_Weapons_Missiles_Damage = 0x86
-    Ship_Weapons_Missiles_Size = 0x87
-    Ship_Weapons_Shotgun = 0x88
-    Ship_Weapons_MiniGun = 0x89
-    Ship_Weapons_Plasma = 0x8A
-    Ship_Weapons_Rockets = 0x8B
-    Ship_Weapons_ShieldLeech = 0x8C
-    Ship_Armour_Shield = 0x8D
-    Ship_Armour_Shield_Strength = 0x8E
-    Ship_Armour_Health = 0x8F
-    Ship_Scan = 0x90
-    Ship_Scan_EconomyFilter = 0x91
-    Ship_Scan_ConflictFilter = 0x92
-    Ship_Hyperdrive = 0x93
-    Ship_Hyperdrive_JumpDistance = 0x94
-    Ship_Hyperdrive_JumpsPerCell = 0x95
-    Ship_Hyperdrive_QuickWarp = 0x96
-    Ship_Launcher = 0x97
-    Ship_Launcher_TakeOffCost = 0x98
-    Ship_Launcher_AutoCharge = 0x99
-    Ship_PulseDrive = 0x9A
-    Ship_PulseDrive_MiniJumpFuelSpending = 0x9B
-    Ship_PulseDrive_MiniJumpSpeed = 0x9C
-    Ship_Boost = 0x9D
-    Ship_Maneuverability = 0x9E
-    Ship_BoostManeuverability = 0x9F
-    Ship_LifeSupport = 0xA0
-    Ship_Drift = 0xA1
-    Ship_Teleport = 0xA2
-    Ship_CargoShield = 0xA3
-    Ship_WaterLandingJet = 0xA4
-    Freighter_Hyperdrive = 0xA5
-    Freighter_Hyperdrive_JumpDistance = 0xA6
-    Freighter_Hyperdrive_JumpsPerCell = 0xA7
-    Freighter_MegaWarp = 0xA8
-    Freighter_Teleport = 0xA9
-    Freighter_Fleet_Boost = 0xAA
-    Freighter_Fleet_Speed = 0xAB
-    Freighter_Fleet_Fuel = 0xAC
-    Freighter_Fleet_Combat = 0xAD
-    Freighter_Fleet_Trade = 0xAE
-    Freighter_Fleet_Explore = 0xAF
-    Freighter_Fleet_Mine = 0xB0
-    Vehicle_Boost = 0xB1
-    Vehicle_Engine = 0xB2
-    Vehicle_Scan = 0xB3
-    Vehicle_EngineFuelUse = 0xB4
-    Vehicle_EngineTopSpeed = 0xB5
-    Vehicle_BoostSpeed = 0xB6
-    Vehicle_BoostTanks = 0xB7
-    Vehicle_Grip = 0xB8
-    Vehicle_SkidGrip = 0xB9
-    Vehicle_SubBoostSpeed = 0xBA
-    Vehicle_Laser = 0xBB
-    Vehicle_LaserDamage = 0xBC
-    Vehicle_LaserHeatTime = 0xBD
-    Vehicle_LaserStrongLaser = 0xBE
-    Vehicle_Gun = 0xBF
-    Vehicle_GunDamage = 0xC0
-    Vehicle_GunHeatTime = 0xC1
-    Vehicle_GunRate = 0xC2
-    Vehicle_StunGun = 0xC3
-    Vehicle_TerrainEdit = 0xC4
-    Vehicle_FuelRegen = 0xC5
-    Vehicle_AutoPilot = 0xC6
-    Vehicle_Flame = 0xC7
-    Vehicle_FlameDamage = 0xC8
-    Vehicle_FlameHeatTime = 0xC9
-    Vehicle_Refiner = 0xCA
-
-
-# make empty classes to already use it in the structs definition
-class cGcProductData(ctypes.Structure):
-    pass
-
-
-class cGcRealityManager(ctypes.Structure):
-    GenerateProceduralProduct = nms_structs.cGcRealityManager._GenerateProceduralProduct_2
-    GenerateProceduralTechnology = nms_structs.cGcRealityManager.GenerateProceduralTechnology
-
-
-class cGcStatsBonus(ctypes.Structure):
-    pass
-
-
-class cGcTechnology(ctypes.Structure):
-    pass
-
-
-# endregion
-
-# region Structs Fields
-
-STRUCTS_FIELDS = {
-    "BaseValue": (ctypes.c_int32, 0x4),
-    "Bonus": (ctypes.c_float, 0x4),
-    "Description": (nms_structs_common.cTkDynamicString, 0x10),
-    "Level": (ctypes.c_int32, 0x4),
-    "NameLower": (nms_structs_common.cTkFixedString[0x80], 0x80),
-    "PendingNewTechnologies": (std.vector[ctypes.POINTER(cGcTechnology)], 0x18),
-    "Stat": (nms_structs.cGcStatsTypes, 0x4),
-    "StatBonuses": (nms_structs_common.cTkDynamicArray[cGcStatsBonus], 0x10),
-}
-
-# offsets can be taken from MBINCompiler
-STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413 = [("BaseValue", 0x1E4), ("Description", 0x120), ("NameLower", 0x090)]
-STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520 = [("BaseValue", 0x16C), ("Description", 0x0F8), ("NameLower", 0x238)]
-STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561 = [("BaseValue", 0x174), ("Description", 0x100), ("NameLower", 0x24C)]
-
-STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_413 = [("PendingNewTechnologies", 0x238)]
-STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_520 = [("PendingNewTechnologies", 0x258)]
-STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_561 = [("PendingNewTechnologies", 0x268)]
-
-# must contain all fields as it is used in an array
-STRUCTS_FIELDS_OFFSETS_STATSBONUS_413 = [("Bonus", 0x4), ("Level", 0x8), ("Stat", 0x0)]
-STRUCTS_FIELDS_OFFSETS_STATSBONUS_520 = [("Bonus", 0x0), ("Level", 0x4), ("Stat", 0x8)]
-
-STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_413 = [("NameLower", 0x0B0), ("StatBonuses", 0x298)]
-STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520 = [("NameLower", 0x244), ("StatBonuses", 0x158)]
-
-
-def _class_fields(cls, structs_fields_offsets):
-    if not hasattr(cls, "_fields_"):
-        cls._fields_ = _generate_fields(structs_fields_offsets[_binary_hash_index()])
-
-
-def _generate_fields(structs_fields_offsets: list[tuple[str, int]]):
-    fields = sorted(structs_fields_offsets, key=lambda f: f[1])  # sort fields by offset
-    result = []
-    for i, (field, offset) in enumerate(fields):
-        if i == 0:
-            h = 0x0  # no previous offset
-            struct, size = STRUCTS_FIELDS[field][0], 0x0  # no previous size
-        else:
-            previous_field, previous_offset = fields[i-1]
-
-            h = previous_offset  # previous offset
-            struct, size = STRUCTS_FIELDS[field][0], STRUCTS_FIELDS[previous_field][1]  # previous size
-
-        padding = offset - size - h
-        if padding:
-            result.append((f"_padding_{i}", ctypes.c_ubyte * padding))
-        result.append((field, struct))
-
-    return result
-
-
-# endregion
-
-# region Call Signatures
-
-FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520 = FUNCDEF(restype=None, argtypes=[ctypes.c_ulonglong, ctypes.c_ulonglong, ctypes.c_char])
-
-
-def _call_sigs(key, call_sigs):
-    if len(call_sigs) <= (binary_hash_index := _binary_hash_index()):
-        module_data.FUNC_CALL_SIGS[key] = call_sigs[-1]
-    else:
-        module_data.FUNC_CALL_SIGS[key] = call_sigs[_binary_hash_index()]
-
-
-# endregion
-
-# region Patterns
-
-# search for "LANGUAGE\\%s_%s.MBIN" around the latest offset
-PATTERNS_LANGUAGEMANAGERBASE_LOAD_413 = "48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20"
-PATTERNS_LANGUAGEMANAGERBASE_LOAD_520 = "48 89 5C 24 10 57 48 81 EC 20 01 00 00 33"
-
-# search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the latest offset
-PATTERNS_REALITYMANAGER_CONSTRUCT_413 = "48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88"
-PATTERNS_REALITYMANAGER_CONSTRUCT_520 = "48 89 4C 24 08 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 E0"
-PATTERNS_REALITYMANAGER_CONSTRUCT_561 = "48 8B C4 48 89 48 08 55 53 56 57 41 54 41 56"
-
-# search for "ITEMGEN_FORMAT_FREI_PASS" around the latest offset
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_413 = "48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48"
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_520 = "48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48"
-
-# search for "UI_WIKI_PROC_TECH_SUB" around the latest offset
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_413 = "44 88 44 24 18 48 89 4C 24 08 55 56 41"
-PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_520 = "44 88 44 24 18 48 89 4C 24 08 55 41"
-
-
-def _patterns(key, patterns):
-    if len(patterns) <= (binary_hash_index := _binary_hash_index()):
-        module_data.FUNC_PATTERNS[key] = patterns[-1]
-    else:
-        module_data.FUNC_PATTERNS[key] = patterns[binary_hash_index]
-
-
-# endregion
-
-
-def _binary_hash_index() -> int:
-    # get the index of current hash
-    return list(KNOWN_BINARY_HASH.keys()).index(pymhf_internal.BINARY_HASH)
-
-
+# dynamically import for selected version
 KNOWN_BINARY_HASH = {
     "014f5fd1837e2bd8356669b92109fd3add116137": "4.13",  # (GOG.dev)
     "239fac0224333873c733c4e5b4d9694ea6cc0b41": "5.20",  # (GOG.com)
     "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2": "5.61",  # (GOG.com)
 }
-if pymhf_internal.BINARY_HASH in KNOWN_BINARY_HASH:
-    _class_fields(cGcProductData, [
-        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_413,
-        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_520,
-        STRUCTS_FIELDS_OFFSETS_PRODUCTDATA_561,
-    ])
-    _class_fields(cGcRealityManager, [
-        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_413,
-        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_520,
-        STRUCTS_FIELDS_OFFSETS_REALITYMANAGER_561,
-    ])
-    _class_fields(cGcStatsBonus, [
-        STRUCTS_FIELDS_OFFSETS_STATSBONUS_413,
-        STRUCTS_FIELDS_OFFSETS_STATSBONUS_520,
-        STRUCTS_FIELDS_OFFSETS_STATSBONUS_520,
-    ])
-    _class_fields(cGcTechnology, [
-        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_413,
-        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520,
-        STRUCTS_FIELDS_OFFSETS_TECHNOLOGY_520,
-    ])
-
-    _call_sigs("cTkLanguageManagerBase::Load", [
-        nms_call_sigs.FUNC_CALL_SIGS["cTkLanguageManagerBase::Load"],
-        FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520,
-        FUNCDEFS_LANGUAGEMANAGERBASE_LOAD_520,
-    ])
-
-    _patterns("cTkLanguageManagerBase::Load", [
-        PATTERNS_LANGUAGEMANAGERBASE_LOAD_413,
-        PATTERNS_LANGUAGEMANAGERBASE_LOAD_520,
-    ])
-    _patterns("cGcRealityManager::Construct", [
-        PATTERNS_REALITYMANAGER_CONSTRUCT_413,
-        PATTERNS_REALITYMANAGER_CONSTRUCT_520,
-        PATTERNS_REALITYMANAGER_CONSTRUCT_561,
-    ])
-    _patterns("cGcRealityManager::GenerateProceduralProduct", [
-        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_413,
-        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALPRODUCT_520,
-    ])
-    _patterns("cGcRealityManager::GenerateProceduralTechnology", [
-        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_413,
-        PATTERNS_REALITYMANAGER_GENERATEPROCEDURALTECHNOLOGY_520,
-    ])
-
-    enums = [
-        nms_enums.eStatsType,
-        eStatsType_520,
-        eStatsType_561,
-    ]
-    eStatsType = enums[_binary_hash_index()]
-
-    # TODO: can be removed when NMS.py is updated to run with newer pyMHF
-    # required as module_data of NMS.py are not carried over to pyMHF
-    _call_sigs("cGcRealityManager::Construct", [
-        nms_call_sigs.FUNC_CALL_SIGS["cGcRealityManager::Construct"],
-    ])
-    _call_sigs("cGcRealityManager::GenerateProceduralProduct", [
-        nms_call_sigs.FUNC_CALL_SIGS["cGcRealityManager::GenerateProceduralProduct"],
-    ])
-    _call_sigs("cGcRealityManager::GenerateProceduralTechnology", [
-        nms_call_sigs.FUNC_CALL_SIGS["cGcRealityManager::GenerateProceduralTechnology"],
-    ])
-    _call_sigs("cTkFSMState::StateChange", [
-        nms_call_sigs.FUNC_CALL_SIGS["cTkFSMState::StateChange"],
-    ])
-
-    _patterns("cTkFSMState::StateChange", [
-        nms_patterns.FUNC_PATTERNS["cTkFSMState::StateChange"],
-    ])
-
-# endregion
+try:
+    nms_enums = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.enums")
+    nms_types = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.types")
+except ImportError as e:
+    # TODO replace , with \n with newer Python version
+    supported = ", ".join(f"{version} ({sha1})" for sha1, version in KNOWN_BINARY_HASH.items())
+    message = f"Executable is not supported. This mod only works with the following GOG.com versions: {supported}"
+    logger.critical(message)
+    raise e
+except Exception as e:
+    message = f"Error while importing specific version data: {e}"
+    logger.critical(message)
+    raise e
 
 
 # region Configuration
 
 FREE_MEMORY_STEPS = 250  # multiple of it should be TOTAL_SEEDS
+
+PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..")  # use Pi root directory as starting point
 
 TOTAL_SEEDS = 100000
 
@@ -731,26 +131,6 @@ TRANSFORM = {
 
     # endregion
 
-    # region Ship
-
-    "Ship_Weapons_Guns_Damage": [],  # Damage (+???%) > 6.0000176429748535
-    "Ship_Weapons_Guns_Rate": [("-", 1), ("*", 100)],  # Fire Rate (+6%) > 1.0602484941482544 > 6.0248494148254395
-    "Ship_Weapons_Guns_HeatTime": [("-", 1), ("*", 100)],  # Heat Dispersion (+6%) > 1.0629289150238037 > 6.292891502380371
-    "Ship_Weapons_Lasers_Damage": [],  # Damage (+???%) > 60.02950668334961
-    "Ship_Weapons_Lasers_HeatTime": [("-", 1), ("*", 100)],  # Heat Dispersion (+89%) > 1.8867706060409546 > 88.67706060409546
-    "Ship_Weapons_ShieldLeech": [],  # Shield recharge on impact (+???%) > 0.27219414710998535
-    "Ship_Armour_Shield_Strength": [],  # Shield Strength (+???%) > 0.20000000298023224
-    "Ship_Hyperdrive_JumpDistance": [],  # Hyperdrive Range (251 ly) > 250.77337646484375
-    "Ship_Hyperdrive_JumpsPerCell": [("*", 100)],  # Warp Cell Efficiency (+100%) > 1.0 > 100.0
-    "Ship_Launcher_TakeOffCost": [(1, "-"), ("*", 100)],  # Launch Cost (-20%) > 0.800000011920929 > 19.999998807907104
-    "Ship_Launcher_AutoCharge": [],  # Automatic Recharging (Enabled) > 1.0
-    "Ship_PulseDrive_MiniJumpFuelSpending": [(1, "-"), ("*", 100)],  # Pulse Drive Fuel Efficiency (+20%) > 0.800000011920929 > 19.999998807907104
-    "Ship_Boost": [("-", 1), ("*", 100)],  # Boost (+14%) > 1.1405895948410034 > 14.058959484100342
-    "Ship_Maneuverability": [],  # Maneuverability (???) > 1.006500005722046
-    "Ship_BoostManeuverability": [("-", 1), ("*", 100)],  # Maneuverability (+10%) > 1.1019220352172852 > 10.192203521728516
-
-    # endregion
-
     # region Freighter
 
     "Freighter_Hyperdrive_JumpDistance": [],  # Hyperdrive Range (230 ly) > 229.639404296875
@@ -778,93 +158,47 @@ TRANSFORM = {
     "Vehicle_GunRate": [(1, "-"), ("*", 100)],  # Rate of Fire (+9%) > 0.9060062170028687 > 9.399378299713135
 
     # endregion
+
+    # region Ship
+
+    "Ship_Weapons_Guns_Damage": [],  # Damage (+???%) > 6.0000176429748535
+    "Ship_Weapons_Guns_Rate": [("-", 1), ("*", 100)],  # Fire Rate (+6%) > 1.0602484941482544 > 6.0248494148254395
+    "Ship_Weapons_Guns_HeatTime": [("-", 1), ("*", 100)],  # Heat Dispersion (+6%) > 1.0629289150238037 > 6.292891502380371
+    "Ship_Weapons_Lasers_Damage": [],  # Damage (+???%) > 60.02950668334961
+    "Ship_Weapons_Lasers_HeatTime": [("-", 1), ("*", 100)],  # Heat Dispersion (+89%) > 1.8867706060409546 > 88.67706060409546
+    "Ship_Weapons_ShieldLeech": [],  # Shield recharge on impact (+???%) > 0.27219414710998535
+    "Ship_Armour_Shield_Strength": [],  # Shield Strength (+???%) > 0.20000000298023224
+    "Ship_Hyperdrive_JumpDistance": [],  # Hyperdrive Range (251 ly) > 250.77337646484375
+    "Ship_Hyperdrive_JumpsPerCell": [("*", 100)],  # Warp Cell Efficiency (+100%) > 1.0 > 100.0
+    "Ship_Launcher_TakeOffCost": [(1, "-"), ("*", 100)],  # Launch Cost (-20%) > 0.800000011920929 > 19.999998807907104
+    "Ship_Launcher_AutoCharge": [],  # Automatic Recharging (Enabled) > 1.0
+    "Ship_PulseDrive_MiniJumpFuelSpending": [(1, "-"), ("*", 100)],  # Pulse Drive Fuel Efficiency (+20%) > 0.800000011920929 > 19.999998807907104
+    "Ship_Boost": [("-", 1), ("*", 100)],  # Boost (+14%) > 1.1405895948410034 > 14.058959484100342
+    "Ship_Maneuverability": [],  # Maneuverability (???) > 1.006500005722046
+    "Ship_BoostManeuverability": [("-", 1), ("*", 100)],  # Maneuverability (+10%) > 1.1019220352172852 > 10.192203521728516
+    "Ship_Cargo_Slots": [],  # Cargo Slots (+3) > 3.0
+    #  TODO verify Ship_Cargo_Slots
+    # endregion
 }
 
 # endregion
 
 # region Data
 
-PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..")  # use Pi root directory as starting point
-
-PRODUCT = [  # ordered by occurrence in GcProceduralProductTable
-    "LOOT",
-    "HIST",
-    "BIO",
-    "FOSS",
-    "PLNT",
-    "TOOL",
-    "FARM",
-    "SEA",
-    "FEAR",
-    "SALV",
-    "BONE",
-    "DARK",
-    "STAR",
-    "EXH",
-
-    # ! No treasure and therefore not really relevant for generating its value.
-    # "PASS",  # FreighterPassword
-    # "CAPT",  # FreighterCaptLog
-    # "CREW",  # FreighterCrewList
-    # "UP_FRHYP",  # FreighterTechHyp
-    # "UP_FRSPE",  # FreighterTechSpeed
-    # "UP_FRFUE",  # FreighterTechFuel
-    # "UP_FRTRA",  # FreighterTechTrade
-    # "UP_FRCOM",  # FreighterTechCombat
-    # "UP_FRMIN",  # FreighterTechMine
-    # "UP_FREXP",  # FreighterTechExp
-    # "LUMP",  # DismantleBio
-    # "COG",   # DismantleTech
-    # "DATA",  # DismantleData
-    # "BOTT",  # MessageInBottle
-]
-
 RE_PRODUCT_AGE = re.compile("((?=[^,.\n]*\d)[0-9,.]+)")  # may contain thousands separators, but must contain at least one digit
 
 TECHNOLOGY = {
-    "AlienShip": {
-        "UA_HYP": ["1", "2", "3", "4"],
-        "UA_LAUN": ["1", "2", "3", "4"],
-        "UA_PULSE": ["1", "2", "3", "4"],
-        "UA_S_SHL": ["1", "2", "3", "4"],
-        "UA_SGUN": ["1", "2", "3", "4"],
-        "UA_SLASR": ["1", "2", "3", "4"],
-    },
-    "Exocraft": {
-        "UP_BOOST": ["1", "2", "3", "4"],
-        "UP_EXENG": ["1", "2", "3", "4"],
-        "UP_EXGUN": ["1", "2", "3", "4"],
-        "UP_EXLAS": ["1", "2", "3", "4"],
-    },
-    "Freighter": {
-        "UP_FRCOM": ["1", "2", "3", "4"],
-        "UP_FREXP": ["1", "2", "3", "4"],
-        "UP_FRFUE": ["1", "2", "3", "4"],
-        "UP_FRHYP": ["1", "2", "3", "4"],
-        "UP_FRMIN": ["1", "2", "3", "4"],
-        "UP_FRSPE": ["1", "2", "3", "4"],
-        "UP_FRTRA": ["1", "2", "3", "4"],
-    },
-    "Mech": {
-        "UP_MCENG": ["2", "3", "4"],
-        "UP_MCGUN": ["2", "3", "4"],
-        "UP_MCLAS": ["2", "3", "4"],
-        "UP_MFIRE": ["2", "3", "4"],
-    },
-    "Ship": {
-        "UP_HYP": ["0", "1", "2", "3", "4", "X"],
-        "UP_LAUN": ["0", "1", "2", "3", "4", "X"],
-        "UP_PULSE": ["0", "1", "2", "3", "4", "X"],
-        "UP_S_SHL": ["0", "1", "2", "3", "4", "X"],
-        "UP_SBLOB": ["1", "2", "3", "4", "X"],
-        "UP_SGUN": ["0", "1", "2", "3", "4", "X"],
-        "UP_SLASR": ["1", "2", "3", "4", "X"],
-        "UP_SMINI": ["1", "2", "3", "4", "X"],
-        "UP_SSHOT": ["1", "2", "3", "4", "X"],
-    },
-    "Submarine": {
-        "UP_EXSUB": ["1", "2", "3", "4"],
-        "UP_SUGUN": ["1", "2", "3", "4"],
+    "Weapon": {
+        "UP_BOLT": ["0", "1", "2", "3", "4", "X"],
+        "UP_CANN": ["1", "2", "3", "4", "X"],
+        "UP_GREN": ["1", "2", "3", "4", "X"],
+        "UP_LASER": ["0", "1", "2", "3", "4", "X"],
+        "UP_RAIL": ["1", "2", "3", "4", "X"],
+        "UP_SCAN": ["0", "1", "2", "3", "4", "X"],
+        "UP_SENGUN": [""],
+        "UP_SHOT": ["1", "2", "3", "4", "X"],
+        "UP_SMG": ["1", "2", "3", "4", "X"],
+        "UP_TGREN": ["1", "2", "3", "4", "X"],
     },
     "Suit": {
         "UP_COLD": ["1", "2", "3"],
@@ -879,113 +213,69 @@ TECHNOLOGY = {
         "UP_TOX": ["1", "2", "3"],
         "UP_UNW": ["1", "2", "3"],
     },
-    "Weapon": {
-        "UP_BOLT": ["0", "1", "2", "3", "4", "X"],
-        "UP_CANN": ["1", "2", "3", "4", "X"],
-        "UP_GREN": ["1", "2", "3", "4", "X"],
-        "UP_LASER": ["0", "1", "2", "3", "4", "X"],
-        "UP_RAIL": ["1", "2", "3", "4", "X"],
-        "UP_SCAN": ["0", "1", "2", "3", "4", "X"],
-        "UP_SENGUN": [""],
-        "UP_SHOT": ["1", "2", "3", "4", "X"],
-        "UP_SMG": ["1", "2", "3", "4", "X"],
-        "UP_TGREN": ["1", "2", "3", "4", "X"],
+    "Freighter": {
+        "UP_FRCOM": ["1", "2", "3", "4"],
+        "UP_FREXP": ["1", "2", "3", "4"],
+        "UP_FRFUE": ["1", "2", "3", "4"],
+        "UP_FRHYP": ["1", "2", "3", "4"],
+        "UP_FRMIN": ["1", "2", "3", "4"],
+        "UP_FRSPE": ["1", "2", "3", "4"],
+        "UP_FRTRA": ["1", "2", "3", "4"],
+    },
+    "Exocraft": {
+        "UP_BOOST": ["1", "2", "3", "4"],
+        "UP_EXENG": ["1", "2", "3", "4"],
+        "UP_EXGUN": ["1", "2", "3", "4"],
+        "UP_EXLAS": ["1", "2", "3", "4"],
+    },
+    "Submarine": {
+        "UP_EXSUB": ["1", "2", "3", "4"],
+        "UP_SUGUN": ["1", "2", "3", "4"],
+    },
+    "Mech": {
+        "UP_MCENG": ["2", "3", "4"],
+        "UP_MCGUN": ["2", "3", "4"],
+        "UP_MCLAS": ["2", "3", "4"],
+        "UP_MFIRE": ["2", "3", "4"],
+    },
+    "AlienShip": {
+        "UA_HYP": ["1", "2", "3", "4"],
+        "UA_LAUN": ["1", "2", "3", "4"],
+        "UA_PULSE": ["1", "2", "3", "4"],
+        "UA_S_SHL": ["1", "2", "3", "4"],
+        "UA_SGUN": ["1", "2", "3", "4"],
+        "UA_SLASR": ["1", "2", "3", "4"],
+    },
+    "Ship": {
+        "UP_HYP": ["0", "1", "2", "3", "4", "X"],
+        "UP_LAUN": ["0", "1", "2", "3", "4", "X"],
+        "UP_PULSE": ["0", "1", "2", "3", "4", "X"],
+        "UP_S_SHL": ["0", "1", "2", "3", "4", "X"],
+        "UP_SBLOB": ["1", "2", "3", "4", "X"],
+        "UP_SGUN": ["0", "1", "2", "3", "4", "X"],
+        "UP_SLASR": ["1", "2", "3", "4", "X"],
+        "UP_SMINI": ["1", "2", "3", "4", "X"],
+        "UP_SSHOT": ["1", "2", "3", "4", "X"],
+    },
+    "Corvette": {
+        "CV_FIT": ["1", "2", "3", "4"],
+        "CV_HYP": ["2", "3"],
+        "CV_INV": ["1", "2", "3", "4"],
+        "CV_LAUN": ["2", "3"],
+        "CV_PULSE": ["2", "3"],
+        "CV_S_SHL": ["2", "3"],
+        "CV_SBLOB": ["3"],
+        "CV_SCI": ["1", "2", "3", "4"],
+        "CV_SGUN": ["3"],
+        "CV_SLASR": ["3"],
+        "CV_SMINI": ["3"],
+        "CV_SROC": ["3"],
+        "CV_SSHOT": ["3"],
+        "CV_TRA": ["1", "2", "3", "4"],
     },
 }
 
 # endregion
-
-# region Helper
-
-
-class Counter(object):
-    def __init__(self, start=0):
-        self.lock = threading.Lock()
-        self.start = start
-        self.value = start
-
-    def __str__(self) -> str:
-        return str(self.value)
-
-    def increment(self):
-        self.lock.acquire()
-        try:
-            self.value += 1
-        finally:
-            self.lock.release()
-
-    def reset(self):
-        self.lock.acquire()
-        try:
-            self.value = self.start
-        finally:
-            self.lock.release()
-
-
-def print_struct_fields(struct: ctypes.Structure, level=0):
-    l = max(len(f) for f, _ in struct._fields_)
-    for field_name, _ in struct._fields_:
-        if field_name.startswith("_"):
-            continue
-
-        try:
-            field = getattr(struct, field_name)
-
-            if isinstance(field, nms_structs_common.cTkDynamicArray):
-                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}} >> {field}")
-                if len(field):
-                    for i, item in enumerate(field.value):
-                        logging.debug(f"{(' ' * 4 * level)}{i:{len(field)}}:")
-                        print_struct_fields(item, level + 1)
-            elif isinstance(field, ctypes.Structure) and str(field).startswith("<"):
-                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}}")
-                print_struct_fields(field, level + 1)
-            else:
-                if field_name.startswith("mb"):
-                    log_value = f"{bool(field)} ({field})"
-                else:
-                    log_value = field
-
-                logging.debug(f"{(' ' * 4 * level)}{field_name:{l}} >> {log_value}")
-        except Exception as e:
-            logging.exception(e)
-
-
-# decorator to wrap an entire method. useful as exceptions raised in mod methods will not be visible otherwise
-def try_except(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            logging.exception(e)
-
-    return wrapper
-
-
-# endregion
-
-# region Translation
-
-LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
-    "Name (en)",
-    "Name (fr)",
-    "Name (it)",
-    "Name (de)",
-    "Name (es)",
-    "Name (ru)",
-    "Name (pl)",
-    "Name (nl)",
-    "Name (pt)",
-    "Name (es-419)",
-    "Name (pt-BR)",
-    "Name (ja)",
-    "Name (zh-Hans)",
-    "Name (zh-Hant)",
-    "Name (ko)",
-]
-
-# endregion
-
 
 # region Changelog
 
@@ -1014,20 +304,33 @@ LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
 # 1.2.1
 #       Updated pyMHF to 0.1.11-dev+7bafefa83f425590c1757b349213432fe0495a80
 
+# 1.3.0
+#       Updated pyMHF to 0.1.16
+#       Updated NMS.py to 147803.1
+#       Added new items from game version 6.00
+
+
+# TODO: add settlement perks
+# TkID<128> *__fastcall cGcSettlementStateManager::GenerateProcPerkId(cGcSettlementStateManager *this, TkID<128> *result, const TkID<128> *lBasePerkId, const unsigned __int64 lBaseSeedValue)
+# cGcSettlementPerkUsefulData *__fastcall cGcFrontendPageSettlementJudgement::ExtractKeyPerkData(cGcFrontendPageSettlementJudgement *this, cGcSettlementPerkUsefulData *result, const TkID<128> lPerkId)
+#   PROC_BAR#12345
+
+
+
 # endregion
 
 
 @dataclass
 class PiModState(ModState):
+    # TODO make executor work again
     # does not work at the moment due to "access violation reading" (a multi threading issue)
     # executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="Pi_Executor")
 
-    language : str = None  # name of column to write the name in, will be set automatically
-    reality_manager : cGcRealityManager = None
+    language = None  # name of column to write the name in, will be set automatically
+    reality_manager = None
 
     is_fully_booted : bool = False
     is_generation_started : bool = False
-    is_reality_manager_constructed : bool = False
 
     product_counter = (Counter(), Counter())  # spawned, finished
     product_counter_total : int = 0
@@ -1043,37 +346,23 @@ class PiModState(ModState):
 
 
 class PiMod(Mod):
-    __NMSPY_required_version__ = "0.7.0"
+    __NMSPY_required_version__ = "146194.0"
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.2.1"
+    __version__ = "1.3.0"
+
+    # region Property
 
     state = PiModState()  # not in __init__ to survive reloading
 
-    # region Construct
-
-    @hooks.cGcRealityManager.Construct.after
-    def hook_reality_manager_construct_after(self, this):
-        logging.debug(f">> Pi: hook_reality_manager_construct_after > {this:X}")
-        self.state.reality_manager = map_struct(this, cGcRealityManager)
-        self.state.is_reality_manager_constructed = True
-
-    # TODO: can be removed when NMS.py is updated to run with newer pyMHF
-    # is necessray as the internal mod is not loaded when launching single-file mods
-    @hooks.cTkFSMState.StateChange.after
-    def state_change(self, this, lNewStateID, lpUserData, lbForceRestart):
-        nms_singleton.state_change(self, this, lNewStateID, lpUserData, lbForceRestart)
-
-    @on_fully_booted
-    def on_fully_booted(self):
-        self.state.is_fully_booted = True
-        logging.info(f">> Pi: The game is now fully booted.")
-
+    @property
+    def is_ready(self):
+        return all([self.state.language, self.state.reality_manager])
 
     # endregion
 
-    # region GUI
+    # region Property (GUI)
 
     @property
     @BOOLEAN(label="Products")
@@ -1113,23 +402,65 @@ class PiMod(Mod):
 
     # endregion
 
-    # region Language
+    # region Construct
 
-    @hooks.cTkLanguageManagerBase.Load.after
-    def hook_language_manager_load_after(self, this, *args):  # args as it does not matter and to avaid multiple signatures
-        logging.debug(f">> Pi: hook_language_manager_load_after")
-        language_manager = map_struct(this, nms_structs.cTkLanguageManagerBase)
-        result = original = language_manager.meRegion
+    @nms_types.cTkLanguageManagerBase.Load.after
+    def language_manager_load_after(self, this: ctypes._Pointer, *args):  # args as it does not matter and to avoid multiple signatures
+        logger.debug(f"hook_language_manager_load_after -> {this}")
+
+        language_manager = map_struct(this, nms_types.cTkLanguageManagerBase)
+        result = original = language_manager.Region
+
+        # treat LR_English and LR_USEnglish as one
         if original == nms_enums.eLanguageRegion.LR_USEnglish:
             result = nms_enums.eLanguageRegion.LR_English
-        if original > 0x1:  # -1 in total
+        if original > nms_enums.eLanguageRegion.LR_USEnglish:
             result -= 1
-        if original > 0xF:  # -2 in total
+        # skip LR_TencentChinese
+        if original > nms_enums.eLanguageRegion.LR_TencentChinese:
             result -= 1
 
         if self.state.language != LANGUAGES[result]:
             self.state.language = LANGUAGES[result]
-            logging.info(f">> Pi: Language is now {original} > {result} > {self.state.language}.")
+            logger.info(f"Language is now '{self.state.language[6:-1]}'")
+
+        self.log_ready_message()
+
+    @nms_types.cGcRealityManager.Construct.after
+    def reality_manager_construct_after(self, this):
+        logger.debug(f"hook_reality_manager_construct_after -> {this}")
+
+        self.state.reality_manager = map_struct(this, nms_types.cGcRealityManager)
+        self.log_ready_message()
+
+    def log_ready_message(self):
+        if self.is_ready:
+            logger.info(f"All required objects have been constructed. You can now start generating.")
+
+    # endregion
+
+    @gui_button("Start Generating")
+    @try_except
+    def start_generating(self):
+        if not all([self.state.language, self.state.reality_manager]):
+            logger.warning(f"Not all required objects have been constructed yet. You may forgot to start the binary or have to wait a few seconds longer until you get the message that everything is ready.")
+            return
+
+        if self.state.is_generation_started:
+            logger.warning(f"Please wait until the currently running generation has finished...")
+            return
+
+        self.state.is_generation_started = True
+
+        if self.product_generation_enabled:
+            self.start_generating_procedural_product()
+        if self.technology_generation_enabled:
+            self.start_generating_procedural_technology()
+
+        # if self.settlement_perk_generation_enabled:
+        #     self.start_generating_procedural_technology()
+
+        self.state.is_generation_started = False
 
     @staticmethod
     def extract_previous_languages(read_rows, seed):
@@ -1141,8 +472,6 @@ class PiMod(Mod):
             }
 
         return {}
-
-    # endregion
 
     # region Read/Write
 
@@ -1180,7 +509,7 @@ class PiMod(Mod):
         with pq.ParquetWriter(f"{f_name}.parquet", schema) as writer:
             try:
                 writer.write_table(table)
-            except pa.lib.ArrowInvalid as e:
+            except pa.lib.ArrowInvalid as e:  # pyright: ignore[reportAttributeAccessIssue]
                 message = str(e)
                 # also stored in CSV and recovered from there until all languages are set
                 if not (message.startswith("Column 'Name (") and message.endswith(")' is declared non-nullable but contains nulls")):
@@ -1188,69 +517,48 @@ class PiMod(Mod):
 
     # endregion
 
-    @gui_button("Start Generating")
-    @try_except
-    def start_generating(self):
-        if pymhf_internal.BINARY_HASH not in KNOWN_BINARY_HASH:
-            logging.error(f">> Pi: The used executable is unknown. This mod only works with the following GOG.com versions: {', '.join(KNOWN_BINARY_HASH.values())}")
-            return
-
-        if not self.state.is_fully_booted:
-            logging.error(f">> Pi: The game is not fully booted yet. Try again after it says it is.")
-            return
-
-        if not all([self.state.is_reality_manager_constructed]):
-            logging.error(f">> Pi: Not all required objects could be constructed. Please ensure all functions are set up correctly, then restart and try again.")
-            return
-
-        if self.state.is_generation_started:
-            logging.warning(f">> Pi: Please wait until the currently running generation has finished...")
-            return
-
-        self.state.is_generation_started = True
-
-        if self.product_generation_enabled:
-            self.start_generating_procedural_product()
-        if self.technology_generation_enabled:
-            self.start_generating_procedural_technology()
-
-        self.state.is_generation_started = False
-
     # region Product
 
     @try_except
     def start_generating_procedural_product(self):
-        self.state.product_counter_total = len(self.state.product_manual or PRODUCT)
+        if self.state.product_manual:
+            products = [
+                ("Product", item_name)
+                for item in self.state.product_manual
+                if (item_name := f"PROC_{item}" if not item.startswith("PROC_") else item) in PRODUCT
+            ]
+        else:
+            products = PRODUCT
+
+        self.state.product_counter_total = len(products)
         self.state.product_start_time = datetime.now()
 
-        logging.info(f">> Pi: Generation for {self.state.product_counter_total} {'PRODUCT' if self.state.product_counter_total == 1 else 'PRODUCTS'} started...")
+        logger.info(f"Generation for {self.state.product_counter_total} {'PRODUCT' if self.state.product_counter_total == 1 else 'PRODUCTS'} started...")
 
-        for item_id in PRODUCT:
-            item_name = f"PROC_{item_id}"
-            if not self.state.product_manual or (item_id in self.state.product_manual) or (item_name in self.state.product_manual):
-                self.state.product_counter[0].increment()
-                # TODO make executor work again
-                # self.state.executor.submit(self.generate_procedural_product, item_name)  # ! access violation reading 0x0000000000000018
-                self.generate_procedural_product(item_name)
+        for category, item_name in products:
+            self.state.product_counter[0].increment()
+            # TODO make executor work again
+            # self.state.executor.submit(self.generate_procedural_product, item_name)  # ! access violation reading 0x0000000000000018
+            self.generate_procedural_product(category, item_name)
 
     @try_except
-    def generate_procedural_product(self, item_name):
+    def generate_procedural_product(self, category, item_name):
         available = True
         item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
         result = []  # result for each seed
 
-        f_name = f"{PI_ROOT}\\Product\\{item_name}"
+        f_name = f"{PI_ROOT}\\{category}\\{item_name}"
 
         read_rows = self.read_existing_file(f_name)
 
         for seed in range(TOTAL_SEEDS):
             pointer = self.state.reality_manager.GenerateProceduralProduct(f"{item_name}#{seed:05}".encode("utf-8"))
             try:
-                generated = map_struct(pointer, cGcProductData)
+                generated = map_struct(pointer, nms_types.cGcProductData)
             except ValueError:
                 available = False
-                logging.warning(f"  ! {item_name} > Product not available in your game version.")  # one space less as warning moves it one to the right
+                logger.warning(f"! {item_name} > Product not available in your game version.")
                 break
 
             # carry over all previous translations
@@ -1274,8 +582,8 @@ class PiMod(Mod):
 
             # update to track meta values
             if not meta:
-                logging.debug(f"     > Age > {row.get('Age')}")
-                logging.debug(f"     > Value > {generated.BaseValue}")
+                logger.debug(f"  > Age > {row.get('Age')}")
+                logger.debug(f"  > Value > {generated.BaseValue}")
                 meta = [generated.BaseValue, generated.BaseValue]
             else:
                 meta = [
@@ -1295,7 +603,7 @@ class PiMod(Mod):
 
             self.write_result(f_name, {"Age": None, "Value": None}, result)
 
-            logging.info(f"   > {item_name} > {datetime.now() - item_start_time}")
+            logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
 
         self.state.product_counter[1].increment()
         self.check_procedural_product_generation_finished()
@@ -1308,7 +616,7 @@ class PiMod(Mod):
 
     def check_procedural_product_generation_finished(self):
         if self.state.product_counter[0].value == self.state.product_counter[1].value == self.state.product_counter_total:
-            logging.info(f">> Pi: PRODUCT generation finished in {datetime.now() - self.state.product_start_time}!")
+            logger.info(f"PRODUCT generation finished in {datetime.now() - self.state.product_start_time}!")
             self.state.product_counter[0].reset()
             self.state.product_counter[1].reset()
 
@@ -1318,63 +626,69 @@ class PiMod(Mod):
 
     @try_except
     def start_generating_procedural_technology(self):
-        self.state.technology_counter_total = (self.state.technology_manual and len([True for inventory_type, items in TECHNOLOGY.items() for item_id, qualities in items.items() for quality in qualities if any((key in self.state.technology_manual) for key in [inventory_type, item_id, f"{item_id}{quality}"])])) or sum(len(qualities) for items in TECHNOLOGY.values() for qualities in items.values())
+        if self.state.technology_manual:
+            technologies = [
+                (inventory_type, item_name)
+                for inventory_type, items in TECHNOLOGY.items()
+                for item_id, qualities in items.items()
+                for quality in qualities
+                if (item_name := f"{item_id}{quality}") and any((key in self.state.technology_manual) for key in [inventory_type.upper(), item_id, item_name])
+            ]
+        else:
+            technologies = [f"{item_id}{quality}" for items in TECHNOLOGY.values() for item_id, qualities in items.items() for quality in qualities]
+
+        self.state.technology_counter_total = len(technologies)
         self.state.technology_start_time = datetime.now()
 
-        logging.info(f">> Pi: Generation for {self.state.technology_counter_total} {'TECHNOLOGY' if self.state.technology_counter_total == 1 else 'TECHNOLOGIES'} started...")
+        logger.info(f"Generation for {self.state.technology_counter_total} {'TECHNOLOGY' if self.state.technology_counter_total == 1 else 'TECHNOLOGIES'} started...")
 
-        for inventory_type, items in TECHNOLOGY.items():
-            for item_id, qualities in items.items():
-                for quality in qualities:
-                    item_name = f"{item_id}{quality}"
-                    if not self.state.technology_manual or any((key in self.state.technology_manual) for key in [inventory_type, item_id, item_name]):
-                        self.state.technology_counter[0].increment()
-                        # TODO make executor work again
-                        # self.state.executor.submit(self.generate_procedural_technology, inventory_type, item_name)  # ! access violation reading
-                        self.generate_procedural_technology(inventory_type, item_name)
+        for inventory_type, item_name in technologies:
+            self.state.technology_counter[0].increment()
+            # TODO make executor work again
+            # self.state.executor.submit(self.generate_procedural_technology, inventory_type, item_name)  # ! access violation reading
+            self.generate_procedural_technology(inventory_type, item_name)
 
     @try_except
-    def generate_procedural_technology(self, inventory_type, item_name):
+    def generate_procedural_technology(self, category, item_name):
         available = True
         item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
         number = 0  # maximum number of unique stats per seed
         result = []  # result for each seed
 
-        f_name = f"{PI_ROOT}\\{inventory_type}\\{item_name}"
+        f_name = f"{PI_ROOT}\\{category}\\{item_name}"
 
         read_rows = self.read_existing_file(f_name)
-
         for seed in range(TOTAL_SEEDS):
             pointer = self.state.reality_manager.GenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"), False)
             try:
-                generated = map_struct(pointer, cGcTechnology)
+                technology = map_struct(pointer, nms_types.cGcTechnology)
             except ValueError:
                 available = False
-                logging.warning(f"  ! {item_name} > Technology not available in your game version.")  # one space less as warning moves it one to the right
+                logger.warning(f"! {item_name} > Technology not available in your game version.")  # one space less as warning moves it one to the right
                 break
 
-            number = max(number, len(generated.StatBonuses.value))
+            number = max(number, len(technology.StatBonuses))
             row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
 
             # add seed and current translation
             row.update({
-                self.state.language: str(generated.NameLower).strip(),  # name for current language
+                self.state.language: str(technology.NameLower).strip(),  # name for current language
                 "Seed": seed,
             })
 
             # update to track meta values
-            for stat_bonus in generated.StatBonuses.value:
-                stat = safe_assign_enum(eStatsType, stat_bonus.Stat._meStatsType).name
-                stat_value = row[stat] = self._transform_value(stat, stat_bonus.Bonus)  # add in-game like value of a stat
+            for stat_bonus in technology.StatBonuses:
+                stat_name = stat_bonus.Stat.StatsType.name
+                stat_value = row[stat_name] = self._transform_value(stat_name, stat_bonus.Bonus)  # add in-game like value of a stat
 
-                if stat not in meta:
-                    logging.debug(f"     > {stat} > {stat_bonus.Bonus} > {stat_value}")  # to see how the value looks
-                    meta[stat] = [stat_value, stat_value]
+                if stat_name not in meta:
+                    logger.debug(f"  > {stat_name} > {stat_bonus.Bonus} > {stat_value}")  # to see how the value looks
+                    meta[stat_name] = [stat_value, stat_value]
                 else:
-                    meta[stat] = [
-                        min(meta[stat][0], stat_value),
-                        max(meta[stat][1], stat_value),
+                    meta[stat_name] = [
+                        min(meta[stat_name][0], stat_value),
+                        max(meta[stat_name][1], stat_value),
                     ]
 
             # add completed row to result
@@ -1417,7 +731,7 @@ class PiMod(Mod):
 
             self.write_result(f_name, meta, result)
 
-            logging.info(f"   > {item_name} > {datetime.now() - item_start_time}")
+            logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
 
         self.state.technology_counter[1].increment()
         self.check_procedural_technology_generation_finished()
@@ -1426,7 +740,7 @@ class PiMod(Mod):
     @staticmethod
     def _transform_value(stat, bonus):
         if stat not in TRANSFORM:
-            logging.warning(f"     > not in TRANSFORM > {stat} > {bonus}")
+            logger.warning(f"  > not in TRANSFORM > {stat} > {bonus}")
 
         for instruction in TRANSFORM.get(stat, []):
             if isinstance(instruction[0], str):  # operator first (bonus - 1)
@@ -1458,12 +772,8 @@ class PiMod(Mod):
 
     def check_procedural_technology_generation_finished(self):
         if self.state.technology_counter[0].value == self.state.technology_counter[1].value == self.state.technology_counter_total:
-            logging.info(f">> Pi: TECHNOLOGY generation finished in {datetime.now() - self.state.technology_start_time}!")
+            logger.info(f"TECHNOLOGY generation finished in {datetime.now() - self.state.technology_start_time}!")
             self.state.technology_counter[0].reset()
             self.state.technology_counter[1].reset()
 
     # endregion
-
-
-if __name__ == "__main__":
-    load_mod_file(__file__)
