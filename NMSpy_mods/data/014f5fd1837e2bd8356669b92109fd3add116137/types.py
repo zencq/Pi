@@ -30,8 +30,9 @@ class cTkLanguageManagerBase(Structure):
     def Region(self):
         return safe_assign_enum(enums.eLanguageRegion, self._Region)
 
-    # search for "LANGUAGE\\%s_%s.MBIN" around the latest offset 0x24D5E90
-    @function_hook(signature="48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20")
+    # search for "LANGUAGE\\%s_%s.MBIN" around the offset
+    # void __fastcall cTkLanguageManagerBase::Load(cTkLanguageManagerBase *this)
+    @function_hook(signature="48 89 5C 24 18 48 89 6C 24 20 57 48 81 EC 20", offset=0x24D5E90)
     def Load(self, this: "ctypes._Pointer[cTkLanguageManagerBase]") -> None:
         pass
 
@@ -42,9 +43,17 @@ class cTkLanguageManagerBase(Structure):
 @partial_struct
 class cGcProductData(Structure):
     # offsets can be taken from https://github.com/monkeyman192/MBINCompiler/blob/v4.12.1-pre1/libMBIN/Source/NMS/GameComponents/GcProductData.cs#L8
-    NameLower: Annotated[str, Field(nms_basic_types.cTkFixedString[0x80], offset=0x90)]
-    Description: Annotated[str, Field(nms_basic_types.cTkDynamicArray[ctypes.c_char], offset=0x120)]
-    BaseValue: Annotated[int, Field(ctypes.c_int32, offset=0x1E4)]
+    _NameLower: Annotated[nms_basic_types.cTkFixedString, Field(nms_basic_types.cTkFixedString[0x80], offset=0x90)]  # ("macNameLower", common.cTkFixedString[0x80]),
+    _Description: Annotated[bytes, Field(ctypes.c_char_p, offset=0x120)]  # ("macDescription", common.cTkDynamicString),
+    BaseValue: Annotated[int, Field(ctypes.c_int32, offset=0x1E4)]  # ("miBaseValue", ctypes.c_int32),
+
+    @property
+    def Description(self) -> str:
+        return self._Description.decode()
+
+    @property
+    def NameLower(self) -> str:
+        return str(self._NameLower).strip()
 
 # endregion
 
@@ -72,31 +81,38 @@ class cGcStatsBonus(Structure):
 @partial_struct
 class cGcTechnology(Structure):
     # offsets can be taken from https://github.com/monkeyman192/MBINCompiler/blob/v4.12.1-pre1/libMBIN/Source/NMS/GameComponents/GcTechnology.cs#L8
-    NameLower: Annotated[str, Field(nms_basic_types.cTkFixedString[0x80], offset=0xB0)]  # ("macNameLower", common.cTkFixedString[0x80]),
+    _NameLower: Annotated[nms_basic_types.cTkFixedString, Field(nms_basic_types.cTkFixedString[0x80], offset=0xB0)]  # ("macNameLower", common.cTkFixedString[0x80]),
     StatBonuses: Annotated[list[cGcStatsBonus], Field(nms_basic_types.cTkDynamicArray[cGcStatsBonus], offset=0x298)]  # ("maStatBonuses", common.cTkDynamicArray[cGcStatsBonus]),
+
+    @property
+    def NameLower(self) -> str:
+        return str(self._NameLower).strip()
 
 
 @partial_struct
 class cGcRealityManager(Structure):
     PendingNewTechnologies: Annotated[list[int], Field(std.vector[ctypes._Pointer[cGcTechnology]], offset=0x238)]  # ("PendingNewTechnologies", std.vector[ctypes.POINTER(cGcTechnology)]),
 
-    # search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the latest offset 0x0BC5AF0
-    @function_hook(signature="48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88")
+    # search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the offset
+    # void __fastcall cGcRealityManager::Construct(cGcRealityManager *this)
+    @function_hook(signature="48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88", offset=0x0BC5AF0)
     def Construct(self, this: "ctypes._Pointer[cGcRealityManager]") -> None:
         pass
 
-    # offset 0x0BCE030
-    @function_hook(signature="48 89 5C 24 08 45 0F")
+    # const TkID<128> *__fastcall cGcRealityManager::GetHashedIDForTech(cGcRealityManager *this, TkID<128> *result, const TkID<128> *lTechID)
+    @function_hook(signature="48 89 5C 24 08 45 0F", offset=0x0BCE030)
     def GetHashedIDForTech(self, this: "ctypes._Pointer[cGcRealityManager]", result: ctypes.c_char_p, lTechID: ctypes.c_char_p) -> ctypes.c_char_p:
         pass
 
-    # search for "ITEMGEN_FORMAT_FREI_PASS" around the latest offset 0x0BCEAE0
-    @function_hook(signature="48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48")
+    # search for "ITEMGEN_FORMAT_FREI_PASS" around the offset
+    # const cGcProductData *__fastcall cGcRealityManager::GenerateProceduralProduct(cGcRealityManager *this, const TkID<128> *lProcProdID)
+    @function_hook(signature="48 89 54 24 10 48 89 4C 24 08 55 53 41 55 48", offset=0x0BCEAE0)
     def GenerateProceduralProduct(self, this: "ctypes._Pointer[cGcRealityManager]", lProcProdID: ctypes.c_char_p) -> ctypes.c_uint64:  # ctypes._Pointer[cGcProductData]:
         pass
 
-    # search for "UI_WIKI_PROC_TECH_SUB" around the latest offset 0x0BD1E00
-    @function_hook(signature="44 88 44 24 18 48 89 4C 24 08 55 56 41")
+    # search for "UI_WIKI_PROC_TECH_SUB" around the offset
+    # const cGcTechnology *__fastcall cGcRealityManager::GenerateProceduralTechnology(cGcRealityManager *this, const TkID<128> *lProcTechID, bool lbExampleForWiki)
+    @function_hook(signature="44 88 44 24 18 48 89 4C 24 08 55 56 41", offset=0x0BD1E00)
     def GenerateProceduralTechnology(self, this: "ctypes._Pointer[cGcRealityManager]", lProcTechID: ctypes.c_char_p, lbExampleForWiki: ctypes.c_bool) -> ctypes.c_uint64:  # ctypes._Pointer[cGcTechnology]:
         pass
 

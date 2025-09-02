@@ -37,6 +37,7 @@ from pymhf.gui import BOOLEAN, STRING, gui_button
 # local
 from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PRODUCT
 from common.decorators import try_except
+from common.helpers import binary_is_602
 from common.objects import Counter
 
 # dynamically import for selected version
@@ -44,9 +45,8 @@ try:
     nms_enums = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.enums")
     nms_types = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.types")
 except ImportError as e:
-    # TODO replace , with \n with newer Python version
     supported = ", ".join(f"{version} ({sha1})" for sha1, version in KNOWN_BINARY_HASH.items())
-    message = f"Executable is not supported. This mod only works with the following GOG.com versions: {supported}"
+    message = f"Executable '{pymhf_internal.BINARY_HASH}' is not supported. This mod only works with the following GOG.com versions: {supported}"
     logger.critical(message)
     raise e
 except Exception as e:
@@ -314,10 +314,6 @@ TECHNOLOGY = {
 
 @dataclass
 class PiModState(ModState):
-    # TODO make executor work again
-    # does not work at the moment due to "access violation reading" (a multi threading issue)
-    # executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="Pi_Executor")
-
     language = None  # name of column to write the name in, will be set automatically
     reality_manager = None
 
@@ -430,7 +426,7 @@ class PiMod(Mod):
 
     @nms_types.cGcRealityManager.Construct.after
     def reality_manager_construct_after(self, this):
-        logger.info(f"hook_reality_manager_construct_after -> {this}")
+        logger.debug(f"hook_reality_manager_construct_after -> {this}")
 
         self.state.reality_manager = map_struct(this, nms_types.cGcRealityManager)
         self.is_ready_execution()
@@ -546,8 +542,6 @@ class PiMod(Mod):
 
         for category, item_name in products:
             self.state.product_counter[0].increment()
-            # TODO make executor work again
-            # self.state.executor.submit(self.generate_procedural_product, item_name)  # ! access violation reading 0x0000000000000018
             self.generate_procedural_product(category, item_name)
 
     @try_except
@@ -564,7 +558,7 @@ class PiMod(Mod):
         for seed in range(TOTAL_SEEDS):
             pointer = self.state.reality_manager.GenerateProceduralProduct(f"{item_name}#{seed:05}".encode("utf-8"))
             try:
-                generated = map_struct(pointer, nms_types.cGcProductData)
+                product = map_struct(pointer, nms_types.cGcProductData)
             except ValueError:
                 available = False
                 logger.warning(f"! {item_name} > Product not available in your game version.")
@@ -575,10 +569,10 @@ class PiMod(Mod):
 
             # add seed and current translation
             row.update({
-                self.state.language: str(generated.NameLower).strip(),  # name for current language
-                "Age": self._get_age(generated.Description),
+                self.state.language: product.NameLower,  # name for current language
+                "Age": self._get_age(product.Description),
                 "Seed": seed,
-                "Value": generated.BaseValue,
+                "Value": product.BaseValue,
             })
 
             # TODO: remove when it got proper name generation
@@ -592,12 +586,12 @@ class PiMod(Mod):
             # update to track meta values
             if not meta:
                 logger.debug(f"  > Age > {row.get('Age')}")
-                logger.debug(f"  > Value > {generated.BaseValue}")
-                meta = [generated.BaseValue, generated.BaseValue]
+                logger.debug(f"  > Value > {product.BaseValue}")
+                meta = [product.BaseValue, product.BaseValue]
             else:
                 meta = [
-                    min(meta[0], generated.BaseValue),
-                    max(meta[1], generated.BaseValue),
+                    min(meta[0], product.BaseValue),
+                    max(meta[1], product.BaseValue),
                 ]
 
             # add completed row to result
@@ -619,7 +613,7 @@ class PiMod(Mod):
 
     @staticmethod
     def _get_age(description) -> int:
-        groups = RE_PRODUCT_AGE.findall(str(description))
+        groups = RE_PRODUCT_AGE.findall(description)
         age = re.sub("[^0-9]", "", groups[0])
         return int(age)
 
@@ -644,7 +638,7 @@ class PiMod(Mod):
                 if (item_name := f"{item_id}{quality}") and any((key in self.state.technology_manual) for key in [inventory_type.upper(), item_id, item_name])
             ]
         else:
-            technologies = [f"{item_id}{quality}" for items in TECHNOLOGY.values() for item_id, qualities in items.items() for quality in qualities]
+            technologies = [(inventory_type, f"{item_id}{quality}") for inventory_type, items in TECHNOLOGY.items() for item_id, qualities in items.items() for quality in qualities]
 
         self.state.technology_counter_total = len(technologies)
         self.state.technology_start_time = datetime.now()
@@ -653,8 +647,6 @@ class PiMod(Mod):
 
         for inventory_type, item_name in technologies:
             self.state.technology_counter[0].increment()
-            # TODO make executor work again
-            # self.state.executor.submit(self.generate_procedural_technology, inventory_type, item_name)  # ! access violation reading
             self.generate_procedural_technology(inventory_type, item_name)
 
     @try_except
@@ -669,7 +661,14 @@ class PiMod(Mod):
 
         read_rows = self.read_existing_file(f_name)
         for seed in range(TOTAL_SEEDS):
-            pointer = self.state.reality_manager.GenerateProceduralTechnology(f"{item_name}#{seed:05}".encode("utf-8"), False)
+            item_encoded = f"{item_name}#{seed:05}".encode("utf-8")
+
+            # signature changed in 6.02 and therefore needs to be called differently
+            if binary_is_602(pymhf_internal.BINARY_HASH):
+                pointer = self.state.reality_manager.GenerateProceduralTechnology(item_encoded, False, b"")
+            else:
+                pointer = self.state.reality_manager.GenerateProceduralTechnology(item_encoded, False)
+
             try:
                 technology = map_struct(pointer, nms_types.cGcTechnology)
             except ValueError:
@@ -682,7 +681,7 @@ class PiMod(Mod):
 
             # add seed and current translation
             row.update({
-                self.state.language: str(technology.NameLower).strip(),  # name for current language
+                self.state.language: technology.NameLower,  # name for current language
                 "Seed": seed,
             })
 
