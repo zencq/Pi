@@ -273,32 +273,32 @@ TECHNOLOGY = {
 
 # 1.1.0
 #       UP_RBSUIT added incl. a warning when an item is not available in the running game
-#       Fixed memory leak thanks to NMS.py version 0.6.5
-#       Removed most of the iteration mode code thanks to the fixed leak and replaced with the possibility to run a single items up to entire inventories
+#       Fix a memory leak thanks to NMS.py version 0.6.5
+#       Remove most of the iteration mode code thanks to the fixed leak and replaced with the possibility to run a single items up to entire inventories
 #       All required structs are now included in NMS.py itself
 #       Use the new executor to execute generation in the background without blocking the game
 #       Use a new hook to toggle product and technology and start via button press
 
 # 1.1.1
-#       Fixed the transformation of raw values that was not triggered due to a mismatch of the data type
-#       Added missing transformation for Weapon_Grenade_Radius and Weapon_Grenade_Speed
+#       Fix the transformation of raw values that was not triggered due to a mismatch of the data type
+#       Add missing transformation for Weapon_Grenade_Radius and Weapon_Grenade_Speed
 
 # 1.2.0
-#       Added new items from game version 5.00, 5.10, and 5.50
-#       Added latin american spanish
-#       Changed chinese language codes
-#       Fixed a bug when using product_manual
-#       Updated to NMS.py 0.7.1 that uses pyMHF 0.1.8 as backend
-#       Additionally add Parquet files as output for better programmatic processing
+#       Add new items from game version 5.00, 5.10, and 5.50
+#       Add latin american spanish
+#       Change chinese language codes
+#       Fix a bug when using product_manual
+#       Update to NMS.py 0.7.1 that uses pyMHF 0.1.8 as backend
+#       Add additional Parquet files as output for better programmatic processing
 
 # 1.2.1
-#       Updated pyMHF to 0.1.11-dev+7bafefa83f425590c1757b349213432fe0495a80
+#       Update pyMHF to 0.1.11-dev+7bafefa83f425590c1757b349213432fe0495a80
 
 # 1.3.0
-#       Updated pyMHF to 0.1.16
-#       Updated NMS.py to 147803.1
-#       Added new items from game version 6.00
-#       Added autostart option
+#       Update pyMHF to 0.1.16
+#       Update NMS.py to 147803.1
+#       Add new items from game version 6.00
+#       Add autostart option
 
 # TODO: add per item_id perfection (min value from lowest class / max C value from highest class )
 
@@ -447,7 +447,7 @@ class PiMod(Mod):
     @gui_button("Start Generating")
     @try_except
     def start_generating(self):
-        if not all([self.state.language, self.state.reality_manager]):
+        if not self.is_ready:
             logger.warning(f"Not all required objects have been constructed yet. Ensure that the binary has been started and you got the message that everything is ready.")
             return
 

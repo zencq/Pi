@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # Pi
-NMSpy_mods/Package.py
 NMSpy_mods/*/
 !NMSpy_mods/common/
 !NMSpy_mods/data/
