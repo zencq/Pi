@@ -85,6 +85,11 @@ class cGcRealityManager(Structure):
     def Construct(self, this: "ctypes._Pointer[cGcRealityManager]") -> None:
         pass
 
+    # offset 0x0D20C40
+    @function_hook(signature="48 89 5C 24 08 45 0F")
+    def GetHashedIDForTech(self, this: "ctypes._Pointer[cGcRealityManager]", result: ctypes.c_char_p, lTechID: ctypes.c_char_p) -> ctypes.c_char_p:
+        pass
+
     # search for "ITEMGEN_FORMAT_FREI_PASS" around the latest offset 0x0D218B0
     @function_hook(signature="48 89 54 24 10 48 89 4C 24 08 55 53 41 54 48")
     def GenerateProceduralProduct(self, this: "ctypes._Pointer[cGcRealityManager]", lProcProdID: ctypes.c_char_p) -> ctypes.c_uint64:  # ctypes._Pointer[cGcProductData]:
@@ -93,11 +98,6 @@ class cGcRealityManager(Structure):
     # search for "UI_WIKI_PROC_TECH_SUB" around the latest offset 0x0D24F40
     @function_hook(signature="44 88 44 24 18 48 89 4C 24 08 55 41")
     def GenerateProceduralTechnology(self, this: "ctypes._Pointer[cGcRealityManager]", lProcTechID: ctypes.c_char_p, lbExampleForWiki: ctypes.c_bool) -> ctypes.c_uint64:  # ctypes._Pointer[cGcTechnology]:
-        pass
-
-    # offset 0x0D20C40
-    @function_hook(signature="48 89 5C 24 08 45 0F")
-    def GetHashedIDForTech(self, this: "ctypes._Pointer[cGcRealityManager]", result: ctypes.c_char_p, lTechID: ctypes.c_char_p) -> ctypes.c_char_p:
         pass
 
 # endregion

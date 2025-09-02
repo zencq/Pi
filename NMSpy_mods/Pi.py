@@ -35,21 +35,11 @@ from pymhf.core.memutils import map_struct
 from pymhf.gui import BOOLEAN, STRING, gui_button
 
 # local
-try:
-    from common.configuration import LANGUAGES, PRODUCT
-    from common.decorators import try_except
-    from common.objects import Counter
-except Exception as e:
-    message = f"Error while importing specific version data: {e}"
-    logger.critical(message)
-    raise e
+from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PRODUCT
+from common.decorators import try_except
+from common.objects import Counter
 
 # dynamically import for selected version
-KNOWN_BINARY_HASH = {
-    "014f5fd1837e2bd8356669b92109fd3add116137": "4.13",  # (GOG.dev)
-    "239fac0224333873c733c4e5b4d9694ea6cc0b41": "5.20",  # (GOG.com)
-    "0969a2aa4e7c025bf99d6e9a807da85a9110fbc2": "5.61",  # (GOG.com)
-}
 try:
     nms_enums = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.enums")
     nms_types = importlib.import_module(f"data.{pymhf_internal.BINARY_HASH}.types")
@@ -308,7 +298,9 @@ TECHNOLOGY = {
 #       Updated pyMHF to 0.1.16
 #       Updated NMS.py to 147803.1
 #       Added new items from game version 6.00
+#       Added autostart option
 
+# TODO: add per item_id perfection (min value from lowest class / max C value from highest class )
 
 # TODO: add settlement perks
 # TkID<128> *__fastcall cGcSettlementStateManager::GenerateProcPerkId(cGcSettlementStateManager *this, TkID<128> *result, const TkID<128> *lBasePerkId, const unsigned __int64 lBaseSeedValue)
@@ -329,18 +321,19 @@ class PiModState(ModState):
     language = None  # name of column to write the name in, will be set automatically
     reality_manager = None
 
-    is_fully_booted : bool = False
+    is_autostart : bool = False
     is_generation_started : bool = False
+    is_ready_posted : bool = False
 
     product_counter = (Counter(), Counter())  # spawned, finished
     product_counter_total : int = 0
-    product_generation_enabled : bool = True
+    product_is_generation_enabled : bool = True
     product_manual : list = None
     product_start_time : datetime = None
 
     technology_counter = (Counter(), Counter())  # spawned, finished
     technology_counter_total : int = 0
-    technology_generation_enabled : bool = True
+    technology_is_generation_enabled : bool = True
     technology_manual : list = None
     technology_start_time : datetime = None
 
@@ -365,13 +358,22 @@ class PiMod(Mod):
     # region Property (GUI)
 
     @property
-    @BOOLEAN(label="Products")
-    def product_generation_enabled(self):
-        return self.state.product_generation_enabled
+    @BOOLEAN(label="Autostart when ready")
+    def is_autostart(self):
+        return self.state.is_autostart
 
-    @product_generation_enabled.setter
-    def product_generation_enabled(self, value: bool):
-        self.state.product_generation_enabled = value
+    @is_autostart.setter
+    def is_autostart(self, value: bool):
+        self.state.is_autostart = value
+
+    @property
+    @BOOLEAN(label="Products")
+    def product_is_generation_enabled(self):
+        return self.state.product_is_generation_enabled
+
+    @product_is_generation_enabled.setter
+    def product_is_generation_enabled(self, value: bool):
+        self.state.product_is_generation_enabled = value
 
     @property
     @STRING(label="Products (overwrite)", hint="any product")
@@ -384,12 +386,12 @@ class PiMod(Mod):
 
     @property
     @BOOLEAN(label="Technologies")
-    def technology_generation_enabled(self):
-        return self.state.technology_generation_enabled
+    def technology_is_generation_enabled(self):
+        return self.state.technology_is_generation_enabled
 
-    @technology_generation_enabled.setter
-    def technology_generation_enabled(self, value: bool):
-        self.state.technology_generation_enabled = value
+    @technology_is_generation_enabled.setter
+    def technology_is_generation_enabled(self, value: bool):
+        self.state.technology_is_generation_enabled = value
 
     @property
     @STRING(label="Technologies (overwrite)", hint="any inventory_type, item_id, and item_name")
@@ -424,18 +426,25 @@ class PiMod(Mod):
             self.state.language = LANGUAGES[result]
             logger.info(f"Language is now '{self.state.language[6:-1]}'")
 
-        self.log_ready_message()
+        self.is_ready_execution()
 
     @nms_types.cGcRealityManager.Construct.after
     def reality_manager_construct_after(self, this):
-        logger.debug(f"hook_reality_manager_construct_after -> {this}")
+        logger.info(f"hook_reality_manager_construct_after -> {this}")
 
         self.state.reality_manager = map_struct(this, nms_types.cGcRealityManager)
-        self.log_ready_message()
+        self.is_ready_execution()
 
-    def log_ready_message(self):
-        if self.is_ready:
-            logger.info(f"All required objects have been constructed. You can now start generating.")
+    def is_ready_execution(self):
+        if self.is_ready and not self.state.is_ready_posted:
+            self.state.is_ready_posted = True
+
+            if self.state.is_autostart:
+                if not self.state.is_generation_started:
+                    logger.info(f"Autostart is enabled. Starting generation now...")
+                    self.start_generating()
+            else:
+                logger.info(f"Everything is ready. You can now start generating.")
 
     # endregion
 
@@ -443,7 +452,7 @@ class PiMod(Mod):
     @try_except
     def start_generating(self):
         if not all([self.state.language, self.state.reality_manager]):
-            logger.warning(f"Not all required objects have been constructed yet. You may forgot to start the binary or have to wait a few seconds longer until you get the message that everything is ready.")
+            logger.warning(f"Not all required objects have been constructed yet. Ensure that the binary has been started and you got the message that everything is ready.")
             return
 
         if self.state.is_generation_started:
@@ -452,9 +461,9 @@ class PiMod(Mod):
 
         self.state.is_generation_started = True
 
-        if self.product_generation_enabled:
+        if self.product_is_generation_enabled:
             self.start_generating_procedural_product()
-        if self.technology_generation_enabled:
+        if self.technology_is_generation_enabled:
             self.start_generating_procedural_technology()
 
         # if self.settlement_perk_generation_enabled:
