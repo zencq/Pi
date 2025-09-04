@@ -13,6 +13,17 @@ from openpyxl.styles import Alignment, Border, Fill, Font, PatternFill, Side, al
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.worksheet import Worksheet
 
+from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT
+
+# pyright: reportArgumentType=false
+# pyright: reportAssignmentType=false
+# pyright: reportAttributeAccessIssue=false
+# pyright: reportCallIssue=false
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportOperatorIssue=false
+# pyright: reportOptionalMemberAccess=false
+# pyright: reportOptionalSubscript=false
+
 
 # region Configuration
 
@@ -33,22 +44,7 @@ VERSION = "5.50"
 
 # region Data
 
-PRODUCT = [
-    "PROC_LOOT",
-    "PROC_HIST",
-    "PROC_BIO",
-    "PROC_FOSS",
-    "PROC_PLNT",
-    "PROC_TOOL",
-    "PROC_FARM",
-    "PROC_SEA",
-    "PROC_FEAR",
-    "PROC_SALV",
-    "PROC_BONE",
-    "PROC_DARK",
-    "PROC_STAR",
-    "PROC_EXH",
-]
+PRODUCT = PRODUCT[:13]  # exclude unused and uninteresting ones
 
 # order here defines how it will be in the generated file
 TECHNOLOGY = {
@@ -66,7 +62,7 @@ TECHNOLOGY = {
         "UP_HOT": ["3"],
     },
 
-    "Ship": {
+    "AllShipsExceptAlien": {
         "UP_PULSE": ["X", "4"],
         "UP_LAUN": ["X", "4"],
         "UP_HYP": ["X", "4"],
@@ -84,6 +80,23 @@ TECHNOLOGY = {
         "UA_S_SHL": ["4"],
         "UA_SGUN": ["4"],
         "UA_SLASR": ["4"],
+    },
+    # print all that are currently used as they get added automatically
+    "Corvette": {
+        "CV_PULSE": ["2", "3"],
+        "CV_LAUN": ["2"],
+        "CV_HYP": ["3"],
+        "CV_S_SHL": ["2"],
+        "CV_SGUN": ["3"],
+        "CV_SROC": ["3"],
+        "CV_SLASR": ["3"],
+        "CV_SSHOT": ["3"],
+        # "CV_SMINI": [],  # currently not used
+        # "CV_SBLOB": [],  # currently not used
+        "CV_FIT": ["1", "3"],
+        "CV_SCI": ["3"],
+        "CV_TRA": ["3"],
+        "CV_INV": ["1", "2"],
     },
 
     "Weapon": {
@@ -111,9 +124,9 @@ TECHNOLOGY = {
     },
     "Mech": {
         "UP_MCLAS": ["4"],
+        "UP_MFIRE": ["4"],
         "UP_MCGUN": ["4"],
         "UP_MCENG": ["4"],
-        "UP_MFIRE": ["4"],
     },
 
     "Freighter": {
@@ -152,35 +165,19 @@ FONT_BOLD = Font(bold=True)
 
 # region Translation
 
-LANGUAGES = [  # order defined by game
-    "Name (en)",
-    "Name (fr)",
-    "Name (it)",
-    "Name (de)",
-    "Name (es)",
-    "Name (ru)",
-    "Name (pl)",
-    "Name (nl)",
-    "Name (pt)",
-    "Name (es-419)",
-    "Name (pt-BR)",
-    "Name (ja)",
-    "Name (zh-Hans)",
-    "Name (zh-Hant)",
-    "Name (ko)",
-]
-
 TRANSLATION = {
     # Inventories
 
-    "AlienShip": "Starship (Living)",
     "Ship": "Starship (Regular)",
-    "Suit": "Exosuit",
     "Weapon": "Multi-Tool",
+    "Suit": "Exosuit",
+    "Freighter": "Freighter",
     "Exocraft": "Exocraft",
     "Submarine": "Submarine (Nautilon)",
     "Mech": "Mech (Minotaur)",
-    "Freighter": "Freighter",
+    "AlienShip": "Starship (Living)",
+    "AllShipsExceptAlien": "Starship (Mechanical)",
+    "Corvette": "Starship (Corvette)",
 
     # Products
 
@@ -265,6 +262,7 @@ TRANSLATION = {
     "Ship_Boost": "Boost",
     "Ship_Maneuverability": "Maneuverability",
     "Ship_BoostManeuverability": "Boost Maneuverability",
+    "Ship_Cargo_Slots": "Cargo Slots",
 
     "Freighter_Hyperdrive_JumpDistance": "Hyperdrive Range",
     "Freighter_Hyperdrive_JumpsPerCell": "Warp Cell Efficiency",
@@ -288,66 +286,83 @@ TRANSLATION = {
 
     # Technologies
 
-    "UP_COLD": "Cold Protection",
+    "UP_LASER": "Mining Beam",
+    "UP_SCAN": "Analysis Visor",
+    "UP_BOLT": "Boltcaster",
+    "UP_GREN": "Plasma Launcher",
+    "UP_TGREN": "Geology Cannon",
+    "UP_RAIL": "Blaze Javelin",
+    "UP_SHOT": "Scatter Blaster",
+    "UP_SMG": "Pulse Spitter",
+    "UP_CANN": "Neutron Cannon",
+    "UP_SENGUN": "Sentinel Weapons Shard",
+
     "UP_ENGY": "Life Support",
     "UP_HAZ": "Hazard Protection",
-    "UP_HOT": "Heat Protection",
     "UP_JET": "Movement System",
-    "UP_RAD": "Radiation Protection",
     "UP_SHLD": "Defence Systems",
     "UP_SNSUIT": "Sentinel Exosuit Fragment",
     "UP_RBSUIT": "Rebuilt Exosuit Module",
-    "UP_TOX": "Toxic Protection",
     "UP_UNW": "Aeration Membrane",
+    "UP_RAD": "Radiation Protection",
+    "UP_TOX": "Toxic Protection",
+    "UP_COLD": "Cold Protection",
+    "UP_HOT": "Heat Protection",
 
-    "UP_HYP": "Hyperdrive",
-    "UP_LAUN": "Launch Thruster",
-    "UP_PULSE": "Pulse Engine",
-    "UP_S_SHL": "Deflector Shield",
-    "UP_SBLOB": "Cyclotron Ballista",
-    "UP_SGUN": "Photon Cannon",
-    "UP_SLASR": "Phase Beam",
-    "UP_SMINI": "Infra-Knife Accelerator",
-    "UP_SSHOT": "Positron Ejector",
+    "UP_FRHYP": "Freighter Hyperdrive",
+    "UP_FRSPE": "Expedition Speed Control",
+    "UP_FRFUE": "Expedition Efficiency Control",
+    "UP_FRCOM": "Expedition Defenses Control",
+    "UP_FRTRA": "Expedition Trade Control",
+    "UP_FREXP": "Expedition Scientific Control",
+    "UP_FRMIN": "Expedition Mining Control",
 
-    "UA_HYP": "Singularity Cortex",
-    "UA_LAUN": "Neural Assembly",
-    "UA_PULSE": "Pulsing Heart",
-    "UA_S_SHL": "Scream Suppressor",
-    "UA_SGUN": "Spewing Vents",
-    "UA_SLASR": "Grafted Eyes",
-
-    "UP_BOLT": "Boltcaster",
-    "UP_CANN": "Neutron Cannon",
-    "UP_GREN": "Plasma Launcher",
-    "UP_LASER": "Mining Beam",
-    "UP_RAIL": "Blaze Javelin",
-    "UP_SCAN": "Analysis Visor",
-    "UP_SENGUN": "Sentinel Weapons Shard",
-    "UP_SHOT": "Scatter Blaster",
-    "UP_SMG": "Pulse Spitter",
-    "UP_TGREN": "Geology Cannon",
-
-    "UP_BOOST": "Exocraft Boosters",
-    "UP_EXENG": "Fusion Engine",
     "UP_EXGUN": "Mounted Cannon",
     "UP_EXLAS": "Exocraft Mining Laser",
+    "UP_BOOST": "Exocraft Boosters",
+    "UP_EXENG": "Fusion Engine",
 
     "UP_EXSUB": "Humboldt Drive",
     "UP_SUGUN": "Nautilon Cannon",
 
-    "UP_MCENG": "Daedalus Engine",
-    "UP_MCGUN": "Minotaur Cannon",
     "UP_MCLAS": "Minotaur Laser",
     "UP_MFIRE": "Minotaur Flamethrower",
+    "UP_MCGUN": "Minotaur Cannon",
+    "UP_MCENG": "Daedalus Engine",
 
-    "UP_FRCOM": "Expedition Defenses Control",
-    "UP_FREXP": "Expedition Scientific Control",
-    "UP_FRFUE": "Expedition Efficiency Control",
-    "UP_FRHYP": "Freighter Hyperdrive",
-    "UP_FRMIN": "Expedition Mining Control",
-    "UP_FRSPE": "Expedition Speed Control",
-    "UP_FRTRA": "Expedition Trade Control",
+    "UA_PULSE": "Pulsing Heart",
+    "UA_LAUN": "Neural Assembly",
+    "UA_HYP": "Singularity Cortex",
+    "UA_S_SHL": "Scream Suppressor",
+    "UA_SGUN": "Spewing Vents",
+    "UA_SLASR": "Grafted Eyes",
+
+    "UP_PULSE": "Pulse Engine",
+    "UP_LAUN": "Launch Thruster",
+    "UP_HYP": "Hyperdrive",
+    "UP_S_SHL": "Deflector Shield",
+    "UP_SGUN": "Photon Cannon",
+    "UP_SLASR": "Phase Beam",
+    "UP_SSHOT": "Positron Ejector",
+    "UP_SMINI": "Infra-Knife Accelerator",
+    "UP_SBLOB": "Cyclotron Ballista",
+
+    "CV_PULSE": "Pulse Engine",
+    "CV_LAUN": "Launch Thruster",
+    "CV_HYP": "Hyperdrive",
+    "CV_S_SHL": "Deflector Shield",
+    "CV_SGUN": "Photon Cannon",
+    "CV_SROC": "Rocket Launcher",
+    "CV_SLASR": "Phase Beam",
+    "CV_SSHOT": "Positron Ejector",
+    "CV_SMINI": "Infra-Knife Accelerator",
+    "CV_SBLOB": "Cyclotron Ballista",
+    "CV_FIT1": "Cockpit",  # BLD_BIG_COK1X2_?_NAME_L
+    "CV_FIT3": "Medusa-Class Reactor",  # BLD_BIG_GEN_1_NAME_L
+    "CV_SCI3": "Azimuth-Class Reactor",  # BLD_BIG_GEN_2_NAME_L
+    "CV_TRA3": "Ceto-Class Reactor",  # BLD_BIG_GEN_3_NAME_L
+    "CV_INV1": "Walkway/Cargo",  # BLD_BIG_HAB1X1_?_NAME_L/BLD_BIG_DECO_?_NAME_L
+    "CV_INV2": "Hab",  # BLD_BIG_HAB1X2_?_NAME_L
 }
 
 
@@ -409,16 +424,19 @@ class Pi():
     def add_technologies(self) -> None:
         for inventory_type, items in TECHNOLOGY.items():
             inventory_translation = _(inventory_type)
-            inventory_sheet = self.sheet_create(inventory_translation)
+            inventory_sheet = None  # generate when needed
 
             for item_id, qualities in items.items():
                 print(inventory_type, item_id)  # to show progress
                 technologies = self.get_technology_with_pandas(inventory_type, item_id, qualities)
-                anchor_coordinate = self.insert_technology(inventory_sheet, item_id, technologies)
-                self.insert_in_overview_sheet(inventory_translation, item_id, target_coordinate=anchor_coordinate)
+                if technologies:
+                    inventory_sheet = inventory_sheet or self.sheet_create(inventory_translation)
+                    anchor_coordinate = self.insert_technology(inventory_sheet, item_id, technologies)
+                    self.insert_in_overview_sheet(inventory_translation, item_id, target_coordinate=anchor_coordinate)
 
-            self.sheet_autofit_column_width(inventory_sheet)
-            self.column_3_set_border_right(inventory_sheet)
+            if inventory_sheet:
+                self.sheet_autofit_column_width(inventory_sheet)
+                self.column_3_set_border_right(inventory_sheet)
 
     @staticmethod
     def get_quality_information(item_name: str) -> tuple:
@@ -539,7 +557,7 @@ class Pi():
         return result[result["Seed"].isin(value[0] for value in subset.values())], max_stats_per_seed, False
 
     @staticmethod
-    def get_stat_column_names_from_dataframe(dataframes: pandas.DataFrame) -> typing.Set[str]:
+    def get_stat_column_names_from_dataframe(dataframes: pandas.DataFrame) -> list[str]:
         if isinstance(dataframes, pandas.DataFrame):
             dataframes = [dataframes]
 
@@ -690,7 +708,7 @@ class Pi():
         if target_coordinate:
             self.cell_set_hyperlink(cell, f"{F_BASE}#'{inventory_translation}'!{target_coordinate}")
 
-    def insert_product(self, sheet: Worksheet, item_name: str, product: pandas.DataFrame) -> str:
+    def insert_product(self, sheet: Worksheet, item_name: str, product: pandas.DataFrame) -> None:
         item_translation = _(item_name)
 
         # insert item_name

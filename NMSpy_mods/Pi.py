@@ -25,6 +25,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Union
 
 logger = logging.getLogger(__name__.lower())
 
@@ -35,7 +36,7 @@ from pymhf.core.memutils import map_struct
 from pymhf.gui import BOOLEAN, STRING, gui_button
 
 # local
-from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PRODUCT
+from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PRODUCT_FREIGHTER_DERELICT, PRODUCT_JUNK, PRODUCT_TREASURE
 from common.decorators import try_except
 from common.helpers import binary_is_602
 from common.objects import Counter
@@ -175,93 +176,99 @@ TRANSFORM = {
 
 # region Data
 
-RE_PRODUCT_AGE = re.compile("((?=[^,.\n]*\d)[0-9,.]+)")  # may contain thousands separators, but must contain at least one digit
+RE_PRODUCT_DESCRIPTION_NUMBER = re.compile("((?=[^,.\n]*\\d)[0-9,.]+)")  # may contain thousands separators, but must contain at least one digit
+RE_PRODUCT_DESCRIPTION_QUOTE = re.compile("„(.*)“")
+RE_PRODUCT_DESCRIPTION_UNREADABLE = re.compile("'{{(.*)}}'")
 
 TECHNOLOGY = {
     "Weapon": {
-        "UP_BOLT": ["0", "1", "2", "3", "4", "X"],
-        "UP_CANN": ["1", "2", "3", "4", "X"],
-        "UP_GREN": ["1", "2", "3", "4", "X"],
         "UP_LASER": ["0", "1", "2", "3", "4", "X"],
-        "UP_RAIL": ["1", "2", "3", "4", "X"],
         "UP_SCAN": ["0", "1", "2", "3", "4", "X"],
-        "UP_SENGUN": [""],
+        "UP_BOLT": ["0", "1", "2", "3", "4", "X"],
+        "UP_GREN": ["1", "2", "3", "4", "X"],
+        "UP_TGREN": ["1", "2", "3", "4", "X"],
+        "UP_RAIL": ["1", "2", "3", "4", "X"],
         "UP_SHOT": ["1", "2", "3", "4", "X"],
         "UP_SMG": ["1", "2", "3", "4", "X"],
-        "UP_TGREN": ["1", "2", "3", "4", "X"],
+        "UP_CANN": ["1", "2", "3", "4", "X"],
+        "UP_SENGUN": [""],
     },
+
     "Suit": {
-        "UP_COLD": ["1", "2", "3"],
         "UP_ENGY": ["0", "1", "2", "3", "X"],
         "UP_HAZ": ["0", "X"],
-        "UP_HOT": ["1", "2", "3"],
         "UP_JET": ["0", "1", "2", "3", "4", "X"],
-        "UP_RAD": ["1", "2", "3"],
-        "UP_RBSUIT": [""],
         "UP_SHLD": ["0", "1", "2", "3", "4", "X"],
         "UP_SNSUIT": [""],
-        "UP_TOX": ["1", "2", "3"],
+        "UP_RBSUIT": [""],
         "UP_UNW": ["1", "2", "3"],
+        "UP_RAD": ["1", "2", "3"],
+        "UP_TOX": ["1", "2", "3"],
+        "UP_COLD": ["1", "2", "3"],
+        "UP_HOT": ["1", "2", "3"],
     },
+
     "Freighter": {
-        "UP_FRCOM": ["1", "2", "3", "4"],
-        "UP_FREXP": ["1", "2", "3", "4"],
-        "UP_FRFUE": ["1", "2", "3", "4"],
         "UP_FRHYP": ["1", "2", "3", "4"],
-        "UP_FRMIN": ["1", "2", "3", "4"],
         "UP_FRSPE": ["1", "2", "3", "4"],
+        "UP_FRFUE": ["1", "2", "3", "4"],
+        "UP_FRCOM": ["1", "2", "3", "4"],
         "UP_FRTRA": ["1", "2", "3", "4"],
+        "UP_FREXP": ["1", "2", "3", "4"],
+        "UP_FRMIN": ["1", "2", "3", "4"],
     },
+
     "Exocraft": {
-        "UP_BOOST": ["1", "2", "3", "4"],
-        "UP_EXENG": ["1", "2", "3", "4"],
         "UP_EXGUN": ["1", "2", "3", "4"],
         "UP_EXLAS": ["1", "2", "3", "4"],
+        "UP_BOOST": ["1", "2", "3", "4"],
+        "UP_EXENG": ["1", "2", "3", "4"],
     },
     "Submarine": {
         "UP_EXSUB": ["1", "2", "3", "4"],
         "UP_SUGUN": ["1", "2", "3", "4"],
     },
     "Mech": {
-        "UP_MCENG": ["2", "3", "4"],
-        "UP_MCGUN": ["2", "3", "4"],
         "UP_MCLAS": ["2", "3", "4"],
         "UP_MFIRE": ["2", "3", "4"],
+        "UP_MCGUN": ["2", "3", "4"],
+        "UP_MCENG": ["2", "3", "4"],
     },
+
     "AlienShip": {
-        "UA_HYP": ["1", "2", "3", "4"],
-        "UA_LAUN": ["1", "2", "3", "4"],
         "UA_PULSE": ["1", "2", "3", "4"],
+        "UA_LAUN": ["1", "2", "3", "4"],
+        "UA_HYP": ["1", "2", "3", "4"],
         "UA_S_SHL": ["1", "2", "3", "4"],
         "UA_SGUN": ["1", "2", "3", "4"],
         "UA_SLASR": ["1", "2", "3", "4"],
     },
-    "Ship": {
-        "UP_HYP": ["0", "1", "2", "3", "4", "X"],
-        "UP_LAUN": ["0", "1", "2", "3", "4", "X"],
+    "AllShipsExceptAlien": {
         "UP_PULSE": ["0", "1", "2", "3", "4", "X"],
+        "UP_LAUN": ["0", "1", "2", "3", "4", "X"],
+        "UP_HYP": ["0", "1", "2", "3", "4", "X"],
         "UP_S_SHL": ["0", "1", "2", "3", "4", "X"],
-        "UP_SBLOB": ["1", "2", "3", "4", "X"],
         "UP_SGUN": ["0", "1", "2", "3", "4", "X"],
         "UP_SLASR": ["1", "2", "3", "4", "X"],
-        "UP_SMINI": ["1", "2", "3", "4", "X"],
         "UP_SSHOT": ["1", "2", "3", "4", "X"],
+        "UP_SMINI": ["1", "2", "3", "4", "X"],
+        "UP_SBLOB": ["1", "2", "3", "4", "X"],
     },
     "Corvette": {
-        "CV_FIT": ["1", "2", "3", "4"],
-        "CV_HYP": ["2", "3"],
-        "CV_INV": ["1", "2", "3", "4"],
-        "CV_LAUN": ["2", "3"],
         "CV_PULSE": ["2", "3"],
+        "CV_LAUN": ["2", "3"],
+        "CV_HYP": ["2", "3"],
         "CV_S_SHL": ["2", "3"],
-        "CV_SBLOB": ["3"],
-        "CV_SCI": ["1", "2", "3", "4"],
         "CV_SGUN": ["3"],
-        "CV_SLASR": ["3"],
-        "CV_SMINI": ["3"],
         "CV_SROC": ["3"],
+        "CV_SLASR": ["3"],
         "CV_SSHOT": ["3"],
+        "CV_SMINI": ["3"],
+        "CV_SBLOB": ["3"],
+        "CV_FIT": ["1", "2", "3", "4"],
+        "CV_SCI": ["1", "2", "3", "4"],
         "CV_TRA": ["1", "2", "3", "4"],
+        "CV_INV": ["1", "2", "3", "4"],
     },
 }
 
@@ -284,7 +291,7 @@ TECHNOLOGY = {
 #       Add missing transformation for Weapon_Grenade_Radius and Weapon_Grenade_Speed
 
 # 1.2.0
-#       Add new items from game version 5.00, 5.10, and 5.50
+#       Add new items from game version 5.0, 5.1, and 5.5
 #       Add latin american spanish
 #       Change chinese language codes
 #       Fix a bug when using product_manual
@@ -297,7 +304,7 @@ TECHNOLOGY = {
 # 1.3.0
 #       Update pyMHF to 0.1.16
 #       Update NMS.py to 147803.1
-#       Add new items from game version 6.00
+#       Add non-treasure products and the new items from game version 6.0
 #       Add autostart option
 
 # TODO: add per item_id perfection (min value from lowest class / max C value from highest class )
@@ -495,14 +502,14 @@ class PiMod(Mod):
     def write_result(f_name: str, meta: dict, result : list[dict]):
         fieldnames = ["Seed", "Perfection"] + sorted(meta.keys()) + LANGUAGES
 
-        # CSV
+        # csv
         with open(f"{f_name}.csv", mode="w", encoding="utf-8", newline="") as f:
             f.write("sep=,\r\n")
             writer = csv.DictWriter(f, fieldnames=fieldnames, dialect="excel")
             writer.writeheader()
             writer.writerows(result)
 
-        # Parquet
+        # parquet
         schema = pa.schema(
             [pa.field('Seed', pa.int32(), nullable=False), pa.field('Perfection', pa.float64(), nullable=False)]
             +
@@ -530,10 +537,13 @@ class PiMod(Mod):
             products = [
                 ("Product", item_name)
                 for item in self.state.product_manual
-                if (item_name := f"PROC_{item}" if not item.startswith("PROC_") else item) in PRODUCT
+                if (item_name := f"PROC_{item}" if not item.startswith("PROC_") else item) in PRODUCT_FREIGHTER_DERELICT or item_name in PRODUCT_JUNK or item_name in PRODUCT_TREASURE
             ]
         else:
-            products = PRODUCT
+            products = [
+                ("Product", item)
+                for item in PRODUCT_FREIGHTER_DERELICT + PRODUCT_JUNK + PRODUCT_TREASURE
+            ]
 
         self.state.product_counter_total = len(products)
         self.state.product_start_time = datetime.now()
@@ -549,6 +559,8 @@ class PiMod(Mod):
         available = True
         item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
+        procedural_description_name = {"PROC_CREW": "Size"}.get(item_name, "Age")
+        procedural_description_used = item_name in PRODUCT_TREASURE or item_name in ["PROC_PASS", "PROC_CREW"]
         result = []  # result for each seed
 
         f_name = f"{PI_ROOT}\\{category}\\{item_name}"
@@ -566,27 +578,26 @@ class PiMod(Mod):
 
             # carry over all previous translations
             row = self.extract_previous_languages(read_rows, seed)
-
-            # add seed and current translation
             row.update({
                 self.state.language: product.NameLower,  # name for current language
-                "Age": self._get_age(product.Description),
                 "Seed": seed,
                 "Value": product.BaseValue,
             })
+            if procedural_description_used:
+                row.update({
+                    procedural_description_name: self._get_procedural_description_value(product.Description),
+                })
 
-            # TODO: remove when it got proper name generation
-            # currently only gets a template name like "%FOSSILADJ% %FOSSILANIMAL% %FOSSILPART%" which do not add any value
-            if item_name == "PROC_EXH":
-                row = {
-                    key: "" if key.startswith("Name (") else value
-                    for key, value in row.items()
-                }
+            # use quote from description as name
+            if item_name == "PROC_BOTT":
+                row.update({
+                    self.state.language: self._get_procedural_description_value(product.Description, mode="BOTT"),
+                })
 
             # update to track meta values
             if not meta:
-                logger.debug(f"  > Age > {row.get('Age')}")
-                logger.debug(f"  > Value > {product.BaseValue}")
+                logger.debug(f"  > {procedural_description_name} > {row.get(procedural_description_name)}")
+                logger.debug(f"  > Value > {row.get('Value')}")
                 meta = [product.BaseValue, product.BaseValue]
             else:
                 meta = [
@@ -604,7 +615,12 @@ class PiMod(Mod):
                     "Perfection": 1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]),
                 })
 
-            self.write_result(f_name, {"Age": None, "Value": None}, result)
+            # add procedural description value if item has one
+            meta_fields = ["Value"]
+            if procedural_description_used:
+                meta_fields.append(procedural_description_name)
+
+            self.write_result(f_name, {key: None for key in meta_fields}, result)
 
             logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
 
@@ -612,10 +628,23 @@ class PiMod(Mod):
         self.check_procedural_product_generation_finished()
 
     @staticmethod
-    def _get_age(description) -> int:
-        groups = RE_PRODUCT_AGE.findall(description)
-        age = re.sub("[^0-9]", "", groups[0])
-        return int(age)
+    def _get_procedural_description_value(text: str, mode="NUMBER") -> Union[str, int, None]:
+        if mode == "NUMBER":
+            groups = RE_PRODUCT_DESCRIPTION_NUMBER.findall(text)
+            if groups:
+                value = re.sub("[^0-9]", "", groups[0])
+                return int(value)
+
+        if mode == "BOTT":
+            groups = RE_PRODUCT_DESCRIPTION_QUOTE.findall(text)
+            if groups:
+                return groups[0]
+
+            groups = RE_PRODUCT_DESCRIPTION_UNREADABLE.findall(text)
+            if groups:
+                return re.sub("<[A-Z_<%]*>", "", groups[0]).strip()
+
+        return None
 
     def check_procedural_product_generation_finished(self):
         if self.state.product_counter[0].value == self.state.product_counter[1].value == self.state.product_counter_total:

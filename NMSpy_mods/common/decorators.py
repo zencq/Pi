@@ -7,6 +7,6 @@ def try_except(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
 
     return wrapper

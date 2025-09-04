@@ -49,7 +49,8 @@ class cGcProductData(Structure):
 
     @property
     def Description(self) -> str:
-        return self._Description.decode()
+        # sometimes an incomplete description and without the strip it fails
+        return self._Description.strip(b"\xc3").decode()
 
     @property
     def NameLower(self) -> str:
