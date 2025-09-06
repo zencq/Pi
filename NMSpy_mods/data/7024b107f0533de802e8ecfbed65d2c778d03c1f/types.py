@@ -49,8 +49,16 @@ class cGcProductData(Structure):
 
     @property
     def Description(self) -> str:
-        # sometimes an incomplete description and without the strip it fails
-        return self._Description.strip(b"\xc3").decode()
+        # sometimes the description is incomplete and needs to be shortened
+        try:
+            return self._Description.decode()
+        except UnicodeDecodeError as e:
+            if "position 510" in str(e):
+                return self._Description[:-1].decode()
+            if "position 509-510" in str(e):
+                return self._Description[:-2].decode()
+
+            raise e
 
     @property
     def NameLower(self) -> str:

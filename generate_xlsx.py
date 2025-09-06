@@ -13,7 +13,7 @@ from openpyxl.styles import Alignment, Border, Fill, Font, PatternFill, Side, al
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.worksheet import Worksheet
 
-from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT
+from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT_TREASURE
 
 # pyright: reportArgumentType=false
 # pyright: reportAssignmentType=false
@@ -43,8 +43,6 @@ VERSION = "5.50"
 # endregion
 
 # region Data
-
-PRODUCT = PRODUCT[:13]  # exclude unused and uninteresting ones
 
 # order here defines how it will be in the generated file
 TECHNOLOGY = {
@@ -412,7 +410,7 @@ class Pi():
         product_sheet.append(["", "Seed", "Perfection", "Age", "Value"])
 
         # insert data
-        for item_name in PRODUCT:
+        for item_name in PRODUCT_TREASURE:
             print("Product", item_name)  # to show progress
             product = self.get_product_with_pandas(item_name)
             self.insert_product(product_sheet, item_name, product)
@@ -700,7 +698,7 @@ class Pi():
 
         column = self.link_settings["column_technology" if is_technology else "column_product"]
         item_translation = _(item_id)
-        row = self.link_settings["row_first"] + (TECHNOLOGY_INDEX.index(item_id) if is_technology else PRODUCT.index(item_id))
+        row = self.link_settings["row_first"] + (TECHNOLOGY_INDEX.index(item_id) if is_technology else PRODUCT_TREASURE.index(item_id))
         sheet = self.workbook["Overview"]
 
         cell = sheet.cell(row=row, column=column, value=f"{inventory_translation}, {item_translation}")

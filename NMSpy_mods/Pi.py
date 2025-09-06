@@ -177,8 +177,7 @@ TRANSFORM = {
 # region Data
 
 RE_PRODUCT_DESCRIPTION_NUMBER = re.compile("((?=[^,.\n]*\\d)[0-9,.]+)")  # may contain thousands separators, but must contain at least one digit
-RE_PRODUCT_DESCRIPTION_QUOTE = re.compile("„(.*)“")
-RE_PRODUCT_DESCRIPTION_UNREADABLE = re.compile("'{{(.*)}}'")
+RE_PRODUCT_DESCRIPTION_QUOTE = re.compile("<[A-Z_<%]*>(.*)<>")
 
 TECHNOLOGY = {
     "Weapon": {
@@ -559,8 +558,8 @@ class PiMod(Mod):
         available = True
         item_start_time = datetime.now()
         meta = {}  # keep track of min/max/weighting for perfection calculation
-        procedural_description_name = {"PROC_CREW": "Size"}.get(item_name, "Age")
-        procedural_description_used = item_name in PRODUCT_TREASURE or item_name in ["PROC_PASS", "PROC_CREW"]
+        procedural_description_is_used = item_name in PRODUCT_TREASURE or item_name in ["PROC_PASS", "PROC_CREW"]
+        procedural_description_value_name = {"PROC_PASS": "Days", "PROC_CREW": "Size"}.get(item_name, "Age")
         result = []  # result for each seed
 
         f_name = f"{PI_ROOT}\\{category}\\{item_name}"
@@ -583,9 +582,9 @@ class PiMod(Mod):
                 "Seed": seed,
                 "Value": product.BaseValue,
             })
-            if procedural_description_used:
+            if procedural_description_is_used:
                 row.update({
-                    procedural_description_name: self._get_procedural_description_value(product.Description),
+                    procedural_description_value_name: self._get_procedural_description_value(product.Description),
                 })
 
             # use quote from description as name
@@ -596,7 +595,7 @@ class PiMod(Mod):
 
             # update to track meta values
             if not meta:
-                logger.debug(f"  > {procedural_description_name} > {row.get(procedural_description_name)}")
+                logger.debug(f"  > {procedural_description_value_name} > {row.get(procedural_description_value_name)}")
                 logger.debug(f"  > Value > {row.get('Value')}")
                 meta = [product.BaseValue, product.BaseValue]
             else:
@@ -617,8 +616,8 @@ class PiMod(Mod):
 
             # add procedural description value if item has one
             meta_fields = ["Value"]
-            if procedural_description_used:
-                meta_fields.append(procedural_description_name)
+            if procedural_description_is_used:
+                meta_fields.append(procedural_description_value_name)
 
             self.write_result(f_name, {key: None for key in meta_fields}, result)
 
@@ -638,11 +637,7 @@ class PiMod(Mod):
         if mode == "BOTT":
             groups = RE_PRODUCT_DESCRIPTION_QUOTE.findall(text)
             if groups:
-                return groups[0]
-
-            groups = RE_PRODUCT_DESCRIPTION_UNREADABLE.findall(text)
-            if groups:
-                return re.sub("<[A-Z_<%]*>", "", groups[0]).strip()
+                return groups[0].strip("\"'„“«»「」”")
 
         return None
 
