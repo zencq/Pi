@@ -35,10 +35,25 @@ HIGH_NUMBER_MULTIPLIER = 3
 OUTDATED = {  # outdated or only available since
     # "UP_CANN": "4.30",  # examples
     # "UP_CANNX": "5.50",
+    "CV_PULSE2": "6.00",
+    "CV_PULSE3": "6.00",
+    "CV_LAUN2": "6.00",
+    "CV_HYP3": "6.00",
+    "CV_S_SHL2": "6.00",
+    "CV_SGUN3": "6.00",
+    "CV_SROC3": "6.00",
+    "CV_SLASR3": "6.00",
+    "CV_SSHOT3": "6.00",
+    "CV_FIT1": "6.00",
+    "CV_FIT3": "6.00",
+    "CV_SCI3": "6.00",
+    "CV_TRA3": "6.00",
+    "CV_INV1": "6.00",
+    "CV_INV2": "6.00",
 }
-RE_LANGUAGE = re.compile("\(([A-Za-z1-9-]+)\)")
+RE_LANGUAGE = re.compile("\\(([A-Za-z1-9-]+)\\)")
 URL = "https://github.com/zencq/Pi"
-VERSION = "5.50"
+VERSION = "5.50.1"
 
 # endregion
 
@@ -79,22 +94,26 @@ TECHNOLOGY = {
         "UA_SGUN": ["4"],
         "UA_SLASR": ["4"],
     },
-    # print all that are currently used as they get added automatically
+    # print all that are currently used as they only get added automatically
+    # as everything should be mentioned individually, make each "class" an entry
     "Corvette": {
-        "CV_PULSE": ["2", "3"],
-        "CV_LAUN": ["2"],
-        "CV_HYP": ["3"],
-        "CV_S_SHL": ["2"],
-        "CV_SGUN": ["3"],
-        "CV_SROC": ["3"],
-        "CV_SLASR": ["3"],
-        "CV_SSHOT": ["3"],
+        "CV_PULSE3": [""],
+        "CV_PULSE2": [""],
+        "CV_LAUN2": [""],
+        "CV_HYP3": [""],
+        "CV_S_SHL2": [""],
+        "CV_SGUN3": [""],
+        "CV_SROC3": [""],
+        "CV_SLASR3": [""],
+        "CV_SSHOT3": [""],
         # "CV_SMINI": [],  # currently not used
         # "CV_SBLOB": [],  # currently not used
-        "CV_FIT": ["1", "3"],
-        "CV_SCI": ["3"],
-        "CV_TRA": ["3"],
-        "CV_INV": ["1", "2"],
+        "CV_FIT1": [""],
+        "CV_FIT3": [""],
+        "CV_SCI3": [""],
+        "CV_TRA3": [""],
+        "CV_INV2": [""],
+        "CV_INV1": [""],
     },
 
     "Weapon": {
@@ -137,7 +156,7 @@ TECHNOLOGY = {
         "UP_FRMIN": ["4"],
     },
 }
-TECHNOLOGY_INDEX = [item_id for _, items in TECHNOLOGY.items() for item_id in items]
+TECHNOLOGY_INDEX = [item_id for items in TECHNOLOGY.values() for item_id in items]
 
 # endregion
 
@@ -345,22 +364,23 @@ TRANSLATION = {
     "UP_SMINI": "Infra-Knife Accelerator",
     "UP_SBLOB": "Cyclotron Ballista",
 
-    "CV_PULSE": "Pulse Engine",
-    "CV_LAUN": "Launch Thruster",
-    "CV_HYP": "Hyperdrive",
-    "CV_S_SHL": "Deflector Shield",
-    "CV_SGUN": "Photon Cannon",
-    "CV_SROC": "Rocket Launcher",
-    "CV_SLASR": "Phase Beam",
-    "CV_SSHOT": "Positron Ejector",
-    "CV_SMINI": "Infra-Knife Accelerator",
-    "CV_SBLOB": "Cyclotron Ballista",
-    "CV_FIT1": "Cockpit",  # BLD_BIG_COK1X2_?_NAME_L
-    "CV_FIT3": "Medusa-Class Reactor",  # BLD_BIG_GEN_1_NAME_L
-    "CV_SCI3": "Azimuth-Class Reactor",  # BLD_BIG_GEN_2_NAME_L
-    "CV_TRA3": "Ceto-Class Reactor",  # BLD_BIG_GEN_3_NAME_L
-    "CV_INV1": "Walkway/Cargo",  # BLD_BIG_HAB1X1_?_NAME_L/BLD_BIG_DECO_?_NAME_L
-    "CV_INV2": "Hab",  # BLD_BIG_HAB1X2_?_NAME_L
+    "CV_PULSE2": "Sublight Thruster/Twin Jets/Pyrodrive Booster",
+    "CV_PULSE3": "Heavy Booster/Kineostream Thruster",
+    "CV_LAUN2": "Landing Gear",
+    "CV_HYP3": "Zenith-Class Reactor",  # single usage
+    "CV_S_SHL2": "Shield Generator",
+    "CV_SGUN3": "Photon Cannon Array",  # single usage
+    "CV_SROC3": "Torpedo Launcher",  # single usage
+    "CV_SLASR3": "Phase Beam Array",  # single usage
+    "CV_SSHOT3": "Deadeye Cannon",  # single usage
+    # "CV_SMINI": "Infra-Knife Accelerator",  # no usage
+    # "CV_SBLOB": "Cyclotron Ballista",  # no usage
+    "CV_FIT1": "Cockpit",
+    "CV_FIT3": "Medusa-Class Reactor",  # single usage
+    "CV_SCI3": "Azimuth-Class Reactor",  # single usage
+    "CV_TRA3": "Ceto-Class Reactor",  # single usage
+    "CV_INV1": "Walkway/Cargo Hull Attachment",
+    "CV_INV2": "Habitation Module",
 }
 
 
@@ -407,14 +427,14 @@ class Pi():
         product_sheet = self.sheet_create("Product")
 
         # insert header
-        product_sheet.append(["", "Seed", "Perfection", "Age", "Value"])
+        product_sheet.append(["", "Seed", "Perfection", "Value"])
 
         # insert data
         for item_name in PRODUCT_TREASURE:
             print("Product", item_name)  # to show progress
             product = self.get_product_with_pandas(item_name)
             self.insert_product(product_sheet, item_name, product)
-            self.insert_in_overview_sheet("Product", item_name)
+            self.insert_in_overview_sheet("Treasure", item_name)
 
         self.sheet_autofit_column_width(product_sheet)
         self.column_3_set_border_right(product_sheet)
@@ -422,15 +442,15 @@ class Pi():
     def add_technologies(self) -> None:
         for inventory_type, items in TECHNOLOGY.items():
             inventory_translation = _(inventory_type)
-            inventory_sheet = None  # generate when needed
+            inventory_sheet = None
 
             for item_id, qualities in items.items():
                 print(inventory_type, item_id)  # to show progress
                 technologies = self.get_technology_with_pandas(inventory_type, item_id, qualities)
-                if technologies:
-                    inventory_sheet = inventory_sheet or self.sheet_create(inventory_translation)
-                    anchor_coordinate = self.insert_technology(inventory_sheet, item_id, technologies)
-                    self.insert_in_overview_sheet(inventory_translation, item_id, target_coordinate=anchor_coordinate)
+                # create even if empty (shows all as not available)
+                inventory_sheet = inventory_sheet or self.sheet_create(inventory_translation)
+                anchor_coordinate = self.insert_technology(inventory_sheet, item_id, technologies)
+                self.insert_in_overview_sheet(inventory_translation, item_id, target_coordinate=anchor_coordinate)
 
             if inventory_sheet:
                 self.sheet_autofit_column_width(inventory_sheet)
@@ -509,7 +529,7 @@ class Pi():
     @staticmethod
     def sheet_autofit_column_width(sheet: Worksheet) -> None:
         for column in sheet.columns:
-            letter = column[0].column_letter
+            letter = next((c for c in column if hasattr(c, "column_letter"))).column_letter
             sheet.column_dimensions[letter].width = max(len(str(cell.value)) for cell in column if "in game version" not in str(cell.value)) + 1
 
     def sheet_create(self, name: str) -> Worksheet:
@@ -660,7 +680,7 @@ class Pi():
             [],
             [],
             [],
-            ["Technologies", "", "", "", "Products"],
+            ["Technologies", "", "", "", "", "", "Products"],
         ]
         for row in overview:
             sheet.append(row)
@@ -680,11 +700,11 @@ class Pi():
         self.cell_set_hyperlink(sheet["B6"], URL)
 
         # merge reference cells as header
-        self.row_max_merge_columns(sheet, 1, 3)  # technology
-        self.row_max_merge_columns(sheet, 5, 8)  # product
+        self.row_max_merge_columns(sheet, 1, 6)  # technology
+        self.row_max_merge_columns(sheet, 7, 9)  # product
 
         # set link for product
-        self.cell_set_hyperlink(sheet.cell(row=sheet.max_row, column=5), f"{F_BASE}#'Product'!A1")
+        self.cell_set_hyperlink(sheet.cell(row=sheet.max_row, column=7), f"{F_BASE}#'Product'!A1")
 
         # store data for to properly add links later
         self.link_settings = {
@@ -693,12 +713,12 @@ class Pi():
             "row_first": len(overview) + 1,
         }
 
-    def insert_in_overview_sheet(self, inventory_translation: str, item_id: str, target_coordinate = None) -> None:
-        is_technology = inventory_translation != "Product"
+    def insert_in_overview_sheet(self, inventory_translation: str, item: str, target_coordinate = None) -> None:
+        is_technology = inventory_translation not in ["Treasure"]
 
         column = self.link_settings["column_technology" if is_technology else "column_product"]
-        item_translation = _(item_id)
-        row = self.link_settings["row_first"] + (TECHNOLOGY_INDEX.index(item_id) if is_technology else PRODUCT_TREASURE.index(item_id))
+        item_translation = _(item)
+        row = self.link_settings["row_first"] + (TECHNOLOGY_INDEX.index(item) if is_technology else PRODUCT_TREASURE.index(item))
         sheet = self.workbook["Overview"]
 
         cell = sheet.cell(row=row, column=column, value=f"{inventory_translation}, {item_translation}")
@@ -723,7 +743,6 @@ class Pi():
                     index_name = row.index(self.language)
                     index_seed = row.index("Seed")
                     index_perfection = row.index("Perfection")
-                    index_age = row.index("Age")
                     index_value = row.index("Value")
                     continue
 
@@ -735,7 +754,6 @@ class Pi():
                     row[index_name],
                     row[index_seed],
                     row[index_perfection],
-                    row[index_age],
                     row[index_value],
                 ])
 
@@ -752,7 +770,7 @@ class Pi():
 
         sheet.append([""])
 
-    def insert_technology(self, sheet: Worksheet, item_id: str, data: typing.Dict[str, pandas.DataFrame]) -> str:
+    def insert_technology(self, sheet: Worksheet, item_id: str, data: dict[(str, int, bool), pandas.DataFrame]) -> str:
         stats_raw = [stat for stat in self.get_stat_column_names_from_dataframe(data.values())]
 
         # insert header
@@ -839,7 +857,7 @@ class Pi():
 
         return pandas.DataFrame()
 
-    def get_technology_with_pandas(self, inventory_type, item_id, qualities: typing.List[str]) -> typing.Dict[str, pandas.DataFrame]:
+    def get_technology_with_pandas(self, inventory_type, item_id, qualities: list[str]) -> dict[(str, int, bool), pandas.DataFrame]:
         result = {}
 
         for i, quality in enumerate(qualities, 1):
