@@ -10,10 +10,12 @@ import pandas
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.styles import Alignment, Border, Fill, Font, PatternFill, Side, alignment, borders, colors, fills, numbers
+from openpyxl.utils import get_column_letter
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.worksheet import Worksheet
 
-from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT_TREASURE
+from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT_TREASURE, PI_ROOT
+from NMSpy_mods.common.helpers import calculate_comparable_perfection
 
 # pyright: reportArgumentType=false
 # pyright: reportAssignmentType=false
@@ -27,8 +29,10 @@ from NMSpy_mods.common.configuration import LANGUAGES, PRODUCT_TREASURE
 
 # region Configuration
 
-F_PATH = os.path.dirname(__file__)
-F_NAME = f"{F_PATH}\\Pi.xlsx"
+COLUMNS_FIRST_STAT = 5
+COLUMNS_MAX = 10
+
+F_NAME = f"{PI_ROOT}\\Pi.xlsx"
 F_BASE = os.path.basename(F_NAME)
 
 HIGH_NUMBER_MULTIPLIER = 3
@@ -427,17 +431,20 @@ class Pi():
         product_sheet = self.sheet_create("Product")
 
         # insert header
-        product_sheet.append(["", "Seed", "Perfection", "Value"])
+        product_sheet.append(["", "", "Individual", "Comparable", ""])  # first line on each product sheet
+        product_sheet.append(["", "Seed", "Perfection", "", "Units"])
+        self.row_max_merge_columns(product_sheet, start_column=3, end_column=4)
 
         # insert data
         for item_name in PRODUCT_TREASURE:
             print("Product", item_name)  # to show progress
-            product = self.get_product_with_pandas(item_name)
+            product = self.get_product_with_pandas("Product", item_name)
+
             self.insert_product(product_sheet, item_name, product)
             self.insert_in_overview_sheet("Treasure", item_name)
 
         self.sheet_autofit_column_width(product_sheet)
-        self.column_3_set_border_right(product_sheet)
+        self.column_set_border_right(product_sheet, COLUMNS_FIRST_STAT - 1)
 
     def add_technologies(self) -> None:
         for inventory_type, items in TECHNOLOGY.items():
@@ -447,14 +454,16 @@ class Pi():
             for item_id, qualities in items.items():
                 print(inventory_type, item_id)  # to show progress
                 technologies = self.get_technology_with_pandas(inventory_type, item_id, qualities)
-                # create even if empty (shows all as not available)
+
                 inventory_sheet = inventory_sheet or self.sheet_create(inventory_translation)
+                inventory_sheet.append(["", "", "Individual", "Comparable"])  # first line on each technology sheet
+
                 anchor_coordinate = self.insert_technology(inventory_sheet, item_id, technologies)
                 self.insert_in_overview_sheet(inventory_translation, item_id, target_coordinate=anchor_coordinate)
 
             if inventory_sheet:
                 self.sheet_autofit_column_width(inventory_sheet)
-                self.column_3_set_border_right(inventory_sheet)
+                self.column_set_border_right(inventory_sheet, COLUMNS_FIRST_STAT - 1)
 
     @staticmethod
     def get_quality_information(item_name: str) -> tuple:
@@ -502,14 +511,14 @@ class Pi():
         cell.style = "Hyperlink"
 
     @staticmethod
-    def column_3_set_border_right(sheet: Worksheet) -> None:
-        for row in sheet.iter_rows(min_row=sheet.min_row, max_row=sheet.max_row - 1, min_col=3, max_col=3):
+    def column_set_border_right(sheet: Worksheet, column: int) -> None:
+        for row in sheet.iter_rows(min_row=sheet.min_row, max_row=sheet.max_row - 1, min_col=column, max_col=column):
             for cell in row:
                 cell.border = BORDER_MIXED if cell.border.bottom.style else BORDER_RIGHT
 
     @staticmethod
     def row_max_set_border_bottom(sheet: Worksheet) -> None:
-        for column in sheet.iter_cols(min_col=sheet.min_row, max_col=9, min_row=sheet.max_row, max_row=sheet.max_row):  # max_col not guaranteed 9
+        for column in sheet.iter_cols(min_col=sheet.min_row, max_col=COLUMNS_MAX, min_row=sheet.max_row, max_row=sheet.max_row):  # max_col not guaranteed 9
             for cell in column:
                 cell.border = BORDER_MIXED if cell.border.right.style else BORDER_BOTTOM
 
@@ -518,7 +527,7 @@ class Pi():
         if not isinstance(fill, Fill):
             fill = PatternFill(fill_type=fills.FILL_SOLID, start_color=fill)
 
-        for column in sheet.iter_cols(min_col=sheet.min_column, max_col=9, min_row=sheet.max_row, max_row=sheet.max_row):  # max_col not guaranteed 9
+        for column in sheet.iter_cols(min_col=sheet.min_column, max_col=COLUMNS_MAX, min_row=sheet.max_row, max_row=sheet.max_row):  # max_col not guaranteed 9
             for cell in column:
                 cell.fill = fill
 
@@ -529,8 +538,22 @@ class Pi():
     @staticmethod
     def sheet_autofit_column_width(sheet: Worksheet) -> None:
         for column in sheet.columns:
-            letter = next((c for c in column if hasattr(c, "column_letter"))).column_letter
-            sheet.column_dimensions[letter].width = max(len(str(cell.value)) for cell in column if "in game version" not in str(cell.value)) + 1
+            length = []
+            letter = next((letter for cell in column if (letter := get_column_letter(cell.column))))
+
+            for cell in column:
+                if cell.value and (value := str(cell.value)) and "in game version" not in value:
+                    if cell.number_format.endswith("%"):
+                        length.append(len(cell.number_format) + 2)  # format is like "0.0%" and the maximum "100.0%"
+                    elif cell.number_format != "General":  # only used for numbers with decimal places
+                        split_format = cell.number_format.rsplit(".", 1)  # second part defines decimal places
+                        split_value = value.rsplit(".", 1)  # first part as a dynamic length
+
+                        length.append(len(split_value[0]) + 1 + len(split_format[-1]))
+                    else:
+                        length.append(len(value))
+
+            sheet.column_dimensions[letter].width = (length and max(length) or 2) + 2  # add padding
 
     def sheet_create(self, name: str) -> Worksheet:
         index = 0 if self.debug else None  # insert at first position to see it w/o clicking
@@ -551,7 +574,7 @@ class Pi():
 
         # add the absolute best per stat. taken from data to include all stats
         for column in columns:
-            best = dataframe_source.sort_values(by=[column, "Perfection", "Seed"], ascending=False).head(1)
+            best = dataframe_source.sort_values(by=[column, "PerfectionSingle", "Seed"], ascending=False).head(1)
             result = pandas.concat([result, best])
 
         # drop duplicates
@@ -579,9 +602,11 @@ class Pi():
         if isinstance(dataframes, pandas.DataFrame):
             dataframes = [dataframes]
 
+        columns_excluded = ("Seed", "Perfection", "Name")
         result = set()
+
         for dataframe in dataframes:
-            result.update({column for column in dataframe if column not in ["Seed", "Perfection"] and not column.startswith("Name")})
+            result.update({column for column in dataframe if not any(column.startswith(excluded) for excluded in columns_excluded)})
 
         return sorted(result)
 
@@ -651,12 +676,12 @@ class Pi():
         dataframe_fill.drop_duplicates(subset="Seed", inplace=True)
 
         if  len(dataframe_fill) > max_rows:
-            return dataframe_fill.sort_values(by=["Perfection", "Seed"], ascending=False)  # just sort here
+            return dataframe_fill.sort_values(by=["PerfectionSingle", "Seed"], ascending=False)  # just sort here
 
         dataframe_remaining = dataframe_source[~dataframe_source["Seed"].isin(dataframe_fill["Seed"].values)]  # is not in
-        head = dataframe_remaining.sort_values(by=["Perfection", "Seed"], ascending=False).head(int(max_rows - len(dataframe_fill)))  # take difference to max_rows
+        head = dataframe_remaining.sort_values(by=["PerfectionSingle", "Seed"], ascending=False).head(int(max_rows - len(dataframe_fill)))  # take difference to max_rows
 
-        return pandas.concat([dataframe_fill, head]).sort_values(by=["Perfection", "Seed"], ascending=False)  # sort by perfection for end result
+        return pandas.concat([dataframe_fill, head]).sort_values(by=["PerfectionSingle", "Seed"], ascending=False)  # sort by perfection for end result
 
     # endregion
 
@@ -724,7 +749,7 @@ class Pi():
         cell = sheet.cell(row=row, column=column, value=f"{inventory_translation}, {item_translation}")
 
         if target_coordinate:
-            self.cell_set_hyperlink(cell, f"{F_BASE}#'{inventory_translation}'!{target_coordinate}")
+            self.cell_set_hyperlink(cell, f"'{inventory_translation}'!{target_coordinate}")
 
     def insert_product(self, sheet: Worksheet, item_name: str, product: pandas.DataFrame) -> None:
         item_translation = _(item_name)
@@ -732,8 +757,7 @@ class Pi():
         # insert item_name
         cell = sheet.cell(row=sheet.max_row + 1, column=1, value=f"{item_translation} ({item_name})")
         # merge columns of row with item_name
-        self.row_max_merge_columns(sheet, 1, 3)
-        self.row_max_merge_columns(sheet, 4, 5)
+        self.row_max_merge_columns(sheet, 1, 4)
         # make item_name bold
         cell.font = FONT_BOLD
 
@@ -742,8 +766,9 @@ class Pi():
                 if i == 0:
                     index_name = row.index(self.language)
                     index_seed = row.index("Seed")
-                    index_perfection = row.index("Perfection")
-                    index_value = row.index("Value")
+                    index_perfection_single = row.index("PerfectionSingle")
+                    index_perfection_comparable = row.index("PerfectionComparable")
+                    index_value = row.index("Units")
                     continue
 
                 if i == 1:  # ignore as it is empty
@@ -753,11 +778,16 @@ class Pi():
                 sheet.append([
                     row[index_name],
                     row[index_seed],
-                    row[index_perfection],
+                    row[index_perfection_single],
+                    row[index_perfection_comparable],
                     row[index_value],
                 ])
 
-                sheet.cell(row=sheet.max_row, column=3).number_format = "0%"  # perfection
+                # perfection
+                sheet.cell(row=sheet.max_row, column=3).number_format = "0%"  # sinlge
+                sheet.cell(row=sheet.max_row, column=4).number_format = "0%"  # comparable
+                # value
+                sheet.cell(row=sheet.max_row, column=5).number_format = "#,##"  # thousands separator
         else:
             # add note that product is not available
             if item_name in OUTDATED:
@@ -766,15 +796,17 @@ class Pi():
                 value = f"This product is not yet available in game version {VERSION}."
 
             self.cell_set_fill_color(sheet.cell(row=sheet.max_row + 1, column=1, value=value), FILL_RED)
-            self.row_max_merge_columns(sheet, 1, 5)
+            self.row_max_merge_columns(sheet, 1, 6)
 
         sheet.append([""])
 
     def insert_technology(self, sheet: Worksheet, item_id: str, data: dict[(str, int, bool), pandas.DataFrame]) -> str:
+        max_stats_per_seed_comparable = 0
         stats_raw = [stat for stat in self.get_stat_column_names_from_dataframe(data.values())]
 
         # insert header
-        sheet.append([f"{_(item_id)} ({item_id})", "Seed", "Perfection"] + [_(stat) for stat in stats_raw])
+        sheet.append([f"{_(item_id)} ({item_id})", "Seed", "Perfection", ""] + [_(stat) for stat in stats_raw])
+        self.row_max_merge_columns(sheet, 3, 4)  # perfection cells
         # cache first row to later add it as reference in the overview sheet
         anchor_cell = sheet.cell(row=sheet.max_row, column=1)
         # make technology name bold
@@ -786,33 +818,39 @@ class Pi():
                 value = f"This technology is not yet available in game version {VERSION} but was added in {OUTDATED[item_id]}."
             else:
                 value = f"This technology is not yet available in game version {VERSION}."
-            self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=4, value=value), FILL_RED)
+            self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=COLUMNS_FIRST_STAT, value=value), FILL_RED)
 
-            sheet.cell(row=sheet.max_row, column=4).alignment = ALIGNMENT_CENTER
-            self.row_max_merge_columns(sheet, 4, 9)
+            sheet.cell(row=sheet.max_row, column=COLUMNS_FIRST_STAT).alignment = ALIGNMENT_CENTER
+            self.row_max_merge_columns(sheet, COLUMNS_FIRST_STAT, COLUMNS_MAX)
         else:
             for (item_name, max_stats_per_seed, is_all_same), dataframe in data.items():
                 quality_translation, colors = self.get_quality_information(item_name)
+                max_stats_per_seed_comparable = max(max_stats_per_seed_comparable, max_stats_per_seed)
 
                 outdated_item = item_id in OUTDATED and item_id or item_name in OUTDATED and item_name
                 if outdated_item:
                     # add note that technology is outdated
-                    sheet.append([quality_translation, "", max_stats_per_seed, f"This technology is outdated in game version {VERSION} as it was changed in {OUTDATED[outdated_item]}."])
+                    sheet.append([quality_translation, "", max_stats_per_seed, max_stats_per_seed_comparable, f"This technology is outdated in game version {VERSION} as it was changed in {OUTDATED[outdated_item]}."])
                     self.row_max_set_fill_color(sheet, colors[1])
-                    self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=4), FILL_RED)
+                    self.cell_set_fill_color(sheet.cell(row=sheet.max_row, column=COLUMNS_FIRST_STAT), FILL_RED)
                 else:
-                    sheet.append([quality_translation, "", max_stats_per_seed, "All seeds are the same." if is_all_same else ""])
+                    sheet.append([quality_translation, "", max_stats_per_seed, max_stats_per_seed_comparable, "All seeds are the same." if is_all_same else ""])
                     self.row_max_set_fill_color(sheet, colors[1])
 
-                sheet.cell(row=sheet.max_row, column=3).alignment = ALIGNMENT_LEFT
-                sheet.cell(row=sheet.max_row, column=4).alignment = ALIGNMENT_CENTER
-                self.row_max_merge_columns(sheet, 4, 9)
+                # perfection
+                sheet.cell(row=sheet.max_row, column=3).alignment = ALIGNMENT_LEFT  # single
+                sheet.cell(row=sheet.max_row, column=4).alignment = ALIGNMENT_LEFT  # comparable
+
+                # area for special stats information
+                sheet.cell(row=sheet.max_row, column=COLUMNS_FIRST_STAT).alignment = ALIGNMENT_CENTER
+                self.row_max_merge_columns(sheet, COLUMNS_FIRST_STAT, COLUMNS_MAX)
 
                 for i, row in enumerate(dataframe_to_rows(dataframe)):
                     if i == 0:
                         index_name = row.index(self.language)
                         index_seed = row.index("Seed")
-                        index_perfection = row.index("Perfection")
+                        index_perfection_single = row.index("PerfectionSingle")
+                        index_perfection_comparable = row.index("PerfectionComparable")
                         index_stats = {stat: row.index(stat) for stat in stats_raw}
                         continue
 
@@ -824,20 +862,23 @@ class Pi():
                         [
                             row[index_name],
                             row[index_seed],
-                            row[index_perfection],
+                            row[index_perfection_single],
+                            row[index_perfection_comparable],
                         ] + [row[index_stats[stat]] for stat in stats_raw]
                     )
                     # style added row
                     if i % 2 == 1:
                         self.row_max_set_fill_color(sheet, colors[0])
 
-                    sheet.cell(row=sheet.max_row, column=3).number_format = "0.000%"
+                    # perfection
+                    sheet.cell(row=sheet.max_row, column=3).number_format = "0.000%"  # single
+                    sheet.cell(row=sheet.max_row, column=4).number_format = "0.000%"  # comparable
 
-                    for column in sheet.iter_cols(min_col=4, max_col=4 + len(stats_raw) - 1, min_row=sheet.max_row, max_row=sheet.max_row):
+                    # add darker color for best value per stat
+                    for column in sheet.iter_cols(min_col=COLUMNS_FIRST_STAT, max_col=COLUMNS_FIRST_STAT + len(stats_raw) - 1, min_row=sheet.max_row, max_row=sheet.max_row):
                         for cell in column:
                             cell.number_format = "#,##0.00000"
-                            # add darker color for best value per stat
-                            if cell.value == dataframe[stats_raw[cell.col_idx - 4]].max():
+                            if cell.value == dataframe[stats_raw[cell.col_idx - COLUMNS_FIRST_STAT]].max():
                                 self.cell_set_fill_color(cell, colors[1])
 
         self.row_max_set_border_bottom(sheet)
@@ -849,11 +890,11 @@ class Pi():
 
     # region Pandas
 
-    def get_product_with_pandas(self, item_name) -> pandas.DataFrame:
-        f_name = f"{F_PATH}\\Product\\{item_name}.parquet"
+    def get_product_with_pandas(self, category, item_name) -> pandas.DataFrame:
+        f_name = f"{PI_ROOT}\\{category}\\{item_name}.parquet"
         if os.path.isfile(f_name):
             data = pandas.read_parquet(f_name)
-            return data[data["Perfection"] == 1.0]
+            return data[data["PerfectionSingle"] == 1.0]
 
         return pandas.DataFrame()
 
@@ -863,7 +904,7 @@ class Pi():
         for i, quality in enumerate(qualities, 1):
             item_name = f"{item_id}{quality}"
 
-            f_name = f"{F_PATH}\\{inventory_type}\\{item_name}.parquet"
+            f_name = f"{PI_ROOT}\\{inventory_type}\\{item_name}.parquet"
             if not os.path.isfile(f_name):
                 continue
 
@@ -916,7 +957,7 @@ class Pi():
                 # add the overall best per stat that is notna if max stats per seed is less than possible stats
                 if available_stats > max_stats_per_seed:
                     for column in columns:
-                        best = dataframe_source[dataframe_source[column].notna()].sort_values(by=["Perfection", "Seed"], ascending=False).head(1)
+                        best = dataframe_source[dataframe_source[column].notna()].sort_values(by=["PerfectionSingle", "Seed"], ascending=False).head(1)
                         f_result = pandas.concat([f_result, best])
 
                     n *= HIGH_NUMBER_MULTIPLIER

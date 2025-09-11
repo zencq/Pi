@@ -9,23 +9,28 @@
 # window_name_override = "NMS.py: Pi"
 # ///
 
+# pyright: reportArgumentType=false
 # pyright: reportAssignmentType=false
+# pyright: reportCallIssue=false
 # pyright: reportMissingImports=false
 
 # built-in
 import csv
 import ctypes
+import glob
 import importlib
+import itertools
 import logging
 import os
+import pandas
 import pyarrow as pa
 import pyarrow.parquet as pq
 import re
 
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Union
+from pandas import DataFrame
+from typing import Any, Iterable, Union
 
 logger = logging.getLogger(__name__.lower())
 
@@ -36,9 +41,9 @@ from pymhf.core.memutils import map_struct
 from pymhf.gui import BOOLEAN, STRING, gui_button
 
 # local
-from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PRODUCT_FREIGHTER_DERELICT, PRODUCT_JUNK, PRODUCT_TREASURE
+from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PI_ROOT, PRODUCT_FREIGHTER_DERELICT, PRODUCT_JUNK, PRODUCT_TREASURE, TOTAL_SEEDS
 from common.decorators import try_except
-from common.helpers import binary_is_602
+from common.helpers import binary_is_602, convert_to_dataframe, get_perfection, get_weighting, read_existing_csv
 from common.objects import Counter
 
 # dynamically import for selected version
@@ -58,11 +63,8 @@ except Exception as e:
 
 # region Configuration
 
+
 FREE_MEMORY_STEPS = 250  # multiple of it should be TOTAL_SEEDS
-
-PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..")  # use Pi root directory as starting point
-
-TOTAL_SEEDS = 100000
 
 TRANSFORM = {
     # region Weapon
@@ -270,6 +272,12 @@ TECHNOLOGY = {
         "CV_INV": ["1", "2", "3", "4"],
     },
 }
+TECHNOLOGY_WITHOUT_QUALITIES = [
+    item_id
+    for _, items in TECHNOLOGY.items()
+    for item_id, qualities in items.items()
+    if len(qualities) == 1 and not qualities[0]  # and empty string
+]
 
 # endregion
 
@@ -473,60 +481,6 @@ class PiMod(Mod):
 
         self.state.is_generation_started = False
 
-    @staticmethod
-    def extract_previous_languages(read_rows, seed):
-        if seed < len(read_rows):  # just in case read file has less rows than expected
-            # add all languages and get previous translations or empty string
-            return {
-                language: read_rows[seed].get(language, "") or ("zh-Hans" in language and read_rows[seed].get("Name (zh-CN)", "")) or ("zh-Hant" in language and read_rows[seed].get("Name (zh-TW)", "")) or ""
-                for language in LANGUAGES
-            }
-
-        return {}
-
-    # region Read/Write
-
-    # read existing file to carry over all previous translations
-    @staticmethod
-    def read_existing_file(f_name: str) -> list:
-        if os.path.isfile(f"{f_name}.csv"):
-            with open(f"{f_name}.csv", mode="r", encoding="utf-8", newline="") as f:
-                f.readline()  # skip first line with delimiter indicator
-                reader = csv.DictReader(f, dialect="excel")
-                return list(reader)
-
-        return []
-
-    @staticmethod
-    def write_result(f_name: str, meta: dict, result : list[dict]):
-        fieldnames = ["Seed", "Perfection"] + sorted(meta.keys()) + LANGUAGES
-
-        # csv
-        with open(f"{f_name}.csv", mode="w", encoding="utf-8", newline="") as f:
-            f.write("sep=,\r\n")
-            writer = csv.DictWriter(f, fieldnames=fieldnames, dialect="excel")
-            writer.writeheader()
-            writer.writerows(result)
-
-        # parquet
-        schema = pa.schema(
-            [pa.field('Seed', pa.int32(), nullable=False), pa.field('Perfection', pa.float64(), nullable=False)]
-            +
-            [pa.field(column, pa.float64()) for column in meta.keys()]
-            +
-            [pa.field(language, pa.string(), nullable=False) for language in LANGUAGES]
-        )
-        table = pa.Table.from_pylist(result, schema=schema)
-        with pq.ParquetWriter(f"{f_name}.parquet", schema) as writer:
-            try:
-                writer.write_table(table)
-            except pa.lib.ArrowInvalid as e:  # pyright: ignore[reportAttributeAccessIssue]
-                message = str(e)
-                # also stored in CSV and recovered from there until all languages are set
-                if not (message.startswith("Column 'Name (") and message.endswith(")' is declared non-nullable but contains nulls")):
-                    raise e
-
-    # endregion
 
     # region Product
 
@@ -552,19 +506,33 @@ class PiMod(Mod):
         for category, item_name in products:
             self.state.product_counter[0].increment()
             self.generate_procedural_product(category, item_name)
+            self.state.product_counter[1].increment()
+
+        self.start_recalculating_comparable_perfection_product()
+        self.check_procedural_product_generation_finished()
+
+    @try_except
+    def start_recalculating_comparable_perfection_product(self):
+        start_time = datetime.now()
+
+        self.calculate_comparable_perfection("Product", "PROC", columns_override=["Units"])
+
+        logger.info(f"> PROC > Calculated comparable perfection in {datetime.now() - start_time}")
 
     @try_except
     def generate_procedural_product(self, category, item_name):
         available = True
         item_start_time = datetime.now()
-        meta = {}  # keep track of min/max/weighting for perfection calculation
         procedural_description_is_used = item_name in PRODUCT_TREASURE or item_name in ["PROC_PASS", "PROC_CREW"]
         procedural_description_value_name = {"PROC_PASS": "Days", "PROC_CREW": "Size"}.get(item_name, "Age")
-        result = []  # result for each seed
+        result : list[dict[str, Any]] = []  # result for each seed
+        stat_name = "Units"
+        stat_number = 1  # always only one (Units)
+        stat_ranges: dict[str, tuple[float, float]] = {}  # keep track of min/max for perfection calculation
 
         f_name = f"{PI_ROOT}\\{category}\\{item_name}"
 
-        read_rows = self.read_existing_file(f_name)
+        read_rows = read_existing_csv(f_name)
 
         for seed in range(TOTAL_SEEDS):
             pointer = self.state.reality_manager.GenerateProceduralProduct(f"{item_name}#{seed:05}".encode("utf-8"))
@@ -575,12 +543,10 @@ class PiMod(Mod):
                 logger.warning(f"! {item_name} > Product not available in your game version.")
                 break
 
-            # carry over all previous translations
-            row = self.extract_previous_languages(read_rows, seed)
+            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
             row.update({
                 self.state.language: product.NameLower,  # name for current language
                 "Seed": seed,
-                "Value": product.BaseValue,
             })
             if procedural_description_is_used:
                 row.update({
@@ -593,38 +559,42 @@ class PiMod(Mod):
                     self.state.language: self._get_procedural_description_value(product.Description, mode="BOTT"),
                 })
 
-            # update to track meta values
-            if not meta:
+            stat_value = row[stat_name] = product.BaseValue
+
+            if stat_name not in stat_ranges:
                 logger.debug(f"  > {procedural_description_value_name} > {row.get(procedural_description_value_name)}")
-                logger.debug(f"  > Value > {row.get('Value')}")
-                meta = [product.BaseValue, product.BaseValue]
+                logger.debug(f"  > {stat_name} > {stat_value}")
+                stat_ranges[stat_name] = (stat_value, stat_value)
             else:
-                meta = [
-                    min(meta[0], product.BaseValue),
-                    max(meta[1], product.BaseValue),
-                ]
+                stat_ranges[stat_name] = (  # tuple
+                    min(stat_ranges[stat_name][0], stat_value),
+                    max(stat_ranges[stat_name][1], stat_value),
+                )
 
             # add completed row to result
             result.append(row)
 
         if available:
+            stat_names = list(stat_ranges.keys())
+            stat_weighting = get_weighting(stat_names, stat_ranges)
+
             # add calculated perfection
             for row in result:
+                # add calculated perfection
+                perfection = get_perfection(row, stat_names, stat_number, stat_ranges, stat_weighting)
                 row.update({
-                    "Perfection": 1.0 - (meta[1] - row["Value"]) / (meta[1] - meta[0]),
+                    "PerfectionSingle": perfection,
+                    "PerfectionComparable": 0.0,  # dummy to make non-nullable column work
                 })
 
             # add procedural description value if item has one
-            meta_fields = ["Value"]
             if procedural_description_is_used:
-                meta_fields.append(procedural_description_value_name)
+                stat_names.append(procedural_description_value_name)
 
-            self.write_result(f_name, {key: None for key in meta_fields}, result)
+            df = convert_to_dataframe(result)
+            self.write_result(f_name, stat_names, df)
 
             logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
-
-        self.state.product_counter[1].increment()
-        self.check_procedural_product_generation_finished()
 
     @staticmethod
     def _get_procedural_description_value(text: str, mode="NUMBER") -> Union[str, int, None]:
@@ -669,21 +639,50 @@ class PiMod(Mod):
 
         logger.info(f"Generation for {self.state.technology_counter_total} {'TECHNOLOGY' if self.state.technology_counter_total == 1 else 'TECHNOLOGIES'} started...")
 
+        cache = ("", "", "")  # trigger, original inventory_type, original item_name
         for inventory_type, item_name in technologies:
+            if cache[0] and not item_name.startswith(cache[0]):
+                self.start_recalculating_comparable_perfection_technology(cache[1], cache[2])
+
+            cache = (item_name[:-1], inventory_type, item_name)  # store latest item to trigger calculation when it changes
+
             self.state.technology_counter[0].increment()
             self.generate_procedural_technology(inventory_type, item_name)
+            self.state.technology_counter[1].increment()
+
+        # always recalculate comparable perfection for last entry
+        self.start_recalculating_comparable_perfection_technology(inventory_type, item_name)
+
+        # print final message and reset counter
+        self.check_procedural_technology_generation_finished()
+
+    @try_except
+    def start_recalculating_comparable_perfection_technology(self, inventory_type, item):
+        # TODO: remove when Corvette items work
+        if inventory_type == "Corvette":
+            return
+
+        if item not in TECHNOLOGY_WITHOUT_QUALITIES:
+             item = item[:-1]  # remove quality
+
+        start_time = datetime.now()
+
+        self.calculate_comparable_perfection(inventory_type, item)
+
+        logger.info(f"> {item} > Calculated comparable perfection in {datetime.now() - start_time}")
 
     @try_except
     def generate_procedural_technology(self, category, item_name):
         available = True
         item_start_time = datetime.now()
-        meta = {}  # keep track of min/max/weighting for perfection calculation
-        number = 0  # maximum number of unique stats per seed
         result = []  # result for each seed
+        stat_number = 0  # maximum number of unique stats per seed
+        stat_ranges = {}  # keep track of min/max for perfection calculation
 
         f_name = f"{PI_ROOT}\\{category}\\{item_name}"
 
-        read_rows = self.read_existing_file(f_name)
+        read_rows = read_existing_csv(f_name)
+
         for seed in range(TOTAL_SEEDS):
             item_encoded = f"{item_name}#{seed:05}".encode("utf-8")
 
@@ -695,15 +694,15 @@ class PiMod(Mod):
 
             try:
                 technology = map_struct(pointer, nms_types.cGcTechnology)
-            except ValueError:
+            except ValueError as e:
                 available = False
+                logger.exception(e)
                 logger.warning(f"! {item_name} > Technology not available in your game version.")  # one space less as warning moves it one to the right
                 break
 
-            number = max(number, len(technology.StatBonuses))
-            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
+            stat_number = max(stat_number, len(technology.StatBonuses))
 
-            # add seed and current translation
+            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
             row.update({
                 self.state.language: technology.NameLower,  # name for current language
                 "Seed": seed,
@@ -714,13 +713,13 @@ class PiMod(Mod):
                 stat_name = stat_bonus.Stat.StatsType.name
                 stat_value = row[stat_name] = self._transform_value(stat_name, stat_bonus.Bonus)  # add in-game like value of a stat
 
-                if stat_name not in meta:
+                if stat_name not in stat_ranges:
                     logger.debug(f"  > {stat_name} > {stat_bonus.Bonus} > {stat_value}")  # to see how the value looks
-                    meta[stat_name] = [stat_value, stat_value]
+                    stat_ranges[stat_name] = [stat_value, stat_value]
                 else:
-                    meta[stat_name] = [
-                        min(meta[stat_name][0], stat_value),
-                        max(meta[stat_name][1], stat_value),
+                    stat_ranges[stat_name] = [
+                        min(stat_ranges[stat_name][0], stat_value),
+                        max(stat_ranges[stat_name][1], stat_value),
                     ]
 
             # add completed row to result
@@ -732,41 +731,21 @@ class PiMod(Mod):
                 self.state.reality_manager.PendingNewTechnologies.clear()
 
         if available:
-            weighting = [stat[1] - stat[0] + 1 for stat in meta.values()]  # max - min + 1
-            weighting_min = min(weighting)
-
-            # add weighting to each stat
-            meta = {key: value + [value[1] - value [0], weighting[i] / weighting_min] for i, (key, value) in enumerate(meta.items())}
+            stat_names = stat_ranges.keys()
+            stat_weighting = get_weighting(stat_names, stat_ranges)
 
             for row in result:
-                perfection = []
-                weighting_total = 0
-
-                # calculate perfection for each seed
-                for stat_name, stat_meta in meta.items():
-                    if stat_name not in row:
-                        continue
-
-                    stat_value = row[stat_name]
-                    weight = stat_meta[3]
-                    weighting_total += weight
-
-                    p = 1.0
-                    if stat_meta[2] > 0:
-                        p -= (stat_meta[1] - stat_value) / stat_meta[2]
-                    perfection.append(p * weight)
-
                 # add calculated perfection
+                perfection = get_perfection(row, stat_names, stat_number, stat_ranges, stat_weighting)
                 row.update({
-                    "Perfection": (sum(perfection) / weighting_total) * (len(perfection) / number),
+                    "PerfectionSingle": perfection,
+                    "PerfectionComparable": 0.0,  # dummy to make non-nullable column work
                 })
 
-            self.write_result(f_name, meta, result)
+            df = convert_to_dataframe(result)
+            self.write_result(f_name, stat_names, df)
 
             logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
-
-        self.state.technology_counter[1].increment()
-        self.check_procedural_technology_generation_finished()
 
     # transform raw value to look more like in-game
     @staticmethod

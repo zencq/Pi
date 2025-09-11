@@ -1,3 +1,13 @@
+import os
+import pyarrow
+
+
+FILE_GENERAL_COLUMNS = {
+    "Seed": pyarrow.int32(),
+    "PerfectionSingle": pyarrow.float64(),
+    "PerfectionComparable": pyarrow.float64(),
+}
+
 KNOWN_BINARY_HASH = {
     "014f5fd1837e2bd8356669b92109fd3add116137": "4.13",  # (GOG.dev)
     "239fac0224333873c733c4e5b4d9694ea6cc0b41": "5.20",  # (GOG.com)
@@ -22,6 +32,8 @@ LANGUAGES = [  # order defined by nms_enums.eLanguageRegion
     "Name (zh-Hant)",
     "Name (ko)",
 ]
+
+PI_ROOT = os.path.realpath(f"{os.path.dirname(__file__)}\\..\\..")  # Pi\\NMSpy_mods\\common
 
 PRODUCT_FREIGHTER_DERELICT = [  # ordered by occurrence in GcProceduralProductTable
     "PROC_PASS",  # FreighterPassword
@@ -59,3 +71,5 @@ PRODUCT_TREASURE = [  # ordered by occurrence in GcProceduralProductTable
     "PROC_STAR",  # SpaceBones
     "PROC_EXH",  # ExhibitFossil
 ]
+
+TOTAL_SEEDS = 100_000
