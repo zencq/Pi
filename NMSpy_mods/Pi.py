@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["pymhf[gui]>=0.1.16", "nmspy>=147803.1", "pyarrow"]
+# dependencies = ["pymhf[gui]>=0.2.0", "nmspy>=152998.0", "pyarrow"]
 #
 # [tool.pymhf]
 # exe = "<path to install dir>/Binaries/NMS.exe"
@@ -15,22 +15,14 @@
 # pyright: reportMissingImports=false
 
 # built-in
-import csv
 import ctypes
-import glob
 import importlib
-import itertools
 import logging
-import os
-import pandas
-import pyarrow as pa
-import pyarrow.parquet as pq
 import re
 
 from dataclasses import dataclass
 from datetime import datetime
-from pandas import DataFrame
-from typing import Any, Iterable, Union
+from typing import Any, Union
 
 logger = logging.getLogger(__name__.lower())
 
@@ -316,6 +308,8 @@ TECHNOLOGY_WITHOUT_QUALITIES = [
 
 # 1.3.1
 #       Fix calls for methods moved to the helpers module
+#       Update pyMHF to 0.2.0
+#       Update NMS.py to 152998.0
 
 # TODO: add settlement perks
 # TkID<128> *__fastcall cGcSettlementStateManager::GenerateProcPerkId(cGcSettlementStateManager *this, TkID<128> *result, const TkID<128> *lBasePerkId, const unsigned __int64 lBaseSeedValue)

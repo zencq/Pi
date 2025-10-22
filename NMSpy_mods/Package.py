@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["pymhf[gui]>=0.1.16", "nmspy>=147803.1"]
+# dependencies = ["pymhf[gui]>=0.2.0", "nmspy>=152998.0"]
 #
 # [tool.pymhf]
 # exe = "<path to install dir>/Binaries/NMS.exe"
@@ -47,44 +47,6 @@ except Exception as e:
     logger.critical(message)
     raise e
 
-# region NMS.py
-
-# # must be ordered in the same way as KNOWN_BINARY_HASH
-# PATTERNS_REALITYMANAGER_CONSTRUCT = [  # search for "Metadata/Simulation/Missions/Tables/MissionTable.mXml" around the latest offset
-#     "48 8B C4 48 89 48 08 55 53 56 57 48 8D A8 88",                 # 4.13 (offset="0x0BC5AF0")
-#     "48 89 4C 24 08 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 E0",  # 5.20 (offset="0x0D14080")
-#     "48 8B C4 48 89 48 08 55 53 56 57 41 54 41 56",                 # 5.61 (offset="0x0D61800")
-# ]
-# PATTERNS_REALITYMANAGER_GETHASHEDIDFORTECH = [  # currently not used as pattern is the same for all version
-#     "48 89 5C 24 08 45 0F",  # 4.13 (offset="0x0BCE030")
-#     "48 89 5C 24 08 45 0F",  # 5.20 (offset="0x0D20C40")
-#     "48 89 5C 24 08 45 0F",  # 5.61 (offset="0x0D6E420")
-# ]
-
-
-# if pymhf_internal.BINARY_HASH in KNOWN_BINARY_HASH:
-#     i = KNOWN_BINARY_HASH.index(pymhf_internal.BINARY_HASH)  # get index of current hash
-
-#     call_sigs.FUNC_CALL_SIGS["cGcRealityManager::GetHashedIDForTech"] = FUNCDEF(
-#         restype=ctypes.c_char_p,  # const TkID<128> *
-#         argtypes=[
-#             ctypes.c_ulonglong,  # cGcRealityManager *
-#             # ctypes.c_ulonglong,  # TkID<128> *  # this is probably the correct one...
-#             ctypes.c_char_p,  # ...but this works with the setup below
-#             ctypes.c_char_p,  # const TkID<128> *
-#         ]
-#     )
-
-#     patterns.FUNC_PATTERNS["cGcRealityManager::Construct"] = PATTERNS_REALITYMANAGER_CONSTRUCT[i]
-#     patterns.FUNC_PATTERNS["cGcRealityManager::GetHashedIDForTech"] = "48 89 5C 24 08 45 0F"
-
-
-# def GetHashedIDForTech(self, lTechID: bytes) -> bytes:
-#     this = ctypes.addressof(self)
-#     return call_function("cGcRealityManager::GetHashedIDForTech", this, ctypes.c_char_p(b""), lTechID)
-
-# endregion
-
 
 # region Configuration
 
@@ -122,6 +84,10 @@ TRANSFORM = {
 #       Update NMS.py to 147803.1
 #       Add autostart option
 
+# 1.3.1
+#       Update pyMHF to 0.2.0
+#       Update NMS.py to 152998.0
+
 # endregion
 
 
@@ -141,7 +107,7 @@ class PackageMod(Mod):
 
     __author__ = "zencq"
     __description__ = "Hash item_id to use for technology packages."
-    __version__ = "1.3.0"
+    __version__ = "1.3.1"
 
     # region Property
 
