@@ -43,7 +43,7 @@ from pymhf.gui import BOOLEAN, STRING, gui_button
 # local
 from common.configuration import KNOWN_BINARY_HASH, LANGUAGES, PI_ROOT, PRODUCT_FREIGHTER_DERELICT, PRODUCT_JUNK, PRODUCT_TREASURE, TOTAL_SEEDS
 from common.decorators import try_except
-from common.helpers import binary_is_602, convert_to_dataframe, get_perfection, get_weighting, read_existing_csv
+from common.helpers import binary_is_602, calculate_comparable_perfection, convert_to_dataframe, extract_previous_languages, get_perfection, get_weighting, read_existing_csv, write_result
 from common.objects import Counter
 
 # dynamically import for selected version
@@ -314,7 +314,8 @@ TECHNOLOGY_WITHOUT_QUALITIES = [
 #       Add non-treasure products and the new items from game version 6.0
 #       Add autostart option
 
-# TODO: add per item_id perfection (min value from lowest class / max C value from highest class )
+# 1.3.1
+#       Fix calls for methods moved to the helpers module
 
 # TODO: add settlement perks
 # TkID<128> *__fastcall cGcSettlementStateManager::GenerateProcPerkId(cGcSettlementStateManager *this, TkID<128> *result, const TkID<128> *lBasePerkId, const unsigned __int64 lBaseSeedValue)
@@ -353,7 +354,7 @@ class PiMod(Mod):
 
     __author__ = "zencq"
     __description__ = "Generate data for all procedural items."
-    __version__ = "1.3.0"
+    __version__ = "1.3.1"
 
     # region Property
 
@@ -515,7 +516,7 @@ class PiMod(Mod):
     def start_recalculating_comparable_perfection_product(self):
         start_time = datetime.now()
 
-        self.calculate_comparable_perfection("Product", "PROC", columns_override=["Units"])
+        calculate_comparable_perfection("Product", "PROC", columns_override=["Units"])
 
         logger.info(f"> PROC > Calculated comparable perfection in {datetime.now() - start_time}")
 
@@ -543,7 +544,7 @@ class PiMod(Mod):
                 logger.warning(f"! {item_name} > Product not available in your game version.")
                 break
 
-            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
+            row = extract_previous_languages(read_rows, seed)  # carry over all previous translations
             row.update({
                 self.state.language: product.NameLower,  # name for current language
                 "Seed": seed,
@@ -592,7 +593,7 @@ class PiMod(Mod):
                 stat_names.append(procedural_description_value_name)
 
             df = convert_to_dataframe(result)
-            self.write_result(f_name, stat_names, df)
+            write_result(f_name, stat_names, df)
 
             logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
 
@@ -667,7 +668,7 @@ class PiMod(Mod):
 
         start_time = datetime.now()
 
-        self.calculate_comparable_perfection(inventory_type, item)
+        calculate_comparable_perfection(inventory_type, item)
 
         logger.info(f"> {item} > Calculated comparable perfection in {datetime.now() - start_time}")
 
@@ -702,7 +703,7 @@ class PiMod(Mod):
 
             stat_number = max(stat_number, len(technology.StatBonuses))
 
-            row = self.extract_previous_languages(read_rows, seed)  # carry over all previous translations
+            row = extract_previous_languages(read_rows, seed)  # carry over all previous translations
             row.update({
                 self.state.language: technology.NameLower,  # name for current language
                 "Seed": seed,
@@ -743,7 +744,7 @@ class PiMod(Mod):
                 })
 
             df = convert_to_dataframe(result)
-            self.write_result(f_name, stat_names, df)
+            write_result(f_name, stat_names, df)
 
             logger.info(f"> {item_name} > {datetime.now() - item_start_time}")
 
