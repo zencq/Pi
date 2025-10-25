@@ -1,6 +1,6 @@
 # Every Item Procedural
 
-![Maintained](https://img.shields.io/maintenance/yes/2025)
+![Maintained](https://img.shields.io/maintenance/yes/2026)
 ![GitHub Release](https://img.shields.io/github/v/release/zencq/Pi?display_name=release)
 ![GitHub Repo Size](https://img.shields.io/github/repo-size/zencq/Pi)
 [![Supported by the No Man's Sky Community Developers & Designers](https://raw.githubusercontent.com/NMSCD/About/master/badge/purple.svg)](https://nmscd.com/)
@@ -24,34 +24,41 @@ actually had a range from `30` to `40`).
 
 There is also the `Pi.xlsx` file which is a user friendly collection of best and
 most desirable seeds. It is categorized by inventory type and contains the best
-values for each stat per item in addition to those already mentioned.
+values for each stat per item in addition to those already mentioned. The file is
+automatically generated and not curated by hand.
 
-<!-- ## Known Issues
+## Known Issues
 
 The following items are currently *outdated* or *not available* due to changes in
 a newer yet unsupported game version. All supported versions can be can be seen
-below and the latest item update in the [releases here on GitHub](https://github.com/zencq/Pi/releases). -->
+below and the latest item update in the [releases here on GitHub](https://github.com/zencq/Pi/releases).
 
-## How it works 2.2
+* All Corvette parts from **Voyagers 6.00** and **Breach 6.10** are not available.
+
+## How it works 2.3
 
 The current implementation utilizes [NMS.py](https://github.com/monkeyman192/NMS.py)
 by [monkeyman192](https://github.com/monkeyman192). NMS.py (and its backend [pyMHF](https://github.com/monkeyman192/pyMHF))
 is included in this repository as submodules to ensure best compatibility.
 
-Currently it is designed to work with GOG.com version 4.13 as well as 5.20 and 5.61
-which cover all changes/additions since 4.13.
+Currently it is designed to only work with the following GOG.com versions which
+cover all changes/additions since the first one listed.
+* 4.13
+* 5.20
+* 5.61
+* 6.02
+<!-- * 6.11 -->
 
-After cloning you must execute `git submodule update --init --recursive` in the
-newly created directory to initialize the NMS.py and pyMHF submodules. Then install
-both in your Python environment by changing into the respective directories, starting
-with pyMHF and the command `pip install .` followed by NMS.py with `pip install --no-deps .`.
-Finally adapt the inline [config](https://github.com/monkeyman192/pyMHF/blob/master/docs/settings.md)
-at the top of the mod file to your needs and you are ready to go.
+After cloning you must execute `git submodule update --init` in the newly created
+directory to initialize the NMS.py and pyMHF submodules. Then install both in your
+Python environment with the command `pip install .` by changing into the respective
+directories, starting with pyMHF and followed by NMS.py. Finally adapt the inline
+[config](https://github.com/monkeyman192/pyMHF/blob/master/docs/settings.md) at the
+top of the mod file to your needs and you are ready to go.
 
-To run it, simply execute the command `pymhf run .\NMSpy_mods\Pi.py` and start the
-binary when you are asked to. When NMS.py runs, a distinct terminal window opens
-where some information are logged. All output is prefixed with `>> Pi` or indented
-below it.
+To run it, simply execute the command `pymhf run .\NMSpy_mods\Pi.py`. When NMS.py
+runs, a distinct terminal window opens where some information are logged. All output
+is marked with `pi`.
 
 As soon as the menu appears in the game, you can start generating via the GUI window
 that opens short after the terminal. Both, technology and products, are enabled
@@ -68,7 +75,7 @@ selected/new language will be shown in the log mentioned above.
 
 ## Authors
 
-* **Christian Engelhardt** (zencq) - [GitHub](https://github.com/cengelha)
+* zencq - [GitHub](https://github.com/zencq)
 
 ## Credits
 
